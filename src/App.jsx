@@ -6,7 +6,12 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
 
-const heroIcons = ['🚀', '💡', '🌍', '📈', '🤝', '🧠']
+const heroIcons = [
+  { icon: '🚀', top: '24%', left: '10%', tone: 'text-primary' },
+  { icon: '📈', top: '34%', left: '78%', tone: 'text-primary' },
+  { icon: '🎯', top: '62%', left: '12%', tone: 'text-secondary' },
+  { icon: '👥', top: '68%', left: '86%', tone: 'text-secondary' },
+]
 const offerings = [
   'Entrepreneurship Courses',
   'Startup Mentorship Programs',
@@ -91,7 +96,7 @@ const testimonials = [
   {
     name: 'Dr. Kavya Nair',
     role: 'Director, Institute Partner',
-    text: 'Build Up Bharat’s programs have transformed entrepreneurial readiness on campus.',
+    text: 'EDC India’s programs have transformed entrepreneurial readiness on campus.',
   },
   {
     name: 'Rohan Kapoor',
@@ -192,75 +197,83 @@ const Home = () => {
       transition={{ duration: 0.6 }}
     >
       <Lightbox item={lightbox} onClose={() => setLightbox(null)} />
-      <nav className="sticky top-0 z-40 border-b border-secondary/40 bg-white/90 backdrop-blur">
+      <nav className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-700">BuildUpBharat</div>
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-orange-500 text-sm font-semibold text-white">
+              E
+            </div>
+            <div className="text-sm font-semibold text-slate-800">EDC India</div>
+          </div>
           <div className="hidden items-center gap-6 text-xs font-semibold text-slate-600 md:flex">
-            {[
-              { label: 'Home', href: '#home' },
-              { label: 'About', href: '#about' },
-              { label: 'Programs', href: '#offerings' },
-              { label: 'Funding', href: '#funding' },
-              { label: 'Global', href: '#global' },
-              { label: 'Showcase', href: '#gallery' },
-              { label: 'Contact', href: '#forms' },
-            ].map((link) => (
-              <a key={link.label} href={link.href} className="transition hover:text-secondary">
-                {link.label}
+            {['Home', 'About', 'Programs', 'Courses', 'Partners', 'Impact', 'Contact'].map((label) => (
+              <a
+                key={label}
+                href={`#${label.toLowerCase()}`}
+                className="transition hover:text-slate-900"
+              >
+                {label}
               </a>
             ))}
           </div>
           <button className="rounded-full bg-secondary px-5 py-2 text-xs font-semibold text-white shadow-glow">
-            Join Now
+            Apply Now
           </button>
         </div>
       </nav>
-      <section id="home" className="relative min-h-screen overflow-hidden bg-white text-slate-900">
-        {heroIcons.map((icon, index) => (
+      <section id="home" className="relative min-h-screen overflow-hidden bg-[#f7f8fc] text-slate-900">
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-[#fff1e8]" />
+        {heroIcons.map((item, index) => (
           <div
-            key={icon}
+            key={`${item.icon}-${index}`}
             ref={(el) => {
               iconRefs.current[index] = el
             }}
-            className="absolute text-3xl text-slate-300"
-            style={{
-              top: `${16 + index * 11}%`,
-              left: `${8 + (index % 3) * 30}%`,
-            }}
+            className={`absolute flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-lg ${item.tone}`}
+            style={{ top: item.top, left: item.left }}
           >
-            {icon}
+            <span className="text-xl">{item.icon}</span>
           </div>
         ))}
-        <div className="relative z-10 mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-20">
+        <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 py-24 text-center">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ duration: 0.7 }}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-600 shadow-sm">
-              BuildUpBharat
+            <div className="inline-flex items-center gap-2 rounded-full bg-orange-100 px-4 py-1 text-[11px] font-semibold text-orange-600">
+              India&apos;s Premier Startup Ecosystem
             </div>
-            <h1 className="mt-6 max-w-3xl text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-              Empowering India&apos;s Next Generation of Entrepreneurs
+            <h1 className="mt-6 text-4xl font-semibold leading-tight text-slate-900 sm:text-5xl lg:text-6xl">
+              <span className="block">Empowering India&apos;s</span>
+              <span className="block">Next Generation of</span>
+              <span className="block bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+                Entrepreneurs
+              </span>
             </h1>
-            <p className="mt-6 max-w-2xl text-lg text-slate-600">
+            <p className="mt-6 max-w-2xl text-base text-slate-600 sm:text-lg">
               Courses, Funding, Global Exposure &amp; Startup Growth Ecosystem
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <button className="rounded-full bg-secondary px-6 py-3 text-sm font-semibold text-white shadow-glow">
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <button className="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200">
                 Join Now
               </button>
-              <button className="rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700">
+              <button className="rounded-full border border-blue-600 px-6 py-3 text-sm font-semibold text-blue-600">
                 Explore Programs
               </button>
             </div>
           </motion.div>
-          <div className="mt-16 grid gap-6 md:grid-cols-3">
-            {['Startup Success', 'Global Network', 'Investor Ready'].map((label) => (
-              <div key={label} className="rounded-2xl border border-secondary/40 bg-white/90 p-5 shadow-sm">
-                <div className="text-xs uppercase tracking-[0.3em] text-slate-400">Focus</div>
-                <div className="mt-3 text-lg font-semibold text-slate-800">{label}</div>
-                <div className="mt-2 text-sm text-slate-600">
-                  Premium mentorship and ecosystem partnerships aligned with Startup India.
-                </div>
+          <div className="mt-14 grid w-full max-w-4xl grid-cols-2 gap-6 sm:grid-cols-4">
+            {[
+              { value: '500+', label: 'Startups' },
+              { value: '₹50Cr+', label: 'Funding Raised' },
+              { value: '100+', label: 'Partners' },
+              { value: '25+', label: 'Countries' },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-xl font-semibold text-blue-700 sm:text-2xl">{stat.value}</div>
+                <div className="mt-1 text-xs font-semibold text-slate-500">{stat.label}</div>
               </div>
             ))}
+          </div>
+          <div className="mt-10 flex h-10 w-6 items-center justify-center rounded-full border border-slate-200 bg-white">
+            <div className="h-3 w-1.5 rounded-full bg-slate-300" />
           </div>
         </div>
       </section>
@@ -275,12 +288,12 @@ const Home = () => {
           transition={{ duration: 0.6 }}
         >
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">About Build Up Bharat</div>
+            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">About EDC India</div>
             <h2 className="section-title mt-4 text-3xl font-semibold text-primary sm:text-4xl">
               Mission-driven storytelling for a stronger Startup India
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-slate-600">
-              Build Up Bharat nurtures entrepreneurial talent through structured programs, global exposure,
+              EDC India nurtures entrepreneurial talent through structured programs, global exposure,
               and a trusted funding ecosystem. We enable founders to launch, scale, and compete globally.
             </p>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -320,7 +333,7 @@ const Home = () => {
         </motion.div>
       </section>
 
-      <section id="offerings" className="bg-white py-20">
+      <section id="programs" className="bg-white py-20">
         <div className="mx-auto max-w-6xl px-6">
           <motion.div
             variants={fadeUp}
@@ -396,7 +409,7 @@ const Home = () => {
         </motion.div>
       </section>
 
-      <section id="colleges" className="bg-accent py-20">
+      <section id="partners" className="bg-accent py-20">
         <div className="mx-auto max-w-6xl px-6">
           <motion.div
             variants={fadeUp}
@@ -606,7 +619,7 @@ const Home = () => {
         </motion.div>
       </section>
 
-      <section id="forms" className="bg-accent py-20">
+      <section id="contact" className="bg-accent py-20">
         <div className="mx-auto max-w-6xl px-6">
           <motion.div
             variants={fadeUp}
@@ -682,7 +695,7 @@ const Home = () => {
       <footer className="bg-[#071f4d] py-12 text-white">
         <div className="mx-auto grid max-w-6xl gap-8 px-6 md:grid-cols-4">
           <div>
-            <div className="text-lg font-semibold">Build Up Bharat</div>
+            <div className="text-lg font-semibold">EDC India</div>
             <p className="mt-3 text-xs text-white/70">
               Empowering founders through curated programs, funding, and global exposure.
             </p>
@@ -704,7 +717,7 @@ const Home = () => {
           <div>
             <div className="text-sm font-semibold">Contact</div>
             <div className="mt-3 space-y-2 text-xs text-white/70">
-              <div>hello@buildupbharat.org</div>
+              <div>hello@edcindia.org</div>
               <div>+91 90000 00000</div>
               <div>New Delhi · Bengaluru · Global</div>
             </div>
