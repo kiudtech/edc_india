@@ -1,23 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-<<<<<<< HEAD
 import { BrowserRouter, Route, Routes, Link, useNavigate } from 'react-router-dom'
-=======
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
 import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
-<<<<<<< HEAD
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import JoinPage from './pages/JoinPage'
 import PaymentPage from './pages/PaymentPage'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
-=======
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
 
 const heroIcons = [
   { icon: '🚀', top: '24%', left: '10%', tone: 'text-primary' },
@@ -34,7 +27,7 @@ const offerings = [
   'College Incubation Tie-Ups',
 ]
 const timeline = [
-  { year: '2018', title: 'Idea to Impact', text: 'Building India’s next generation of founders.' },
+  { year: '2018', title: 'Idea to Impact', text: "Building India's next generation of founders." },
   { year: '2020', title: 'National Partnerships', text: 'Collaboration with leading institutions.' },
   { year: '2022', title: 'Global Launch', text: 'International exposure and cross-border mentorship.' },
   { year: '2024', title: 'Scale & Growth', text: 'Funding readiness and global market access.' },
@@ -109,7 +102,7 @@ const testimonials = [
   {
     name: 'Dr. Kavya Nair',
     role: 'Director, Institute Partner',
-    text: 'EDC India’s programs have transformed entrepreneurial readiness on campus.',
+    text: "EDC India's programs have transformed entrepreneurial readiness on campus.",
   },
   {
     name: 'Rohan Kapoor',
@@ -156,19 +149,11 @@ const Counter = ({ value, label }) => {
 const Lightbox = ({ item, onClose }) => {
   if (!item) return null
   return (
-<<<<<<< HEAD
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 p-4 sm:p-6">
       <div className="w-full max-w-lg rounded-3xl bg-white p-5 shadow-2xl sm:max-w-3xl sm:p-8">
         <div className="text-sm uppercase tracking-[0.2em] text-slate-400">Startup Showcase</div>
         <div className="mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">{item}</div>
         <div className="mt-4 h-40 rounded-2xl bg-gradient-to-br from-primary/10 via-secondary/10 to-accent sm:h-64" />
-=======
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 p-6">
-      <div className="max-w-3xl rounded-3xl bg-white p-8 shadow-2xl">
-        <div className="text-sm uppercase tracking-[0.2em] text-slate-400">Startup Showcase</div>
-        <div className="mt-3 text-2xl font-semibold text-slate-900">{item}</div>
-        <div className="mt-4 h-64 rounded-2xl bg-gradient-to-br from-primary/10 via-secondary/10 to-accent" />
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
         <button
           onClick={onClose}
           className="mt-6 w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white"
@@ -181,15 +166,10 @@ const Lightbox = ({ item, onClose }) => {
 }
 
 const Home = () => {
-<<<<<<< HEAD
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState(courseTabs[0])
   const [lightbox, setLightbox] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-=======
-  const [activeTab, setActiveTab] = useState(courseTabs[0])
-  const [lightbox, setLightbox] = useState(null)
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
   const iconRefs = useRef([])
 
   useEffect(() => {
@@ -226,11 +206,7 @@ const Home = () => {
     >
       <Lightbox item={lightbox} onClose={() => setLightbox(null)} />
       <nav className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 backdrop-blur">
-<<<<<<< HEAD
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
-=======
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-orange-500 text-sm font-semibold text-white">
               E
@@ -248,7 +224,6 @@ const Home = () => {
               </a>
             ))}
           </div>
-<<<<<<< HEAD
           <div className="flex items-center gap-3">
             <Link to="/login" className="hidden text-xs font-semibold text-slate-600 transition hover:text-slate-900 sm:inline-flex">
               Login
@@ -299,12 +274,6 @@ const Home = () => {
             </div>
           </div>
         )}
-=======
-          <button className="rounded-full bg-secondary px-5 py-2 text-xs font-semibold text-white shadow-glow">
-            Apply Now
-          </button>
-        </div>
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
       </nav>
       <section id="home" className="relative min-h-screen overflow-hidden bg-[#f7f8fc] text-slate-900">
         <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-[#fff1e8]" />
@@ -314,7 +283,6 @@ const Home = () => {
             ref={(el) => {
               iconRefs.current[index] = el
             }}
-<<<<<<< HEAD
             className={`absolute hidden h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-lg sm:flex sm:h-12 sm:w-12 ${item.tone}`}
             style={{ top: item.top, left: item.left }}
           >
@@ -322,24 +290,11 @@ const Home = () => {
           </div>
         ))}
         <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6 sm:py-24">
-=======
-            className={`absolute flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-lg ${item.tone}`}
-            style={{ top: item.top, left: item.left }}
-          >
-            <span className="text-xl">{item.icon}</span>
-          </div>
-        ))}
-        <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 py-24 text-center">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ duration: 0.7 }}>
             <div className="inline-flex items-center gap-2 rounded-full bg-orange-100 px-4 py-1 text-[11px] font-semibold text-orange-600">
               India&apos;s Premier Startup Ecosystem
             </div>
-<<<<<<< HEAD
             <h1 className="mt-6 text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl md:text-5xl lg:text-6xl">
-=======
-            <h1 className="mt-6 text-4xl font-semibold leading-tight text-slate-900 sm:text-5xl lg:text-6xl">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
               <span className="block">Empowering India&apos;s</span>
               <span className="block">Next Generation of</span>
               <span className="block bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
@@ -350,7 +305,6 @@ const Home = () => {
               Courses, Funding, Global Exposure &amp; Startup Growth Ecosystem
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
-<<<<<<< HEAD
               <button onClick={() => navigate('/join')} className="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200">
                 Join Now
               </button>
@@ -360,17 +314,6 @@ const Home = () => {
             </div>
           </motion.div>
           <div className="mt-10 grid w-full max-w-4xl grid-cols-2 gap-4 sm:mt-14 sm:gap-6 sm:grid-cols-4">
-=======
-              <button className="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200">
-                Join Now
-              </button>
-              <button className="rounded-full border border-blue-600 px-6 py-3 text-sm font-semibold text-blue-600">
-                Explore Programs
-              </button>
-            </div>
-          </motion.div>
-          <div className="mt-14 grid w-full max-w-4xl grid-cols-2 gap-6 sm:grid-cols-4">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
             {[
               { value: '500+', label: 'Startups' },
               { value: '₹50Cr+', label: 'Funding Raised' },
@@ -389,11 +332,7 @@ const Home = () => {
         </div>
       </section>
 
-<<<<<<< HEAD
       <section id="about" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
-=======
-      <section id="about" className="mx-auto max-w-6xl px-6 py-20">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
         <motion.div
           className="grid gap-10 lg:grid-cols-2"
           variants={fadeUp}
@@ -404,11 +343,7 @@ const Home = () => {
         >
           <div>
             <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">About EDC India</div>
-<<<<<<< HEAD
             <h2 className="section-title mt-4 text-2xl font-semibold text-primary sm:text-3xl lg:text-4xl">
-=======
-            <h2 className="section-title mt-4 text-3xl font-semibold text-primary sm:text-4xl">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
               Mission-driven storytelling for a stronger Startup India
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-slate-600">
@@ -431,11 +366,7 @@ const Home = () => {
               )}
             </div>
           </div>
-<<<<<<< HEAD
           <div className="rounded-3xl border border-secondary/40 bg-white p-5 shadow-xl sm:p-8">
-=======
-          <div className="rounded-3xl border border-secondary/40 bg-white p-8 shadow-xl">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
             <div className="text-xs uppercase tracking-[0.3em] text-slate-400">Growth Timeline</div>
             <div className="mt-6 space-y-6">
               {timeline.map((item, index) => (
@@ -456,13 +387,8 @@ const Home = () => {
         </motion.div>
       </section>
 
-<<<<<<< HEAD
       <section id="programs" className="bg-white py-12 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-=======
-      <section id="programs" className="bg-white py-20">
-        <div className="mx-auto max-w-6xl px-6">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -471,11 +397,7 @@ const Home = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Our Core Offerings</div>
-<<<<<<< HEAD
             <h2 className="mt-4 text-2xl font-semibold text-primary sm:text-3xl lg:text-4xl">Premium ecosystem support</h2>
-=======
-            <h2 className="mt-4 text-3xl font-semibold text-primary sm:text-4xl">Premium ecosystem support</h2>
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           </motion.div>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {offerings.map((item) => (
@@ -495,11 +417,7 @@ const Home = () => {
         </div>
       </section>
 
-<<<<<<< HEAD
       <section id="courses" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
-=======
-      <section id="courses" className="mx-auto max-w-6xl px-6 py-20">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
         <motion.div
           className="grid gap-10 lg:grid-cols-[1.1fr_1fr]"
           variants={fadeUp}
@@ -510,11 +428,7 @@ const Home = () => {
         >
           <div>
             <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Courses</div>
-<<<<<<< HEAD
             <h2 className="mt-4 text-2xl font-semibold text-primary sm:text-3xl lg:text-4xl">Entrepreneurship learning tracks</h2>
-=======
-            <h2 className="mt-4 text-3xl font-semibold text-primary sm:text-4xl">Entrepreneurship learning tracks</h2>
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
             <p className="mt-4 text-sm text-slate-600">
               Modular tracks built to guide founders from ideation to global expansion.
             </p>
@@ -534,11 +448,7 @@ const Home = () => {
               ))}
             </div>
           </div>
-<<<<<<< HEAD
           <div className="rounded-3xl border border-secondary/40 bg-white p-5 shadow-xl transition duration-300 hover:-translate-y-1 hover:shadow-glow sm:p-8">
-=======
-          <div className="rounded-3xl border border-secondary/40 bg-white p-8 shadow-xl transition duration-300 hover:-translate-y-1 hover:shadow-glow">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
             <div className="text-lg font-semibold text-slate-800">{activeTab.name}</div>
             <p className="mt-3 text-sm text-slate-600">{activeTab.description}</p>
             <div className="mt-6 space-y-3">
@@ -553,13 +463,8 @@ const Home = () => {
         </motion.div>
       </section>
 
-<<<<<<< HEAD
       <section id="partners" className="bg-accent py-12 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-=======
-      <section id="partners" className="bg-accent py-20">
-        <div className="mx-auto max-w-6xl px-6">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -568,11 +473,7 @@ const Home = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">College Tie-Ups</div>
-<<<<<<< HEAD
             <h2 className="mt-4 text-2xl font-semibold text-primary sm:text-3xl lg:text-4xl">University collaboration showcase</h2>
-=======
-            <h2 className="mt-4 text-3xl font-semibold text-primary sm:text-4xl">University collaboration showcase</h2>
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
             <div className="mt-8 grid gap-6 lg:grid-cols-2">
               <div className="rounded-3xl border border-secondary/40 bg-white p-6 shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-glow">
                 <div className="text-sm font-semibold text-slate-800">Partner Logos Carousel</div>
@@ -607,15 +508,9 @@ const Home = () => {
                   ))}
                 </div>
               </div>
-<<<<<<< HEAD
               <div className="relative overflow-hidden rounded-3xl border border-secondary/40 bg-primary p-5 text-white shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-glow sm:p-8">
                 <div className="text-sm font-semibold text-white/80">Interactive World Map</div>
                 <div className="mt-6 h-48 rounded-2xl bg-white/10 sm:h-64">
-=======
-              <div className="relative overflow-hidden rounded-3xl border border-secondary/40 bg-primary p-8 text-white shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-glow">
-                <div className="text-sm font-semibold text-white/80">Interactive World Map</div>
-                <div className="mt-6 h-64 rounded-2xl bg-white/10">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
                   {mapNodes.map((node, index) => (
                     <span
                       key={index}
@@ -633,11 +528,7 @@ const Home = () => {
         </div>
       </section>
 
-<<<<<<< HEAD
       <section id="funding" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
-=======
-      <section id="funding" className="mx-auto max-w-6xl px-6 py-20">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
         <motion.div
           variants={fadeUp}
           initial="hidden"
@@ -646,13 +537,8 @@ const Home = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Startup Funding Support</div>
-<<<<<<< HEAD
           <h2 className="mt-4 text-2xl font-semibold text-primary sm:text-3xl lg:text-4xl">Step-by-step funding flow</h2>
           <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-5">
-=======
-          <h2 className="mt-4 text-3xl font-semibold text-primary sm:text-4xl">Step-by-step funding flow</h2>
-          <div className="mt-10 grid gap-6 lg:grid-cols-5">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
             {fundingSteps.map((step, index) => (
               <div
                 key={step.step}
@@ -667,13 +553,8 @@ const Home = () => {
         </motion.div>
       </section>
 
-<<<<<<< HEAD
       <section id="global" className="bg-white py-12 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-=======
-      <section id="global" className="bg-white py-20">
-        <div className="mx-auto max-w-6xl px-6">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -682,19 +563,11 @@ const Home = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Global Exposure</div>
-<<<<<<< HEAD
             <h2 className="mt-4 text-2xl font-semibold text-primary sm:text-3xl lg:text-4xl">World map with glowing nodes</h2>
           </motion.div>
           <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-[1.1fr_1fr]">
             <div className="relative rounded-3xl border border-secondary/40 bg-primary p-5 text-white transition duration-300 hover:-translate-y-1 hover:shadow-glow sm:p-8">
               <div className="h-48 rounded-2xl bg-white/10 sm:h-72">
-=======
-            <h2 className="mt-4 text-3xl font-semibold text-primary sm:text-4xl">World map with glowing nodes</h2>
-          </motion.div>
-          <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-            <div className="relative rounded-3xl border border-secondary/40 bg-primary p-8 text-white transition duration-300 hover:-translate-y-1 hover:shadow-glow">
-              <div className="h-72 rounded-2xl bg-white/10">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
                 {mapNodes.map((node, index) => (
                   <span
                     key={index}
@@ -707,11 +580,7 @@ const Home = () => {
                 Strategic access to global startup ecosystems across key innovation hubs.
               </div>
             </div>
-<<<<<<< HEAD
             <div className="rounded-3xl border border-secondary/40 bg-white p-5 shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-glow sm:p-8">
-=======
-            <div className="rounded-3xl border border-secondary/40 bg-white p-8 shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-glow">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
               <div className="text-sm font-semibold text-slate-800">Programs</div>
               <div className="mt-6 space-y-4">
                 {globalExposure.map((item) => (
@@ -728,11 +597,7 @@ const Home = () => {
         </div>
       </section>
 
-<<<<<<< HEAD
       <section id="gallery" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
-=======
-      <section id="gallery" className="mx-auto max-w-6xl px-6 py-20">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
         <motion.div
           variants={fadeUp}
           initial="hidden"
@@ -741,11 +606,7 @@ const Home = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Startup Showcase Gallery</div>
-<<<<<<< HEAD
           <h2 className="mt-4 text-2xl font-semibold text-primary sm:text-3xl lg:text-4xl">Masonry + lightbox</h2>
-=======
-          <h2 className="mt-4 text-3xl font-semibold text-primary sm:text-4xl">Masonry + lightbox</h2>
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           <div className="mt-10 columns-1 gap-6 sm:columns-2 lg:columns-3">
             {galleryItems.map((item, index) => (
               <button
@@ -767,13 +628,8 @@ const Home = () => {
         </motion.div>
       </section>
 
-<<<<<<< HEAD
       <section id="impact" className="bg-white py-12 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-=======
-      <section id="impact" className="bg-white py-20">
-        <div className="mx-auto max-w-6xl px-6">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -782,11 +638,7 @@ const Home = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Impact</div>
-<<<<<<< HEAD
             <h2 className="mt-4 text-2xl font-semibold text-primary sm:text-3xl lg:text-4xl">Counter animation</h2>
-=======
-            <h2 className="mt-4 text-3xl font-semibold text-primary sm:text-4xl">Counter animation</h2>
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           </motion.div>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {impactStats.map((stat) => (
@@ -796,11 +648,7 @@ const Home = () => {
         </div>
       </section>
 
-<<<<<<< HEAD
       <section id="testimonials" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
-=======
-      <section id="testimonials" className="mx-auto max-w-6xl px-6 py-20">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
         <motion.div
           variants={fadeUp}
           initial="hidden"
@@ -809,13 +657,8 @@ const Home = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Testimonials</div>
-<<<<<<< HEAD
           <h2 className="mt-4 text-2xl font-semibold text-primary sm:text-3xl lg:text-4xl">Trusted by founders and investors</h2>
           <div className="mt-8 grid gap-6 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
-=======
-          <h2 className="mt-4 text-3xl font-semibold text-primary sm:text-4xl">Trusted by founders and investors</h2>
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
             {testimonials.map((item) => (
               <div
                 key={item.name}
@@ -830,13 +673,8 @@ const Home = () => {
         </motion.div>
       </section>
 
-<<<<<<< HEAD
       <section id="contact" className="bg-accent py-12 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-=======
-      <section id="contact" className="bg-accent py-20">
-        <div className="mx-auto max-w-6xl px-6">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -845,13 +683,8 @@ const Home = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Startup Forms</div>
-<<<<<<< HEAD
             <h2 className="mt-4 text-2xl font-semibold text-primary sm:text-3xl lg:text-4xl">Applications &amp; partnerships</h2>
             <div className="mt-8 grid gap-6 sm:mt-10 sm:grid-cols-2">
-=======
-            <h2 className="mt-4 text-3xl font-semibold text-primary sm:text-4xl">Applications &amp; partnerships</h2>
-            <div className="mt-10 grid gap-6 lg:grid-cols-2">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
               {[
                 { title: 'Startup Application Form', cta: 'Apply Now' },
                 { title: 'Investor Interest Form', cta: 'Join as Investor' },
@@ -887,13 +720,8 @@ const Home = () => {
         </div>
       </section>
 
-<<<<<<< HEAD
       <section id="cta" className="bg-primary py-10 text-white sm:py-12 lg:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-=======
-      <section id="cta" className="bg-primary py-16 text-white">
-        <div className="mx-auto max-w-6xl px-6">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           <motion.div
             className="flex flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left"
             variants={fadeUp}
@@ -904,19 +732,11 @@ const Home = () => {
           >
             <div>
               <div className="text-xs uppercase tracking-[0.3em] text-white/70">Call To Action</div>
-<<<<<<< HEAD
               <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">Build Your Startup With The Right Ecosystem</h2>
             </div>
             <div className="flex flex-wrap gap-4">
               <button onClick={() => navigate('/join')} className="rounded-full bg-secondary px-6 py-3 text-sm font-semibold text-white shadow-glow">
                 Join Now
-=======
-              <h2 className="mt-3 text-3xl font-semibold">Build Your Startup With The Right Ecosystem</h2>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              <button className="rounded-full bg-secondary px-6 py-3 text-sm font-semibold text-white shadow-glow">
-                Apply Now
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
               </button>
               <button className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white">
                 Partner With Us
@@ -926,13 +746,8 @@ const Home = () => {
         </div>
       </section>
 
-<<<<<<< HEAD
       <footer className="bg-[#071f4d] py-10 text-white sm:py-12">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-=======
-      <footer className="bg-[#071f4d] py-12 text-white">
-        <div className="mx-auto grid max-w-6xl gap-8 px-6 md:grid-cols-4">
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
           <div>
             <div className="text-lg font-semibold">EDC India</div>
             <p className="mt-3 text-xs text-white/70">
@@ -976,7 +791,6 @@ const Home = () => {
 
 function App() {
   return (
-<<<<<<< HEAD
     <AuthProvider>
       <BrowserRouter>
         <Routes>
@@ -988,13 +802,6 @@ function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
-=======
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
->>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
   )
 }
 
