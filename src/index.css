@@ -12,7 +12,10 @@ html,
 body,
 #root {
   height: 100%;
+<<<<<<< HEAD
   overflow-x: hidden;
+=======
+>>>>>>> 1e0bcfff9e52b2fd7503ee96976b895c1bf464e5
 }
 
 body {
