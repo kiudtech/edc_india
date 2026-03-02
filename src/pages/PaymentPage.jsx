@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate, Navigate } from 'react-router-dom'
+import { API_BASE } from '../config'
 
 export default function PaymentPage() {
   const location = useLocation()
@@ -29,7 +30,7 @@ export default function PaymentPage() {
       // Simulate a 2-second payment processing delay
       await new Promise((r) => setTimeout(r, 2000))
 
-      const res = await fetch('/api/payment/process', {
+      const res = await fetch(`${API_BASE}/api/payment/process`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, amount: 2500, type: 'membership' }),

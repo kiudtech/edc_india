@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { API_BASE } from '../config'
 
 const stageOptions = ['Idea Stage', 'MVP/Prototype', 'Early Traction', 'Growth', 'Scaling']
 const industryOptions = [
@@ -33,7 +34,7 @@ export default function JoinPage() {
 
     setSubmitting(true)
     try {
-      const res = await fetch('/api/auth/join', {
+      const res = await fetch(`${API_BASE}/api/auth/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

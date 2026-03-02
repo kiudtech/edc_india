@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { API_BASE } from '../config'
 
 /* ─── Sample placeholder data ─── */
 const sampleEvents = [
@@ -64,7 +65,7 @@ export default function DashboardPage() {
 
   const fetchTickets = async () => {
     try {
-      const res = await fetch('/api/user/tickets', { headers: { Authorization: `Bearer ${token}` } })
+      const res = await fetch(`${API_BASE}/api/user/tickets`, { headers: { Authorization: `Bearer ${token}` } })
       if (res.ok) setTickets(await res.json())
     } catch { /* ignore */ }
   }
@@ -73,7 +74,7 @@ export default function DashboardPage() {
     e.preventDefault()
     setTicketMsg('')
     try {
-      const res = await fetch('/api/user/tickets', {
+      const res = await fetch(`${API_BASE}/api/user/tickets`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(ticketForm),
@@ -90,7 +91,7 @@ export default function DashboardPage() {
   const handleCourseInterest = async (courseName) => {
     setCourseMsg('')
     try {
-      const res = await fetch('/api/user/course-interest', {
+      const res = await fetch(`${API_BASE}/api/user/course-interest`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ courseName }),
