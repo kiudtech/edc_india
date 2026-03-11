@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { API_BASE } from '../config'
 
@@ -80,11 +80,13 @@ function statusBadge(s) {
 function Modal({ open, onClose, title, children }) {
   if (!open) return null
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
-        <div className="mb-4 flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm" onClick={onClose}>
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="mb-5 flex items-center justify-between">
           <h3 className="text-lg font-bold text-slate-800">{title}</h3>
-          <button onClick={onClose} className="text-2xl leading-none text-slate-400 hover:text-slate-600">&times;</button>
+          <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
         </div>
         {children}
       </div>
@@ -114,42 +116,123 @@ export default function AdminDashboardPage() {
 
   const handleLogout = () => { logout(); navigate('/login') }
 
-  return (
-    <div className="flex min-h-screen bg-slate-50">
-      {/* mobile overlay */}
-      {sidebarOpen && <div className="fixed inset-0 z-30 bg-black/30 lg:hidden" onClick={() => setSidebarOpen(false)} />}
-
-      {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-slate-900 transition-transform lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex h-16 items-center gap-3 border-b border-slate-700 px-5">
-          <span className="text-2xl">🛡️</span>
-          <span className="text-lg font-bold text-white">BUB Admin</span>
+  const sidebarContent = (
+    <>
+      {/* Brand */}
+      <div className="flex items-center gap-3 px-5 pt-6 pb-4">
+        <img src="/logo.png" alt="EDC India" className="h-10 w-10 rounded-full bg-white object-contain shadow" />
+        <div>
+          <div className="text-sm font-bold text-slate-800">EDC India</div>
+          <div className="text-[10px] font-medium text-slate-400">Admin Panel</div>
         </div>
-        <nav className="mt-4 space-y-1 px-3">
+      </div>
+
+      {/* Admin info card */}
+      <div className="mx-4 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 p-3.5 text-white shadow-lg">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500/30 text-sm font-bold backdrop-blur">
+            🛡️
+          </div>
+          <div className="min-w-0">
+            <div className="truncate text-sm font-bold">{user?.name}</div>
+            <div className="text-[10px] text-white/60">Administrator</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div className="mt-5 flex-1 overflow-y-auto px-3">
+        <div className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">Management</div>
+        <div className="space-y-1">
           {sections.map(s => (
             <button
               key={s.id}
               onClick={() => { setActive(s.id); setSidebarOpen(false) }}
-              className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${active === s.id ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}
+              className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition duration-200 ${
+                active === s.id
+                  ? 'bg-primary/10 font-bold text-primary shadow-sm'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+              }`}
             >
               <span className="text-base">{s.icon}</span>
-              {s.label}
+              <span>{s.label}</span>
+              {active === s.id && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" />}
             </button>
           ))}
-        </nav>
+        </div>
+      </div>
+
+      {/* Bottom actions */}
+      <div className="border-t border-slate-100 p-4 space-y-2">
+        <Link to="/" className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+          Back to Website
+        </Link>
+        <button onClick={handleLogout} className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition hover:bg-red-50 hover:text-red-600">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+          Logout
+        </button>
+      </div>
+    </>
+  )
+
+  return (
+    <div className="flex min-h-screen bg-[#f8f9fc]">
+      {/* ═══ Desktop Sidebar ═══ */}
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-100 bg-white lg:flex">
+        {sidebarContent}
       </aside>
 
-      {/* Main area */}
-      <div className="flex flex-1 flex-col">
-        {/* Top bar */}
-        <header className="flex h-16 items-center justify-between border-b bg-white px-4 shadow-sm lg:px-8">
-          <button className="text-2xl lg:hidden" onClick={() => setSidebarOpen(true)}>☰</button>
-          <h1 className="text-lg font-bold text-slate-700 capitalize">{sections.find(s => s.id === active)?.label}</h1>
-          <div className="flex items-center gap-4">
-            <span className="hidden text-sm text-slate-500 sm:inline">Welcome, {user?.name}</span>
-            <button onClick={handleLogout} className="rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-100">Logout</button>
+      {/* ═══ Mobile Sidebar Overlay ═══ */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+          <aside className="fixed left-0 top-0 z-50 flex h-full w-72 flex-col bg-white shadow-2xl">
+            <div className="flex items-center justify-end px-4 pt-4">
+              <button onClick={() => setSidebarOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+
+      {/* ═══ Main Content ═══ */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* ── Top Navbar ── */}
+        <nav className="sticky top-0 z-30 border-b border-slate-100 bg-white/80 backdrop-blur-lg">
+          <div className="flex items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:bg-slate-100 lg:hidden"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+              </button>
+              <div className="lg:hidden flex items-center gap-2">
+                <img src="/logo.png" alt="EDC India" className="h-8 w-8 rounded-full bg-white object-contain" />
+                <span className="text-sm font-bold text-slate-800">Admin</span>
+              </div>
+              <div className="hidden lg:block">
+                <h1 className="text-lg font-bold text-slate-800">
+                  {sections.find(s => s.id === active)?.icon} {sections.find(s => s.id === active)?.label}
+                </h1>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="hidden items-center gap-3 sm:flex">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-slate-700 to-slate-900 text-xs font-bold text-white shadow-md">
+                  {user?.name?.charAt(0)?.toUpperCase() || 'A'}
+                </div>
+                <div className="text-right">
+                  <div className="text-xs font-bold text-slate-800">{user?.name}</div>
+                  <div className="text-[10px] text-slate-400">Admin</div>
+                </div>
+              </div>
+            </div>
           </div>
-        </header>
+        </nav>
 
         {/* Section content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">
@@ -183,54 +266,50 @@ function AnalyticsSection() {
   if (!data) return <p className="text-slate-500">Failed to load analytics</p>
 
   const cards = [
-    { label: 'Total Members', value: data.totalMembers, icon: '👥', color: 'blue' },
-    { label: 'Active Members', value: data.activeMembers, icon: '✅', color: 'green' },
-    { label: 'Pending Members', value: data.pendingMembers, icon: '⏳', color: 'yellow' },
-    { label: 'Total Revenue', value: fmtCurrency(data.totalRevenue), icon: '💰', color: 'green' },
-    { label: 'Total Payments', value: data.totalPayments, icon: '💳', color: 'blue' },
-    { label: 'Idea Validations', value: data.totalValidations, icon: '🏆', color: 'purple' },
-    { label: 'Approved Validations', value: data.approvedValidations, icon: '✅', color: 'green' },
-    { label: 'Colleges Applied', value: data.totalColleges, icon: '🏫', color: 'blue' },
-    { label: 'Total Tickets', value: data.totalTickets, icon: '🎟️', color: 'gray' },
-    { label: 'Open Tickets', value: data.openTickets, icon: '🔴', color: 'red' },
+    { label: 'Total Members', value: data.totalMembers, icon: '👥', gradient: 'from-blue-500 to-indigo-600' },
+    { label: 'Active Members', value: data.activeMembers, icon: '✅', gradient: 'from-emerald-500 to-teal-600' },
+    { label: 'Pending Members', value: data.pendingMembers, icon: '⏳', gradient: 'from-amber-500 to-orange-600' },
+    { label: 'Total Revenue', value: fmtCurrency(data.totalRevenue), icon: '💰', gradient: 'from-emerald-500 to-green-600' },
+    { label: 'Total Payments', value: data.totalPayments, icon: '💳', gradient: 'from-sky-500 to-blue-600' },
+    { label: 'Idea Validations', value: data.totalValidations, icon: '🏆', gradient: 'from-purple-500 to-pink-600' },
+    { label: 'Approved Validations', value: data.approvedValidations, icon: '✅', gradient: 'from-teal-500 to-emerald-600' },
+    { label: 'Colleges Applied', value: data.totalColleges, icon: '🏫', gradient: 'from-indigo-500 to-blue-600' },
+    { label: 'Total Tickets', value: data.totalTickets, icon: '🎟️', gradient: 'from-slate-500 to-slate-700' },
+    { label: 'Open Tickets', value: data.openTickets, icon: '🔴', gradient: 'from-red-500 to-rose-600' },
   ]
-
-  const cardColors = {
-    blue: 'border-blue-200 bg-blue-50',
-    green: 'border-emerald-200 bg-emerald-50',
-    yellow: 'border-amber-200 bg-amber-50',
-    red: 'border-red-200 bg-red-50',
-    purple: 'border-purple-200 bg-purple-50',
-    gray: 'border-slate-200 bg-slate-50',
-  }
 
   return (
     <div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {cards.map(c => (
-          <div key={c.label} className={`rounded-xl border p-4 ${cardColors[c.color]}`}>
-            <div className="text-2xl">{c.icon}</div>
-            <p className="mt-2 text-2xl font-bold text-slate-800">{c.value}</p>
-            <p className="text-xs text-slate-500">{c.label}</p>
+          <div key={c.label} className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${c.gradient} p-4 text-white shadow-lg transition duration-300 hover:-translate-y-0.5 hover:shadow-xl`}>
+            <div className="absolute -right-2 -top-2 text-4xl opacity-[0.15]">{c.icon}</div>
+            <div className="relative">
+              <p className="text-2xl font-bold">{c.value}</p>
+              <p className="mt-1 text-[11px] font-semibold text-white/70">{c.label}</p>
+            </div>
           </div>
         ))}
       </div>
 
       {data.recentPayments?.length > 0 && (
         <div className="mt-8">
-          <h3 className="mb-3 text-sm font-semibold text-slate-600 uppercase">Recent Payments</h3>
-          <div className="overflow-x-auto rounded-xl border bg-white">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-700">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-sm">💳</span>
+            Recent Payments
+          </h3>
+          <div className="overflow-x-auto rounded-2xl border border-slate-100 bg-white shadow-sm">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs font-medium text-slate-500 uppercase">
+              <thead className="bg-slate-50/80 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 <tr><th className="px-4 py-3">User</th><th className="px-4 py-3">Amount</th><th className="px-4 py-3">Type</th><th className="px-4 py-3">Date</th></tr>
               </thead>
               <tbody>
                 {data.recentPayments.map(p => (
-                  <tr key={p._id} className="border-t">
-                    <td className="px-4 py-3">{p.userId?.name || '—'}<br /><span className="text-xs text-slate-400">{p.userId?.founderId}</span></td>
-                    <td className="px-4 py-3 font-medium">{fmtCurrency(p.amount)}</td>
+                  <tr key={p._id} className="border-t border-slate-50 transition hover:bg-blue-50/30">
+                    <td className="px-4 py-3 font-medium">{p.userId?.name || '—'}<br /><span className="text-[10px] text-slate-400">{p.userId?.founderId}</span></td>
+                    <td className="px-4 py-3 font-bold text-slate-800">{fmtCurrency(p.amount)}</td>
                     <td className="px-4 py-3 capitalize">{p.type}</td>
-                    <td className="px-4 py-3">{fmtDate(p.createdAt)}</td>
+                    <td className="px-4 py-3 text-slate-500">{fmtDate(p.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -1237,26 +1316,26 @@ function NotificationsSection() {
    =============================================================== */
 function Spinner() {
   return (
-    <div className="flex items-center justify-center py-12">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+    <div className="flex items-center justify-center py-16">
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
     </div>
   )
 }
 
 function Info({ label, value }) {
   return (
-    <div>
-      <span className="text-xs font-semibold text-slate-400">{label}</span>
-      <p className="text-slate-700 capitalize">{value || '—'}</p>
+    <div className="rounded-lg bg-slate-50 p-2.5">
+      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</span>
+      <p className="mt-0.5 text-sm font-medium text-slate-700 capitalize">{value || '—'}</p>
     </div>
   )
 }
 
 function FormField({ label, value, onChange, type = 'text', textarea, placeholder }) {
-  const cls = 'mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+  const cls = 'mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20'
   return (
     <div>
-      <label className="text-xs font-semibold text-slate-500">{label}</label>
+      <label className="text-xs font-bold text-slate-500">{label}</label>
       {textarea
         ? <textarea value={value} onChange={e => onChange(e.target.value)} rows={3} className={cls} placeholder={placeholder} />
         : <input type={type} value={value} onChange={e => onChange(e.target.value)} className={cls} placeholder={placeholder} />
