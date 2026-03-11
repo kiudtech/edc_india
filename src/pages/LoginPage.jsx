@@ -22,11 +22,13 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier, password }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message)
+      const text = await res.text()
+      let data
+      try { data = JSON.parse(text) } catch { throw new Error('Server returned an invalid response. Make sure the backend is running.') }
+      if (!res.ok) throw new Error(data.message || 'Login failed')
 
       login(data.token, data.user)
-      navigate('/dashboard')
+      navigate(data.user.role === 'admin' ? '/admin' : '/dashboard')
     } catch (err) {
       setError(err.message)
     } finally {

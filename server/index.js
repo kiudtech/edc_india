@@ -8,6 +8,8 @@ import authRoutes from './routes/auth.js'
 import paymentRoutes from './routes/payment.js'
 import userRoutes from './routes/user.js'
 import adminRoutes from './routes/admin.js'
+import collegeRoutes from './routes/college.js'
+import validationRoutes from './routes/validation.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: path.join(__dirname, '.env') })
@@ -25,6 +27,8 @@ app.use('/api/auth', authRoutes)
 app.use('/api/payment', paymentRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/admin', adminRoutes)
+app.use('/api/college', collegeRoutes)
+app.use('/api/validation', validationRoutes)
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))
 

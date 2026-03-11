@@ -1,42 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { API_BASE } from '../config'
-
-/* ─── Sample placeholder data ─── */
-const sampleEvents = [
-  { id: 1, title: 'Startup Pitch Night', date: 'Mar 15, 2026', location: 'New Delhi', status: 'Upcoming', image: 'https://image.pollinations.ai/prompt/startup%20pitch%20night%20event%20stage%20modern%20lighting?width=400&height=250' },
-  { id: 2, title: 'Innovation Summit 2026', date: 'Apr 5, 2026', location: 'Bengaluru', status: 'Upcoming', image: 'https://image.pollinations.ai/prompt/innovation%20summit%20conference%20hall%20tech%20event?width=400&height=250' },
-  { id: 3, title: 'Founder Meetup', date: 'Mar 28, 2026', location: 'Mumbai', status: 'Upcoming', image: 'https://image.pollinations.ai/prompt/founder%20meetup%20networking%20event%20coffee?width=400&height=250' },
-  { id: 4, title: 'Hackathon: Build India', date: 'May 10, 2026', location: 'Online', status: 'Registration Open', image: 'https://image.pollinations.ai/prompt/hackathon%20coding%20event%20team%20collaboration?width=400&height=250' },
-]
-const sampleGrants = [
-  { title: 'Startup India Seed Fund', amount: '₹20 Lakh', deadline: 'Mar 31, 2026', eligibility: 'Early Stage' },
-  { title: 'MSME Innovation Grant', amount: '₹10 Lakh', deadline: 'Apr 15, 2026', eligibility: 'All Stages' },
-  { title: 'State Innovation Fund', amount: '₹5 Lakh', deadline: 'May 1, 2026', eligibility: 'MVP Ready' },
-]
-const sampleFunding = [
-  { title: 'Angel Investor Round', range: '₹25L – ₹1Cr', stage: 'Seed', status: 'Open' },
-  { title: 'Pre-Series A', range: '₹1Cr – ₹5Cr', stage: 'Growth', status: 'Open' },
-  { title: 'Government Scheme Fund', range: '₹10L – ₹50L', stage: 'Early', status: 'Active' },
-]
-const sampleInvestors = [
-  { name: 'Rajesh Sharma', type: 'Angel Investor', sectors: 'EdTech, HealthTech', portfolio: '15+ startups' },
-  { name: 'Priya Ventures', type: 'VC Fund', sectors: 'DeepTech, SaaS', portfolio: '50+ startups' },
-  { name: 'Vision Capital', type: 'Micro VC', sectors: 'AgriTech, CleanTech', portfolio: '25+ startups' },
-]
-const sampleUpdates = [
-  { title: 'New Partnership with IIT Delhi', date: '2 hours ago', type: 'Announcement' },
-  { title: 'Workshop on AI for Startups', date: '1 day ago', type: 'Event' },
-  { title: 'Success Story: AgriPulse raises ₹2Cr', date: '3 days ago', type: 'Success' },
-  { title: 'Monthly Founder Newsletter – Feb 2026', date: '1 week ago', type: 'Newsletter' },
-]
-const paidCourses = [
-  { name: 'Advanced Pitch Mastery', duration: '6 weeks', price: '₹4,999', instructor: 'Industry Expert' },
-  { name: 'Fundraising Blueprint', duration: '8 weeks', price: '₹7,999', instructor: 'VC Partner' },
-  { name: 'Scale-Up Operations', duration: '4 weeks', price: '₹3,999', instructor: 'Startup Mentor' },
-  { name: 'International Market Entry', duration: '6 weeks', price: '₹5,999', instructor: 'Global Advisor' },
-]
 
 const tabs = [
   { id: 'overview', label: 'Overview', icon: '🏠' },
@@ -49,6 +14,20 @@ const tabs = [
   { id: 'support', label: 'Support', icon: '🎟️' },
 ]
 
+const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'
+const fmtCurrency = (n) => `₹${Number(n).toLocaleString('en-IN')}`
+const timeAgo = (d) => {
+  if (!d) return ''
+  const diff = Date.now() - new Date(d).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 60) return `${mins}m ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  if (days < 7) return `${days}d ago`
+  return fmtDate(d)
+}
+
 export default function DashboardPage() {
   const { user, token, logout } = useAuth()
   const navigate = useNavigate()
@@ -58,14 +37,42 @@ export default function DashboardPage() {
   const [ticketMsg, setTicketMsg] = useState('')
   const [courseMsg, setCourseMsg] = useState('')
 
-  useEffect(() => {
-    fetchTickets()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  /* ─── Dynamic data from DB ─── */
+  const [events, setEvents] = useState([])
+  const [grants, setGrants] = useState([])
+  const [funding, setFunding] = useState([])
+  const [investors, setInvestors] = useState([])
+  const [notifications, setNotifications] = useState([])
+  const [courses, setCourses] = useState([])
+  const [showNotifPanel, setShowNotifPanel] = useState(false)
+
+  const headers = { Authorization: `Bearer ${token}` }
+
+  const fetchAll = useCallback(async () => {
+    const f = (url) => fetch(`${API_BASE}${url}`, { headers }).then(r => r.ok ? r.json() : []).catch(() => [])
+    const [ev, gr, fu, inv, notif, co, tk] = await Promise.all([
+      f('/api/user/events'),
+      f('/api/user/grants'),
+      f('/api/user/funding'),
+      f('/api/user/investors'),
+      f('/api/user/notifications'),
+      f('/api/user/courses'),
+      f('/api/user/tickets'),
+    ])
+    setEvents(ev)
+    setGrants(gr)
+    setFunding(fu)
+    setInvestors(inv)
+    setNotifications(notif)
+    setCourses(co)
+    setTickets(tk)
+  }, [token])
+
+  useEffect(() => { fetchAll() }, [fetchAll])
 
   const fetchTickets = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/user/tickets`, { headers: { Authorization: `Bearer ${token}` } })
+      const res = await fetch(`${API_BASE}/api/user/tickets`, { headers })
       if (res.ok) setTickets(await res.json())
     } catch { /* ignore */ }
   }
@@ -76,7 +83,7 @@ export default function DashboardPage() {
     try {
       const res = await fetch(`${API_BASE}/api/user/tickets`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', ...headers },
         body: JSON.stringify(ticketForm),
       })
       if (!res.ok) throw new Error()
@@ -93,7 +100,7 @@ export default function DashboardPage() {
     try {
       const res = await fetch(`${API_BASE}/api/user/course-interest`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', ...headers },
         body: JSON.stringify({ courseName }),
       })
       const data = await res.json()
@@ -106,6 +113,7 @@ export default function DashboardPage() {
   const handleLogout = () => { logout(); navigate('/') }
 
   const cardClass = 'rounded-2xl border border-secondary/40 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-glow'
+  const emptyState = (text) => <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-400">{text}</div>
 
   /* ─── Tab Content Renderers ─── */
   const renderOverview = () => (
@@ -136,85 +144,114 @@ export default function DashboardPage() {
   )
 
   const renderEvents = () => (
-    <div className="grid gap-5 sm:grid-cols-2">
-      {sampleEvents.map((ev) => (
-        <div key={ev.id} className={cardClass}>
-          <img src={ev.image} alt={ev.title} className="h-36 w-full rounded-xl object-cover" loading="lazy" />
-          <div className="mt-3 flex items-start justify-between gap-2">
-            <div>
-              <div className="text-sm font-semibold text-slate-800">{ev.title}</div>
-              <div className="mt-1 text-xs text-slate-500">{ev.date} · {ev.location}</div>
+    events.length === 0 ? emptyState('No events available yet. Check back soon!') : (
+      <div className="grid gap-5 sm:grid-cols-2">
+        {events.map((ev) => (
+          <div key={ev._id} className={cardClass}>
+            {ev.image && <img src={ev.image} alt={ev.title} className="h-36 w-full rounded-xl object-cover" loading="lazy" />}
+            <div className="mt-3 flex items-start justify-between gap-2">
+              <div>
+                <div className="text-sm font-semibold text-slate-800">{ev.title}</div>
+                <div className="mt-1 text-xs text-slate-500">{fmtDate(ev.date)} · {ev.location}</div>
+                {ev.description && <div className="mt-1 text-xs text-slate-400 line-clamp-2">{ev.description}</div>}
+              </div>
+              <span className="shrink-0 rounded-full bg-green-100 px-2.5 py-0.5 text-[10px] font-semibold text-green-700">{ev.status}</span>
             </div>
-            <span className="shrink-0 rounded-full bg-green-100 px-2.5 py-0.5 text-[10px] font-semibold text-green-700">{ev.status}</span>
+            {ev.eventType && <div className="mt-2 text-[10px] text-slate-400">Type: {ev.eventType}{ev.registrationLimit > 0 ? ` · Limit: ${ev.registrationLimit}` : ''}</div>}
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    )
   )
 
   const renderGrants = () => (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {sampleGrants.map((g) => (
-        <div key={g.title} className={cardClass}>
-          <div className="text-sm font-semibold text-slate-800">{g.title}</div>
-          <div className="mt-2 text-xl font-semibold text-primary">{g.amount}</div>
-          <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-            <span>Deadline: {g.deadline}</span>
-            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">{g.eligibility}</span>
+    grants.length === 0 ? emptyState('No grants available yet. Check back soon!') : (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {grants.map((g) => (
+          <div key={g._id} className={cardClass}>
+            <div className="text-sm font-semibold text-slate-800">{g.title}</div>
+            {g.organization && <div className="mt-1 text-xs text-slate-500">{g.organization}</div>}
+            <div className="mt-2 text-xl font-semibold text-primary">{g.amount}</div>
+            {g.description && <div className="mt-2 text-xs text-slate-400 line-clamp-2">{g.description}</div>}
+            <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+              <span>Deadline: {fmtDate(g.deadline)}</span>
+              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">{g.eligibility}</span>
+            </div>
+            {g.applicationLink && (
+              <a href={g.applicationLink} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-xs font-semibold text-primary hover:underline">Apply →</a>
+            )}
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    )
   )
 
   const renderFunding = () => (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {sampleFunding.map((f) => (
-        <div key={f.title} className={cardClass}>
-          <div className="text-sm font-semibold text-slate-800">{f.title}</div>
-          <div className="mt-2 text-lg font-semibold text-primary">{f.range}</div>
-          <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-            <span>Stage: {f.stage}</span>
-            <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-semibold text-green-700">{f.status}</span>
+    funding.length === 0 ? emptyState('No funding opportunities yet. Check back soon!') : (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {funding.map((f) => (
+          <div key={f._id} className={cardClass}>
+            <div className="text-sm font-semibold text-slate-800">{f.title}</div>
+            {f.organization && <div className="mt-1 text-xs text-slate-500">{f.organization}</div>}
+            <div className="mt-2 text-lg font-semibold text-primary">{f.amount}</div>
+            {f.description && <div className="mt-2 text-xs text-slate-400 line-clamp-2">{f.description}</div>}
+            <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+              <span>Deadline: {fmtDate(f.deadline)}</span>
+              <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-semibold text-green-700">{f.status}</span>
+            </div>
+            {f.applicationLink && (
+              <a href={f.applicationLink} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-xs font-semibold text-primary hover:underline">Apply →</a>
+            )}
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    )
   )
 
   const renderInvestors = () => (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {sampleInvestors.map((inv) => (
-        <div key={inv.name} className={cardClass}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary">
-            {inv.name.charAt(0)}
+    investors.length === 0 ? emptyState('No investor updates yet. Check back soon!') : (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {investors.map((inv) => (
+          <div key={inv._id} className={cardClass}>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary">
+              {inv.title?.charAt(0) || 'I'}
+            </div>
+            <div className="mt-3 text-sm font-semibold text-slate-800">{inv.title}</div>
+            {inv.organization && <div className="mt-1 text-xs text-secondary font-semibold">{inv.organization}</div>}
+            {inv.description && <div className="mt-2 text-xs text-slate-500">{inv.description}</div>}
+            {inv.eligibility && <div className="mt-1 text-xs text-slate-400">Focus: {inv.eligibility}</div>}
+            {inv.amount && <div className="mt-1 text-xs text-slate-400">Investment: {inv.amount}</div>}
           </div>
-          <div className="mt-3 text-sm font-semibold text-slate-800">{inv.name}</div>
-          <div className="mt-1 text-xs text-secondary font-semibold">{inv.type}</div>
-          <div className="mt-2 text-xs text-slate-500">Sectors: {inv.sectors}</div>
-          <div className="text-xs text-slate-500">Portfolio: {inv.portfolio}</div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    )
   )
 
   const renderCommunity = () => (
-    <div className="space-y-3">
-      {sampleUpdates.map((u) => (
-        <div key={u.title} className={cardClass + ' flex items-center gap-4'}>
-          <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ${
-            u.type === 'Announcement' ? 'bg-blue-100 text-blue-700'
-              : u.type === 'Event' ? 'bg-orange-100 text-orange-700'
-              : u.type === 'Success' ? 'bg-green-100 text-green-700'
-              : 'bg-slate-100 text-slate-600'
-          }`}>{u.type}</span>
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-semibold text-slate-800">{u.title}</div>
-            <div className="text-xs text-slate-500">{u.date}</div>
-          </div>
-        </div>
-      ))}
-    </div>
+    notifications.length === 0 ? emptyState('No community updates yet. Check back soon!') : (
+      <div className="space-y-3">
+        {notifications.map((n) => {
+          const typeColors = {
+            announcement: 'bg-blue-100 text-blue-700',
+            'event-alert': 'bg-orange-100 text-orange-700',
+            'funding-update': 'bg-green-100 text-green-700',
+            general: 'bg-slate-100 text-slate-600',
+          }
+          return (
+            <div key={n._id} className={cardClass + ' flex items-center gap-4'}>
+              <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ${typeColors[n.type] || typeColors.general}`}>
+                {n.type === 'event-alert' ? 'Event' : n.type === 'funding-update' ? 'Funding' : n.type === 'announcement' ? 'Announcement' : 'Update'}
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-semibold text-slate-800">{n.title}</div>
+                {n.message && <div className="mt-0.5 text-xs text-slate-500 line-clamp-1">{n.message}</div>}
+                <div className="text-xs text-slate-400">{timeAgo(n.createdAt)}</div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
   )
 
   const renderCourses = () => (
@@ -223,21 +260,34 @@ export default function DashboardPage() {
         <div className="mb-4 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">{courseMsg}</div>
       )}
       <p className="mb-4 text-sm text-slate-500">Express interest and our admin will contact you for enrollment.</p>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {paidCourses.map((c) => (
-          <div key={c.name} className={cardClass}>
-            <div className="text-sm font-semibold text-slate-800">{c.name}</div>
-            <div className="mt-1 text-xs text-slate-500">Duration: {c.duration} · By: {c.instructor}</div>
-            <div className="mt-2 text-lg font-semibold text-primary">{c.price}</div>
-            <button
-              onClick={() => handleCourseInterest(c.name)}
-              className="mt-3 w-full rounded-full border border-primary px-4 py-2 text-xs font-semibold text-primary transition hover:bg-primary hover:text-white"
-            >
-              I&apos;m Interested
-            </button>
-          </div>
-        ))}
-      </div>
+      {courses.length === 0 ? emptyState('No courses available yet. Check back soon!') : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {courses.map((c) => (
+            <div key={c._id} className={cardClass}>
+              <div className="text-sm font-semibold text-slate-800">{c.name}</div>
+              <div className="mt-1 text-xs text-slate-500">Duration: {c.duration}{c.instructor ? ` · By: ${c.instructor}` : ''}</div>
+              {c.description && <div className="mt-1 text-xs text-slate-400 line-clamp-2">{c.description}</div>}
+              <div className="mt-2 text-lg font-semibold text-primary">{c.type === 'free' ? 'Free' : fmtCurrency(c.price)}</div>
+              {c.type === 'paid' ? (
+                <button
+                  onClick={() => handleCourseInterest(c.name)}
+                  className="mt-3 w-full rounded-full border border-primary px-4 py-2 text-xs font-semibold text-primary transition hover:bg-primary hover:text-white"
+                >
+                  I&apos;m Interested
+                </button>
+              ) : (
+                c.contentLink ? (
+                  <a href={c.contentLink} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block w-full rounded-full bg-green-600 px-4 py-2 text-center text-xs font-semibold text-white transition hover:bg-green-700">
+                    Access Course
+                  </a>
+                ) : (
+                  <div className="mt-3 text-xs text-green-600 font-semibold">Free — Available to all members</div>
+                )
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 
@@ -319,6 +369,63 @@ export default function DashboardPage() {
             <div className="hidden text-sm font-semibold text-slate-800 sm:block">EDC India</div>
           </Link>
           <div className="flex items-center gap-4">
+            {/* ─ Bell icon for notifications ─ */}
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifPanel(p => !p)}
+                className="relative flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:bg-blue-50 hover:text-primary"
+                aria-label="Notifications"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                {notifications.length > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
+                    {notifications.length > 9 ? '9+' : notifications.length}
+                  </span>
+                )}
+              </button>
+              {showNotifPanel && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowNotifPanel(false)} />
+                  <div className="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-slate-200 bg-white shadow-xl sm:w-96">
+                    <div className="flex items-center justify-between border-b px-4 py-3">
+                      <h3 className="text-sm font-semibold text-slate-800">Notifications</h3>
+                      <button onClick={() => setShowNotifPanel(false)} className="text-xs text-slate-400 hover:text-slate-700">&times;</button>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="px-4 py-8 text-center text-xs text-slate-400">No notifications yet</div>
+                      ) : (
+                        notifications.map(n => {
+                          const tc = {
+                            announcement: 'bg-blue-100 text-blue-700',
+                            'event-alert': 'bg-orange-100 text-orange-700',
+                            'funding-update': 'bg-green-100 text-green-700',
+                            general: 'bg-slate-100 text-slate-600',
+                          }
+                          return (
+                            <div key={n._id} className="border-b border-slate-50 px-4 py-3 transition hover:bg-slate-50 last:border-b-0">
+                              <div className="flex items-start gap-2">
+                                <span className={`mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[9px] font-semibold ${tc[n.type] || tc.general}`}>
+                                  {n.type === 'event-alert' ? 'Event' : n.type === 'funding-update' ? 'Funding' : n.type === 'announcement' ? 'News' : 'Info'}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-xs font-semibold text-slate-800">{n.title}</div>
+                                  <div className="mt-0.5 text-[11px] text-slate-500 line-clamp-2">{n.message}</div>
+                                  <div className="mt-1 text-[10px] text-slate-400">{timeAgo(n.createdAt)}</div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
             <div className="text-right">
               <div className="text-xs font-semibold text-slate-800">{user?.name}</div>
               <div className="text-[10px] text-slate-500">{user?.founderId}</div>

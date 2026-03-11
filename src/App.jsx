@@ -7,10 +7,14 @@ import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 import JoinPage from './pages/JoinPage'
 import PaymentPage from './pages/PaymentPage'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
+import AdminDashboardPage from './pages/AdminDashboardPage'
+import IdeaValidationPage from './pages/IdeaValidationPage'
+import CollegeApplicationPage from './pages/CollegeApplicationPage'
 
 const heroIcons = [
   { icon: '🚀', top: '24%', left: '10%', tone: 'text-primary' },
@@ -214,7 +218,7 @@ const Home = () => {
             <div className="text-sm font-semibold text-slate-800">EDC India</div>
           </div>
           <div className="hidden items-center gap-6 text-xs font-semibold text-slate-600 md:flex">
-            {['Home', 'About', 'Programs', 'Courses', 'Partners', 'Impact', 'Contact'].map((label) => (
+            {['Home', 'About', 'Programs', 'Courses', 'Plans', 'Partners', 'Impact', 'Contact'].map((label) => (
               <a
                 key={label}
                 href={`#${label.toLowerCase()}`}
@@ -228,12 +232,12 @@ const Home = () => {
             <Link to="/login" className="hidden text-xs font-semibold text-slate-600 transition hover:text-slate-900 sm:inline-flex">
               Login
             </Link>
-            <button
-              onClick={() => navigate('/join')}
+            <a
+              href="#plans"
               className="hidden rounded-full bg-secondary px-5 py-2 text-xs font-semibold text-white shadow-glow sm:inline-flex"
             >
               Join Now
-            </button>
+            </a>
             <button
               className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 md:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -252,7 +256,7 @@ const Home = () => {
         {mobileMenuOpen && (
           <div className="border-t border-slate-100 bg-white px-4 pb-4 pt-2 md:hidden">
             <div className="flex flex-col gap-3 text-sm font-semibold text-slate-600">
-              {['Home', 'About', 'Programs', 'Courses', 'Partners', 'Impact', 'Contact'].map((label) => (
+              {['Home', 'About', 'Programs', 'Courses', 'Plans', 'Partners', 'Impact', 'Contact'].map((label) => (
                 <a
                   key={label}
                   href={`#${label.toLowerCase()}`}
@@ -265,12 +269,13 @@ const Home = () => {
               <Link to="/login" className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={() => setMobileMenuOpen(false)}>
                 Login
               </Link>
-              <button
-                onClick={() => { setMobileMenuOpen(false); navigate('/join') }}
-                className="mt-2 w-full rounded-full bg-secondary px-5 py-2.5 text-xs font-semibold text-white shadow-glow"
+              <a
+                href="#plans"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-2 block w-full rounded-full bg-secondary px-5 py-2.5 text-center text-xs font-semibold text-white shadow-glow"
               >
                 Join Now
-              </button>
+              </a>
             </div>
           </div>
         )}
@@ -305,9 +310,9 @@ const Home = () => {
               Courses, Funding, Global Exposure &amp; Startup Growth Ecosystem
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <button onClick={() => navigate('/join')} className="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200">
+              <a href="#plans" className="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200">
                 Join Now
-              </button>
+              </a>
               <a href="#programs" className="rounded-full border border-blue-600 px-6 py-3 text-sm font-semibold text-blue-600">
                 Explore Programs
               </a>
@@ -720,6 +725,66 @@ const Home = () => {
         </div>
       </section>
 
+      <section id="plans" className="bg-[#f7f8fc] py-12 sm:py-16 lg:py-20">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
+            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Membership Plans</div>
+            <h2 className="mt-4 text-2xl font-semibold text-primary sm:text-3xl lg:text-4xl">Choose Your Plan</h2>
+            <p className="mt-3 text-sm text-slate-600">Two pathways to grow your startup with EDC India</p>
+          </motion.div>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            {/* Startup Membership */}
+            <motion.div
+              className="relative rounded-3xl border border-secondary/40 bg-white p-7 shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-glow"
+              whileHover={{ scale: 1.02 }}
+            >
+              <div className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-[10px] font-semibold text-blue-600">Most Popular</div>
+              <h3 className="mt-4 text-lg font-semibold text-slate-900">Startup Membership</h3>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="text-3xl font-semibold text-primary">₹2,500</span>
+                <span className="text-xs text-slate-500">one-time</span>
+              </div>
+              <p className="mt-3 text-xs text-slate-500">Full access to the EDC India startup ecosystem, mentorship, events, grants, and funding opportunities.</p>
+              <ul className="mt-5 space-y-2.5 text-xs text-slate-600">
+                {['Unique Founder ID (BUB-XXXX)', 'Access to Events & Workshops', 'Grant & Funding Directory', 'Investor Network Access', 'Community & Announcements', 'Course Enrollment', 'Dedicated Support Tickets'].map((f) => (
+                  <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-green-500">✓</span>{f}</li>
+                ))}
+              </ul>
+              <button
+                onClick={() => navigate('/join')}
+                className="mt-6 w-full rounded-full bg-primary py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
+              >
+                Join Now — ₹2,500
+              </button>
+            </motion.div>
+            {/* Idea Validation */}
+            <motion.div
+              className="relative rounded-3xl border-2 border-purple-300 bg-white p-7 shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-glow"
+              whileHover={{ scale: 1.02 }}
+            >
+              <div className="inline-flex items-center gap-2 rounded-full bg-purple-100 px-3 py-1 text-[10px] font-semibold text-purple-600">Expert Review</div>
+              <h3 className="mt-4 text-lg font-semibold text-slate-900">Idea Validation</h3>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="text-3xl font-semibold text-purple-600">₹5,000</span>
+                <span className="text-xs text-slate-500">one-time</span>
+              </div>
+              <p className="mt-3 text-xs text-slate-500">Get your startup idea validated by experts, receive feedback, certification, and a member account.</p>
+              <ul className="mt-5 space-y-2.5 text-xs text-slate-600">
+                {['Expert Idea Review & Feedback', 'Validation Certificate', 'Auto Member Account + Founder ID', 'Access to Full Ecosystem', 'Priority Admin Review', 'Startup Stage Assessment', 'Innovation Report'].map((f) => (
+                  <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-purple-500">✓</span>{f}</li>
+                ))}
+              </ul>
+              <button
+                onClick={() => navigate('/join-validation')}
+                className="mt-6 w-full rounded-full bg-purple-600 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-200 transition hover:bg-purple-700"
+              >
+                Join Now — ₹5,000
+              </button>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       <section id="cta" className="bg-primary py-10 text-white sm:py-12 lg:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <motion.div
@@ -735,9 +800,9 @@ const Home = () => {
               <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">Build Your Startup With The Right Ecosystem</h2>
             </div>
             <div className="flex flex-wrap gap-4">
-              <button onClick={() => navigate('/join')} className="rounded-full bg-secondary px-6 py-3 text-sm font-semibold text-white shadow-glow">
+              <a href="#plans" className="rounded-full bg-secondary px-6 py-3 text-sm font-semibold text-white shadow-glow">
                 Join Now
-              </button>
+              </a>
               <button className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white">
                 Partner With Us
               </button>
@@ -798,7 +863,10 @@ function App() {
           <Route path="/join" element={<JoinPage />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/join-validation" element={<IdeaValidationPage />} />
+          <Route path="/college-apply" element={<CollegeApplicationPage />} />
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
