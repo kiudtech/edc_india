@@ -75,14 +75,7 @@ const galleryItems = [
   'Market Immersion',
   'Prototype Showcase',
 ]
-const aiImages = [
-  'https://image.pollinations.ai/prompt/ai%20generated%20startup%20team%20collaboration%20modern%20office%20premium%20lighting',
-  'https://image.pollinations.ai/prompt/ai%20generated%20global%20demo%20day%20stage%20founder%20pitch%20cinematic',
-  'https://image.pollinations.ai/prompt/ai%20generated%20innovation%20lab%20prototyping%20workshop%20clean%20aesthetic',
-  'https://image.pollinations.ai/prompt/ai%20generated%20investor%20meeting%20boardroom%20startup%20funding%20premium',
-  'https://image.pollinations.ai/prompt/ai%20generated%20college%20incubation%20hub%20students%20building%20startup',
-  'https://image.pollinations.ai/prompt/ai%20generated%20global%20startup%20expo%20booth%20modern%20design',
-]
+
 const testimonials = [
   {
     name: 'Aarav Mehta',
@@ -493,7 +486,7 @@ const Home = () => {
                 className="mb-5 w-full break-inside-avoid rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-100/50"
               >
                 <img
-                  src={aiImages[index % aiImages.length]}
+                  src={`/stories/${item}.png`}
                   alt={`${item} visual`}
                   className="h-36 w-full rounded-xl object-cover"
                   loading="lazy"
