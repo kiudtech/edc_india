@@ -10,6 +10,7 @@ import userRoutes from './routes/user.js'
 import adminRoutes from './routes/admin.js'
 import collegeRoutes from './routes/college.js'
 import validationRoutes from './routes/validation.js'
+import { ensureAdminUser } from './config/ensureAdmin.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: path.join(__dirname, '.env') })
@@ -21,8 +22,6 @@ app.use(cors({
 }))
 app.use(express.json())
 
-connectDB()
-
 app.use('/api/auth', authRoutes)
 app.use('/api/payment', paymentRoutes)
 app.use('/api/user', userRoutes)
@@ -33,4 +32,15 @@ app.use('/api/validation', validationRoutes)
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))
 
 const PORT = process.env.PORT || 5000
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
+const startServer = async () => {
+  await connectDB()
+  await ensureAdminUser()
+
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+}
+
+startServer().catch((err) => {
+  console.error('Server startup failed:', err.message)
+  process.exit(1)
+})

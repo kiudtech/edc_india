@@ -54,11 +54,16 @@ router.post('/join', async (req, res) => {
 // ── Login ──
 router.post('/login', async (req, res) => {
   try {
-    const { identifier, password } = req.body
+    const identifier = String(req.body.identifier || '').trim()
+    const password = String(req.body.password || '')
+
+    if (!identifier || !password) {
+      return res.status(400).json({ message: 'Identifier and password are required.' })
+    }
 
     const user = await User.findOne({
       $or: [
-        { email: identifier?.toLowerCase() },
+        { email: identifier.toLowerCase() },
         { founderId: identifier },
       ],
     })
