@@ -1,0 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: rgba(11, 61, 145, 0.15);
+}
+
+body {
+  margin: 0;
+  font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #f5f7fa;
+  color: #0f172a;
+}
+
+.glass {
+  backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(245, 247, 250, 0.4));
+}
+
+.hero-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgba(11, 61, 145, 0.15) 1px, transparent 0);
+  background-size: 26px 26px;
+}
+
+.section-title {
+  letter-spacing: 0.02em;
+}
+
+/* ── Marquee animation ── */
+.marquee-track {
+  overflow: hidden;
+  width: 100%;
+}
+
+.marquee-inner {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track:hover .marquee-inner {
+  animation-play-state: paused;
+}
+
+/* ── Hero floating blobs ── */
+@keyframes float-slow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.95); }
+}
+
+@keyframes float-slow-reverse {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-25px, 20px) scale(0.95); }
+  66% { transform: translate(20px, -15px) scale(1.05); }
+}
+
+.blob-float {
+  animation: float-slow 12s ease-in-out infinite;
+}
+
+.blob-float-reverse {
+  animation: float-slow-reverse 14s ease-in-out infinite;
+}
+
+/* ── Gradient shimmer on text ── */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.text-shimmer {
+  background-size: 200% auto;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ── Premium animation for blue hero words ── */
+@keyframes premium-blue-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes premium-blue-breathe {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(59, 130, 246, 0)); }
+  50% { filter: drop-shadow(0 6px 16px rgba(37, 99, 235, 0.28)); }
+}
+
+@keyframes premium-blue-halo {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.38; transform: scale(1.02); }
+}
+
+.hero-premium-accent {
+  position: relative;
+  display: inline-block;
+  background-image: linear-gradient(120deg, #1e3a8a 0%, #2563eb 24%, #60a5fa 48%, #2563eb 72%, #1d4ed8 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: premium-blue-flow 8s ease-in-out infinite, premium-blue-breathe 4.6s ease-in-out infinite;
+}
+
+.hero-premium-accent::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  color: rgba(37, 99, 235, 0.28);
+  filter: blur(10px);
+  animation: premium-blue-halo 4.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-premium-accent,
+  .hero-premium-accent::after {
+    animation: none;
+  }
+}
+
+/* ── Pulse glow on primary CTA ── */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(11, 61, 145, 0.35); }
+  50% { box-shadow: 0 0 20px 4px rgba(11, 61, 145, 0.15); }
+}
+
+.cta-pulse {
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+/* ── Nav link underline ── */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #0b3d91, #e65100);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* ── Stat card glow on hover ── */
+@keyframes card-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(11, 61, 145, 0.08); }
+  50% { box-shadow: 0 8px 30px 0 rgba(11, 61, 145, 0.12); }
+}
+
+.card-hover-glow:hover {
+  animation: card-glow 1.5s ease-in-out infinite;
+}
+
+/* ── Gradient border animation ── */
+@keyframes border-gradient {
+  0% { border-color: rgba(11, 61, 145, 0.15); }
+  50% { border-color: rgba(230, 81, 0, 0.2); }
+  100% { border-color: rgba(11, 61, 145, 0.15); }
+}
+
+.animated-border:hover {
+  animation: border-gradient 2s ease-in-out infinite;
+}
