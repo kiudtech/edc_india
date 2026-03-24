@@ -120,7 +120,7 @@ export default function IdeaValidationPage() {
               <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold ${step >= s ? 'bg-blue-600 text-white shadow-md' : 'bg-white border-2 border-slate-200 text-slate-400'}`}>
                 {s}
               </div>
-              {s < 3 && <div className={`h-1 w-10 sm:w-16 rounded ${step > s ? 'bg-blue-600' : 'bg-slate-200'}`} />}
+              {s < 3 && <div className={h-1 w-10 sm:w-16 rounded } />}
             </div>
           ))}
         </motion.div>
@@ -153,11 +153,11 @@ export default function IdeaValidationPage() {
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label className="text-xs font-semibold text-slate-600">Full Name *</label>
-                <input name="founderName" value={form.founderName} onChange={handleChange} required disabled className={`${inputClass} bg-slate-50 opacity-70 cursor-not-allowed`} placeholder="Your full name" />
+                <input name="founderName" value={form.founderName} onChange={handleChange} required disabled className={${inputClass} bg-slate-50 opacity-70 cursor-not-allowed} placeholder="Your full name" />
               </div>
               <div className="sm:col-span-2">
                 <label className="text-xs font-semibold text-slate-600">Email *</label>
-                <input name="founderEmail" type="email" value={form.founderEmail} onChange={handleChange} required disabled className={`${inputClass} bg-slate-50 opacity-70 cursor-not-allowed`} placeholder="you@example.com" />
+                <input name="founderEmail" type="email" value={form.founderEmail} onChange={handleChange} required disabled className={${inputClass} bg-slate-50 opacity-70 cursor-not-allowed} placeholder="you@example.com" />
               </div>
               <div className="sm:col-span-2">
                 <label className="text-xs font-semibold text-slate-600">Phone *</label>

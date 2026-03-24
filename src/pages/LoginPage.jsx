@@ -2,25 +2,25 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { API_BASE } from '../config'
+import { GoogleLogin } from '@react-oauth/google'
+import { jwtDecode } from 'jwt-decode'
 
 export default function LoginPage() {
   const navigate = useNavigate()
   const { login } = useAuth()
-  const [identifier, setIdentifier] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const handleGoogleSuccess = async (credentialResponse) => {
     setError('')
     setSubmitting(true)
-
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
+      const decoded = jwtDecode(credentialResponse.credential)
+      
+      const res = await fetch(`${API_BASE}/api/auth/google-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier, password }),
+        body: JSON.stringify({ email: decoded.email, googleId: decoded.sub }),
       })
       const text = await res.text()
       let data
@@ -28,9 +28,11 @@ export default function LoginPage() {
       if (!res.ok) throw new Error(data.message || 'Login failed')
 
       login(data.token, data.user)
-      navigate(data.user.role === 'admin' ? '/admin' : '/dashboard')
+      if (data.user.role === 'admin') navigate('/admin')
+      else navigate('/dashboard')
     } catch (err) {
-      setError(err.message)
+      console.error(err)
+      setError(err.message || 'An error occurred during Google sign in.')
     } finally {
       setSubmitting(false)
     }
@@ -58,52 +60,31 @@ export default function LoginPage() {
         <div className="text-center">
           <h1 className="text-2xl font-semibold text-slate-900 sm:text-3xl">Welcome Back</h1>
           <p className="mt-2 text-sm text-slate-500">
-            Log in with your Email or Founder ID
+            Log in to your account
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 w-full rounded-3xl border border-secondary/40 bg-white p-6 shadow-xl sm:p-8">
+        <div className="mt-8 w-full rounded-3xl border border-secondary/40 bg-white p-6 shadow-xl sm:p-8">
           {error && (
             <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
               {error}
             </div>
           )}
 
-          <div className="grid gap-5">
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">
-                Email or Founder ID
-              </label>
-              <input
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                required
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-                placeholder="you@email.com  or  BUB-1001"
+          <div className="flex flex-col items-center">
+            {submitting ? (
+              <p className="text-sm font-medium text-slate-600">Logging in...</p>
+            ) : (
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => setError('Google sign-in failed. Please try again.')}
+                shape="rectangular"
+                width={300}
+                text="signin_with"
               />
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-                placeholder="Your password"
-              />
-            </div>
+            )}
           </div>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-6 w-full rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 disabled:opacity-50"
-          >
-            {submitting ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
+        </div>
 
         <p className="mt-6 text-center text-sm text-slate-500">
           Don&apos;t have an account?{' '}

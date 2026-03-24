@@ -18,6 +18,7 @@ import CollegeApplicationPage from './pages/CollegeApplicationPage'
 import AboutPage from './pages/AboutPage'
 import FellowshipPage from './pages/FellowshipPage'
 import FellowshipApplicationPage from './pages/FellowshipApplicationPage'
+import StartupApplicationPage from './pages/StartupApplicationPage'
 import MembershipValidationPage from './pages/MembershipValidationPage'
 import RankingPage from './pages/RankingPage'
 import CollegeRankingApplicationPage from './pages/CollegeRankingApplicationPage'
@@ -882,7 +883,7 @@ function AppContent() {
     location.pathname === '/' ||
     location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/dashboard') ||
-    ['/login', '/join', '/payment', '/join-validation', '/college-apply'].includes(location.pathname)
+      ['/login', '/payment', '/join-validation', '/college-apply'].includes(location.pathname)
 
   return (
     <>
@@ -890,6 +891,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/join" element={<JoinPage />} />
+        <Route path="/startup-application" element={<StartupApplicationPage />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/join-validation" element={<IdeaValidationPage />} />
@@ -908,13 +910,17 @@ function AppContent() {
   )
 }
 
+import { GoogleOAuthProvider } from '@react-oauth/google'
+
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
-    </AuthProvider>
+    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+      <AuthProvider>
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   )
 }
 

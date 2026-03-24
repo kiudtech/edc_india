@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import jwt from 'jsonwebtoken'
+import crypto from 'crypto'
 import User from '../models/User.js'
 import Counter from '../models/Counter.js'
 
@@ -9,10 +10,12 @@ const router = Router()
 router.post('/join', async (req, res) => {
   try {
     const {
-      name, email, phone, password,
+      name, email, phone,
       startupName, startupStage, industry,
-      ideaSummary, termsAccepted,
+      ideaSummary, termsAccepted
     } = req.body
+
+    const password = crypto.randomBytes(16).toString('hex');
 
     if (!termsAccepted) {
       return res.status(400).json({ message: 'You must accept the Terms & Conditions.' })
@@ -78,6 +81,48 @@ router.post('/login', async (req, res) => {
 
     const isMatch = await user.comparePassword(password)
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials.' })
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' })
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        founderId: user.founderId,
+        membershipStatus: user.membershipStatus,
+        membershipType: user.membershipType,
+        startupName: user.startupName,
+        industry: user.industry,
+        startupStage: user.startupStage,
+        role: user.role,
+        createdAt: user.createdAt,
+      },
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+// Google Login
+router.post('/google-login', async (req, res) => {
+  try {
+    const { email, googleId } = req.body
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required.' })
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() })
+
+    if (!user) return res.status(400).json({ message: 'No account found with this email. Please sign up first.' })
+
+    if (user.role !== 'admin' && user.membershipStatus !== 'active') {
+      return res.status(403).json({
+        message: 'Membership not active. Please complete payment first.',
+      })
+    }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' })
 

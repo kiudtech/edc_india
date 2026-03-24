@@ -1,170 +1,164 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { API_BASE } from '../config'
+import React from 'react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
-const stageOptions = ['Idea Stage', 'MVP/Prototype', 'Early Traction', 'Growth', 'Scaling']
-const industryOptions = [
-  'Technology', 'Healthcare/HealthTech', 'Education/EdTech', 'Finance/FinTech',
-  'Agriculture/AgriTech', 'E-Commerce', 'Manufacturing', 'Clean Energy/CleanTech',
-  'Food & Beverage', 'Real Estate/PropTech', 'Media & Entertainment',
-  'Logistics/Supply Chain', 'Other',
-]
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
 
 export default function JoinPage() {
-  const navigate = useNavigate()
-  const [form, setForm] = useState({
-    name: '', email: '', phone: '', password: '', confirmPassword: '',
-    startupName: '', startupStage: '', industry: '', ideaSummary: '', termsAccepted: false,
-  })
-  const [error, setError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-
-    if (form.password.length < 6) return setError('Password must be at least 6 characters.')
-    if (form.password !== form.confirmPassword) return setError('Passwords do not match.')
-    if (!form.termsAccepted) return setError('You must accept the Terms & Conditions.')
-
-    setSubmitting(true)
-    try {
-      const res = await fetch(`${API_BASE}/api/auth/join`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message)
-
-      navigate('/payment', { state: { userId: data.userId, founderId: data.founderId } })
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  const inputClass =
-    'w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20'
+  const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-accent">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
-          <Link to="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="EDC India" className="h-11 w-11 rounded-full object-contain bg-white" />
-            <div className="text-sm font-semibold text-slate-800">EDC India</div>
-          </Link>
-          <div className="flex items-center gap-4 text-xs font-semibold">
-            <span className="text-slate-500">Already a member?</span>
-            <Link to="/login" className="text-primary hover:underline">Login</Link>
+    <div className="bg-accent min-h-screen text-ink pb-24 font-sans selection:bg-primary/20 selection:text-primary">
+      {/* Hero Section */}
+      <header className="relative overflow-hidden py-24 text-center sm:py-32">
+        {/* Subtle Background Elements */}
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-accent to-accent"></div>
+        <div className="absolute top-1/2 left-1/2 -z-10 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl"></div>
+        
+        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold text-primary uppercase tracking-widest shadow-sm">
+            Spark Your Journey
           </div>
-        </div>
-      </nav>
-
-      <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-16">
-        <div className="text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-orange-100 px-4 py-1 text-[11px] font-semibold text-orange-600">
-            Startup Membership — ₹2,500
-          </div>
-          <h1 className="mt-4 text-2xl font-semibold text-slate-900 sm:text-3xl">
-            Join Startup Membership
+          <h1 className="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+            Choose Your <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Pathway</span>
           </h1>
-          <p className="mt-2 text-sm text-slate-500">
-            Start your entrepreneurial journey with EDC India
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600 leading-relaxed font-medium">
+            Whether you are just validating an idea or ready to accelerate a funded startup, we have a membership tier designed specifically for your growth.
           </p>
-        </div>
+        </motion.div>
+      </header>
 
-        <form onSubmit={handleSubmit} className="mt-8 rounded-3xl border border-secondary/40 bg-white p-6 shadow-xl sm:p-8">
-          {error && (
-            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-              {error}
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-12 relative z-20">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="grid gap-8 sm:gap-6 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3 items-stretch max-w-6xl mx-auto"
+        >
+          {/* Plan 1: Startup Membership (Most Popular) */}
+          <motion.div variants={fadeUp} className="relative flex flex-col rounded-[2.5rem] border-2 border-primary bg-white p-8 sm:p-10 shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_0_1px_rgba(255,107,0,0.5),_0_12px_40px_rgba(11,61,145,0.25)] lg:-mt-6 lg:mb-6">
+            <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-max rounded-full bg-gradient-to-r from-primary to-secondary px-6 py-1.5 text-[11px] font-black uppercase tracking-widest text-white shadow-lg">
+              Most Popular
             </div>
-          )}
-
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Full Name *</label>
-              <input name="name" value={form.name} onChange={handleChange} required className={inputClass} placeholder="Your full name" />
+            <h3 className="text-2xl font-bold text-primary mt-2">Startup Membership</h3>
+            <p className="mt-3 text-sm text-slate-500 min-h-[64px] leading-relaxed font-medium">
+              Full access to the EDC India startup ecosystem, mentorship, events, grants, and funding opportunities.
+            </p>
+            <div className="my-8 flex items-baseline gap-2">
+              <span className="text-5xl font-extrabold tracking-tight text-ink">₹2,500</span>
+              <span className="text-sm font-semibold text-slate-500">/ one-time</span>
             </div>
+            <ul className="mb-10 flex-1 space-y-5 text-sm font-semibold text-slate-600">
+              {[
+                'Unique Founder ID (BUB-XXXX)',
+                'Access to Events & Workshops',
+                'Grant & Funding Directory',
+                'Investor Network Access',
+                'Community & Announcements',
+                'Course Enrollment',
+                'Dedicated Support Tickets'
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-4">
+                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs">✓</div>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => navigate('/startup-application')}
+              className="mt-auto w-full rounded-2xl bg-primary px-6 py-4 text-sm font-bold text-white transition-all hover:bg-blue-800 hover:shadow-lg hover:scale-[1.02] active:scale-95 shadow-md"
+            >
+              Join Now — ₹2,500
+            </button>
+          </motion.div>
 
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Email Address *</label>
-              <input name="email" type="email" value={form.email} onChange={handleChange} required className={inputClass} placeholder="you@email.com" />
+          {/* Plan 2: Idea Validation */}
+          <motion.div variants={fadeUp} className="relative flex flex-col rounded-[2.5rem] border border-slate-200/80 bg-white p-8 sm:p-10 shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-primary/30">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50/50 px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest w-fit">
+              Expert Review
             </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Phone Number *</label>
-              <input name="phone" value={form.phone} onChange={handleChange} required className={inputClass} placeholder="+91 XXXXX XXXXX" />
+            <h3 className="text-2xl font-bold text-ink">Idea Validation</h3>
+            <p className="mt-3 text-sm text-slate-500 min-h-[64px] leading-relaxed font-medium">
+              Get your startup idea validated by experts, receive feedback, certification, and a member account.
+            </p>
+            <div className="my-8 flex items-baseline gap-2">
+              <span className="text-5xl font-extrabold tracking-tight text-ink">₹5,000</span>
+              <span className="text-sm font-semibold text-slate-500">/ one-time</span>
             </div>
+            <ul className="mb-10 flex-1 space-y-5 text-sm font-semibold text-slate-600">
+              {[
+                'Expert Idea Review & Feedback',
+                'Validation Certificate',
+                'Auto Member Account + Founder ID',
+                'Access to Full Ecosystem',
+                'Priority Admin Review',
+                'Startup Stage Assessment',
+                'Innovation Report'
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-4">
+                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs">✓</div>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => navigate('/join-validation')}
+              className="mt-auto w-full rounded-2xl bg-ink px-6 py-4 text-sm font-bold text-white transition-all hover:bg-slate-800 hover:scale-[1.02] active:scale-95 shadow-md hover:shadow-xl"
+            >
+              Join Now — ₹5,000
+            </button>
+          </motion.div>
 
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Password *</label>
-              <input name="password" type="password" value={form.password} onChange={handleChange} required className={inputClass} placeholder="Min 6 characters" />
+          {/* Plan 3: Fellowship */}
+          <motion.div variants={fadeUp} className="relative flex flex-col rounded-[2.5rem] border border-slate-200/80 bg-white p-8 sm:p-10 shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-primary/30">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50/50 px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest w-fit">
+              Career + Startup
             </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Confirm Password *</label>
-              <input name="confirmPassword" type="password" value={form.confirmPassword} onChange={handleChange} required className={inputClass} placeholder="Re-enter password" />
+            <h3 className="text-2xl font-bold text-ink">Fellowship Program</h3>
+            <p className="mt-3 text-sm text-slate-500 min-h-[64px] leading-relaxed font-medium">
+              A structured fellowship track to build entrepreneurial skills with execution support, mentorship, and growth opportunities.
+            </p>
+            <div className="my-8 flex items-baseline gap-2">
+              <span className="text-5xl font-extrabold tracking-tight text-ink">₹5,000</span>
+              <span className="text-sm font-semibold text-slate-500">/ one-time</span>
             </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Startup Name</label>
-              <input name="startupName" value={form.startupName} onChange={handleChange} className={inputClass} placeholder="Optional" />
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Startup Stage *</label>
-              <select name="startupStage" value={form.startupStage} onChange={handleChange} required className={inputClass}>
-                <option value="">Select stage</option>
-                {stageOptions.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Industry *</label>
-              <select name="industry" value={form.industry} onChange={handleChange} required className={inputClass}>
-                <option value="">Select industry</option>
-                {industryOptions.map((i) => <option key={i} value={i}>{i}</option>)}
-              </select>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Idea Summary <span className="text-slate-400">(optional, max 200 chars)</span></label>
-              <textarea
-                name="ideaSummary" value={form.ideaSummary} onChange={handleChange}
-                maxLength={200} rows={3} className={inputClass}
-                placeholder="Briefly describe your startup idea..."
-              />
-              <div className="mt-1 text-right text-[11px] text-slate-400">{form.ideaSummary.length}/200</div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="flex cursor-pointer items-start gap-3">
-                <input type="checkbox" name="termsAccepted" checked={form.termsAccepted} onChange={handleChange} className="mt-0.5 h-4 w-4 rounded border-slate-300 text-primary" />
-                <span className="text-xs text-slate-600">
-                  I agree to the <span className="font-semibold text-primary">Terms & Conditions</span> and <span className="font-semibold text-primary">Privacy Policy</span> of EDC India.
-                </span>
-              </label>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-6 w-full rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 disabled:opacity-50"
-          >
-            {submitting ? 'Processing...' : 'Proceed to Payment → ₹2,500'}
-          </button>
-        </form>
-      </div>
+            <ul className="mb-10 flex-1 space-y-5 text-sm font-semibold text-slate-600">
+              {[
+                'Execution-focused learning path',
+                'Mentor support and progress guidance',
+                'Communication and pitch practice',
+                'Career and startup exposure',
+                'Network with founders and peers',
+                'Funding opportunity readiness'
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-4">
+                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs">✓</div>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => navigate('/fellowship-application')}
+              className="mt-auto w-full rounded-2xl bg-ink px-6 py-4 text-sm font-bold text-white transition-all hover:bg-slate-800 hover:scale-[1.02] active:scale-95 shadow-md hover:shadow-xl"
+            >
+              Join Fellowship — ₹5,000
+            </button>
+          </motion.div>
+        </motion.div>
+      </main>
     </div>
-  )
+  );
 }

@@ -3,6 +3,7 @@ import IdeaValidation from '../models/IdeaValidation.js'
 import Payment from '../models/Payment.js'
 import User from '../models/User.js'
 import Counter from '../models/Counter.js'
+import crypto from 'crypto'
 
 const router = Router()
 
@@ -52,7 +53,7 @@ router.post('/pay', async (req, res) => {
         name: validation.founderName,
         email: validation.founderEmail,
         phone: validation.founderPhone,
-        password: validation.founderPhone, // temporary password = phone
+        password: crypto.randomBytes(16).toString('hex'), // random password
         startupName: validation.startupName,
         startupStage: validation.stage,
         industry: validation.industry,
