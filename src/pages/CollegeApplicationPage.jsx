@@ -11,6 +11,7 @@ export default function CollegeApplicationPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -22,6 +23,9 @@ export default function CollegeApplicationPage() {
     setError('')
     if (!form.collegeName || !form.contactPerson || !form.email || !form.phone) {
       return setError('Please fill all required fields.')
+    }
+    if (!termsAccepted) {
+      return setError('Please accept the Terms & Conditions.')
     }
     setSubmitting(true)
     try {
@@ -148,6 +152,15 @@ export default function CollegeApplicationPage() {
                 <label className="mb-1.5 block text-xs font-semibold text-slate-600">Success Stories</label>
                 <textarea name="successStories" value={form.successStories} onChange={handleChange} rows={2} className={inputClass} placeholder="Notable startups or founders from your institution..." />
               </div>
+            </div>
+
+            <div className="mt-5">
+              <label className="flex cursor-pointer items-start gap-3">
+                <input type="checkbox" checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600" />
+                <span className="text-xs text-slate-600">
+                  I agree to the <a href="/terms" target="_blank" className="font-semibold text-blue-600 hover:underline">Terms & Conditions</a> and <span className="font-semibold text-blue-600">Privacy Policy</span> of EDC India.
+                </span>
+              </label>
             </div>
 
             <button

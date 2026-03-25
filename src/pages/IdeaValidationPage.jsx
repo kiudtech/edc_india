@@ -23,6 +23,7 @@ export default function IdeaValidationPage() {
   })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
   const [validationId, setValidationId] = useState(null)
   const [result, setResult] = useState(null)
 
@@ -51,6 +52,9 @@ export default function IdeaValidationPage() {
     setError('')
     if (!form.founderName || !form.founderEmail || !form.founderPhone || !form.startupName || !form.idea || !form.industry || !form.stage) {
       return setError('Please fill all required fields.')
+    }
+    if (!termsAccepted) {
+      return setError('Please accept the Terms & Conditions.')
     }
     setSubmitting(true)
 
@@ -189,6 +193,14 @@ export default function IdeaValidationPage() {
                 <label className="text-xs font-semibold text-slate-600">What Makes It Innovative?</label>
                 <textarea name="innovationDescription" value={form.innovationDescription} onChange={handleChange} rows={3} className={inputClass} placeholder="What makes your idea unique / innovative? (optional)" />
               </div>
+            </div>
+            <div className="mt-5">
+              <label className="flex cursor-pointer items-start gap-3">
+                <input type="checkbox" checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600" />
+                <span className="text-xs text-slate-600">
+                  I agree to the <a href="/terms" target="_blank" className="font-semibold text-blue-600 hover:underline">Terms & Conditions</a> and <span className="font-semibold text-blue-600">Privacy Policy</span> of EDC India.
+                </span>
+              </label>
             </div>
             <button
               type="submit"

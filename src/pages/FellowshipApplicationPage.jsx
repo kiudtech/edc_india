@@ -29,6 +29,7 @@ export default function FellowshipApplicationPage() {
   const [status, setStatus] = useState('');
   const [submitting, setSubmitting] = useState(false);
   
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [form, setForm] = useState({
     fullName: user?.name || '',
     email: user?.email || '',
@@ -75,6 +76,10 @@ export default function FellowshipApplicationPage() {
     if (!authUserId) {
       setStatus('Please login first, then continue with fellowship payment.');
       setView('auth');
+      return;
+    }
+    if (!termsAccepted) {
+      setError('Please accept the Terms & Conditions.');
       return;
     }
     
@@ -162,6 +167,15 @@ export default function FellowshipApplicationPage() {
                 <label className="text-xs font-semibold text-slate-600">Why do you want to join? *</label>
                 <textarea name="message" value={form.message} onChange={handleChange} required rows={4} className={inputClass} placeholder="Briefly describe your motivation..." />
               </div>
+            </div>
+
+            <div className="mt-5">
+              <label className="flex cursor-pointer items-start gap-3">
+                <input type="checkbox" checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600" />
+                <span className="text-xs text-slate-600">
+                  I agree to the <a href="/terms" target="_blank" className="font-semibold text-blue-600 hover:underline">Terms & Conditions</a> and <span className="font-semibold text-blue-600">Privacy Policy</span> of EDC India.
+                </span>
+              </label>
             </div>
             
             <button type="submit" disabled={submitting} className="mt-8 w-full rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50">

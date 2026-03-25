@@ -74,15 +74,51 @@ const fundingSteps = [
   { step: 'Growth', text: 'Scale your startup with our ecosystem support.', icon: '🚀' },
 ]
 const galleryItems = [
-  'Demo Day Spotlight',
-  'Global Expo',
-  'Founder Journey',
-  'Pitch Arena',
-  'Campus Incubation',
-  'Mentorship Labs',
-  'Investor Connect',
-  'Market Immersion',
-  'Prototype Showcase',
+  {
+    label: 'Demo Day Spotlight',
+    file: 'WhatsApp Image 2026-03-22 at 9.35.11 PM.jpeg',
+    desc: 'Founders pitch live to investors and industry leaders.',
+  },
+  {
+    label: 'Pitch Arena',
+    file: 'image.png',
+    desc: 'High-energy pitch sessions with real-time feedback.',
+  },
+  {
+    label: 'Campus Incubation',
+    file: 'Incubation.jpeg',
+    desc: 'On-campus startup ecosystems built with partner institutions.',
+  },
+  {
+    label: 'Founder Journey',
+    file: 'ChatGPT Image Jan 29, 2026, 04_18_46 PM.png',
+    desc: 'Stories of resilience, growth, and entrepreneurial grit.',
+  },
+  {
+    label: 'Global Expo',
+    file: 'Copy of WhatsApp Image 2023-12-16 at 12.59.52.jpeg',
+    desc: 'Showcasing Indian startups on the global stage.',
+  },
+  {
+    label: 'Mentorship Labs',
+    file: 'Copy of WhatsApp Image 2023-12-16 at 12.59.56 (1).jpeg',
+    desc: 'Hands-on sessions with experienced mentors and advisors.',
+  },
+  {
+    label: 'Investor Connect',
+    file: 'Copy of WhatsApp Image 2023-12-16 at 13.05.27.jpeg',
+    desc: 'Bridging founders with angels, VCs, and strategic investors.',
+  },
+  {
+    label: 'Market Immersion',
+    file: 'Copy of WhatsApp Image 2023-12-16 at 13.05.30.jpeg',
+    desc: 'Deep dives into target markets and customer discovery.',
+  },
+  {
+    label: 'Prototype Showcase',
+    file: 'Copy of WhatsApp Image 2023-12-16 at 13.05.33 (1).jpeg',
+    desc: 'From idea to working prototype — live demonstrations.',
+  },
 ]
 
 const testimonials = [
@@ -654,20 +690,20 @@ const Home = () => {
             <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">A glimpse into the journeys of founders, demo days, and global events.</p>
           </motion.div>
           <div className="mt-12 columns-1 gap-5 sm:columns-2 lg:columns-3">
-            {galleryItems.map((item, index) => (
+            {galleryItems.map((item) => (
               <button
-                key={item}
-                onClick={() => setLightbox(item)}
+                key={item.label}
+                onClick={() => setLightbox(item.label)}
                 className="mb-5 w-full break-inside-avoid rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-100/50"
               >
                 <img
-                  src={`/stories/${item}.png`}
-                  alt={`${item} visual`}
+                  src={`/stories/${item.file}`}
+                  alt={item.label}
                   className="h-36 w-full rounded-xl object-cover"
                   loading="lazy"
                 />
-                <div className="mt-3 text-sm font-bold text-slate-800">{item}</div>
-                <div className="mt-1 text-xs text-slate-500">Success stories and founder journeys.</div>
+                <div className="mt-3 text-sm font-bold text-slate-800">{item.label}</div>
+                <div className="mt-1 text-xs text-slate-500">{item.desc}</div>
               </button>
             ))}
           </div>
