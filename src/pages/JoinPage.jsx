@@ -1,6 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import { API_BASE } from '../config'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -17,8 +18,93 @@ const staggerContainer = {
   },
 };
 
+const defaultPlans = [
+  {
+    slug: 'startup-membership',
+    name: 'Startup Membership',
+    badge: 'Most Popular',
+    description: 'Full access to the EDC India startup ecosystem, mentorship, events, grants, and funding opportunities.',
+    price: 2500,
+    billingText: '/ one-time',
+    ctaText: 'Join Now',
+    ctaRoute: '/startup-application',
+    features: [
+      'Unique Founder ID (BUB-XXXX)',
+      'Access to Events & Workshops',
+      'Grant & Funding Directory',
+      'Investor Network Access',
+      'Community & Announcements',
+      'Course Enrollment',
+      'Dedicated Support Tickets',
+    ],
+  },
+  {
+    slug: 'idea-validation',
+    name: 'Idea Validation',
+    badge: 'Expert Review',
+    description: 'Get your startup idea validated by experts, receive feedback, certification, and a member account.',
+    price: 5000,
+    billingText: '/ one-time',
+    ctaText: 'Join Now',
+    ctaRoute: '/join-validation',
+    features: [
+      'Expert Idea Review & Feedback',
+      'Validation Certificate',
+      'Auto Member Account + Founder ID',
+      'Access to Full Ecosystem',
+      'Priority Admin Review',
+      'Startup Stage Assessment',
+      'Innovation Report',
+    ],
+  },
+  {
+    slug: 'fellowship-program',
+    name: 'Fellowship Program',
+    badge: 'Career + Startup',
+    description: 'A structured fellowship track to build entrepreneurial skills with execution support, mentorship, and growth opportunities.',
+    price: 5000,
+    billingText: '/ one-time',
+    ctaText: 'Join Fellowship',
+    ctaRoute: '/fellowship-application',
+    features: [
+      'Execution-focused learning path',
+      'Mentor support and progress guidance',
+      'Communication and pitch practice',
+      'Career and startup exposure',
+      'Network with founders and peers',
+      'Funding opportunity readiness',
+    ],
+  },
+]
+
 export default function JoinPage() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const [plans, setPlans] = useState(defaultPlans)
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/plans`)
+        if (!res.ok) return
+        const data = await res.json()
+        if (Array.isArray(data) && data.length > 0) {
+          setPlans(data)
+        }
+      } catch {
+        // Keep defaults when backend is unavailable.
+      }
+    }
+
+    fetchPlans()
+  }, [])
+
+  const cardClassByIndex = (index, isPopular) => {
+    if (isPopular || index === 0) {
+      return 'relative flex flex-col rounded-[2.5rem] border-2 border-primary bg-white p-8 sm:p-10 shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_0_1px_rgba(255,107,0,0.5),_0_12px_40px_rgba(11,61,145,0.25)] lg:-mt-6 lg:mb-6'
+    }
+
+    return 'relative flex flex-col rounded-[2.5rem] border border-slate-200/80 bg-white p-8 sm:p-10 shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-primary/30'
+  }
 
   return (
     <div className="bg-accent min-h-screen text-ink pb-24 font-sans selection:bg-primary/20 selection:text-primary">
@@ -48,117 +134,39 @@ export default function JoinPage() {
           variants={staggerContainer}
           className="grid gap-8 sm:gap-6 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3 items-stretch max-w-6xl mx-auto"
         >
-          {/* Plan 1: Startup Membership (Most Popular) */}
-          <motion.div variants={fadeUp} className="relative flex flex-col rounded-[2.5rem] border-2 border-primary bg-white p-8 sm:p-10 shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_0_1px_rgba(255,107,0,0.5),_0_12px_40px_rgba(11,61,145,0.25)] lg:-mt-6 lg:mb-6">
-            <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-max rounded-full bg-gradient-to-r from-primary to-secondary px-6 py-1.5 text-[11px] font-black uppercase tracking-widest text-white shadow-lg">
-              Most Popular
-            </div>
-            <h3 className="text-2xl font-bold text-primary mt-2">Startup Membership</h3>
-            <p className="mt-3 text-sm text-slate-500 min-h-[64px] leading-relaxed font-medium">
-              Full access to the EDC India startup ecosystem, mentorship, events, grants, and funding opportunities.
-            </p>
-            <div className="my-8 flex items-baseline gap-2">
-              <span className="text-5xl font-extrabold tracking-tight text-ink">₹2,500</span>
-              <span className="text-sm font-semibold text-slate-500">/ one-time</span>
-            </div>
-            <ul className="mb-10 flex-1 space-y-5 text-sm font-semibold text-slate-600">
-              {[
-                'Unique Founder ID (BUB-XXXX)',
-                'Access to Events & Workshops',
-                'Grant & Funding Directory',
-                'Investor Network Access',
-                'Community & Announcements',
-                'Course Enrollment',
-                'Dedicated Support Tickets'
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-4">
-                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs">✓</div>
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={() => navigate('/startup-application')}
-              className="mt-auto w-full rounded-2xl bg-primary px-6 py-4 text-sm font-bold text-white transition-all hover:bg-blue-800 hover:shadow-lg hover:scale-[1.02] active:scale-95 shadow-md"
-            >
-              Join Now — ₹2,500
-            </button>
-          </motion.div>
-
-          {/* Plan 2: Idea Validation */}
-          <motion.div variants={fadeUp} className="relative flex flex-col rounded-[2.5rem] border border-slate-200/80 bg-white p-8 sm:p-10 shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-primary/30">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50/50 px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest w-fit">
-              Expert Review
-            </div>
-            <h3 className="text-2xl font-bold text-ink">Idea Validation</h3>
-            <p className="mt-3 text-sm text-slate-500 min-h-[64px] leading-relaxed font-medium">
-              Get your startup idea validated by experts, receive feedback, certification, and a member account.
-            </p>
-            <div className="my-8 flex items-baseline gap-2">
-              <span className="text-5xl font-extrabold tracking-tight text-ink">₹5,000</span>
-              <span className="text-sm font-semibold text-slate-500">/ one-time</span>
-            </div>
-            <ul className="mb-10 flex-1 space-y-5 text-sm font-semibold text-slate-600">
-              {[
-                'Expert Idea Review & Feedback',
-                'Validation Certificate',
-                'Auto Member Account + Founder ID',
-                'Access to Full Ecosystem',
-                'Priority Admin Review',
-                'Startup Stage Assessment',
-                'Innovation Report'
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-4">
-                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs">✓</div>
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={() => navigate('/join-validation')}
-              className="mt-auto w-full rounded-2xl bg-ink px-6 py-4 text-sm font-bold text-white transition-all hover:bg-slate-800 hover:scale-[1.02] active:scale-95 shadow-md hover:shadow-xl"
-            >
-              Join Now — ₹5,000
-            </button>
-          </motion.div>
-
-          {/* Plan 3: Fellowship */}
-          <motion.div variants={fadeUp} className="relative flex flex-col rounded-[2.5rem] border border-slate-200/80 bg-white p-8 sm:p-10 shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-primary/30">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50/50 px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest w-fit">
-              Career + Startup
-            </div>
-            <h3 className="text-2xl font-bold text-ink">Fellowship Program</h3>
-            <p className="mt-3 text-sm text-slate-500 min-h-[64px] leading-relaxed font-medium">
-              A structured fellowship track to build entrepreneurial skills with execution support, mentorship, and growth opportunities.
-            </p>
-            <div className="my-8 flex items-baseline gap-2">
-              <span className="text-5xl font-extrabold tracking-tight text-ink">₹5,000</span>
-              <span className="text-sm font-semibold text-slate-500">/ one-time</span>
-            </div>
-            <ul className="mb-10 flex-1 space-y-5 text-sm font-semibold text-slate-600">
-              {[
-                'Execution-focused learning path',
-                'Mentor support and progress guidance',
-                'Communication and pitch practice',
-                'Career and startup exposure',
-                'Network with founders and peers',
-                'Funding opportunity readiness'
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-4">
-                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs">✓</div>
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={() => navigate('/fellowship-application')}
-              className="mt-auto w-full rounded-2xl bg-ink px-6 py-4 text-sm font-bold text-white transition-all hover:bg-slate-800 hover:scale-[1.02] active:scale-95 shadow-md hover:shadow-xl"
-            >
-              Join Fellowship — ₹5,000
-            </button>
-          </motion.div>
+          {plans.map((plan, index) => (
+            <motion.div key={plan.slug || `${plan.name}-${index}`} variants={fadeUp} className={cardClassByIndex(index, plan.isPopular)}>
+              {plan.badge && (
+                <div className={`mb-4 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest w-fit ${plan.isPopular || index === 0 ? 'absolute -top-5 left-1/2 -translate-x-1/2 w-max border-primary bg-gradient-to-r from-primary to-secondary text-white shadow-lg' : 'border-slate-200 bg-slate-50/50 text-slate-600'}`}>
+                  {plan.badge}
+                </div>
+              )}
+              <h3 className={`text-2xl font-bold mt-2 ${plan.isPopular || index === 0 ? 'text-primary' : 'text-ink'}`}>{plan.name}</h3>
+              <p className="mt-3 text-sm text-slate-500 min-h-[64px] leading-relaxed font-medium">
+                {plan.description}
+              </p>
+              <div className="my-8 flex items-baseline gap-2">
+                <span className="text-5xl font-extrabold tracking-tight text-ink">₹{Number(plan.price || 0).toLocaleString('en-IN')}</span>
+                <span className="text-sm font-semibold text-slate-500">{plan.billingText || '/ one-time'}</span>
+              </div>
+              <ul className="mb-10 flex-1 space-y-5 text-sm font-semibold text-slate-600">
+                {(plan.features || []).map((item, i) => (
+                  <li key={`${plan.slug || plan.name}-feature-${i}`} className="flex items-start gap-4">
+                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs">✓</div>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => navigate(plan.ctaRoute || '/join')}
+                className={`mt-auto w-full rounded-2xl px-6 py-4 text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-95 shadow-md hover:shadow-xl ${(plan.isPopular || index === 0) ? 'bg-primary hover:bg-blue-800 hover:shadow-lg' : 'bg-ink hover:bg-slate-800'}`}
+              >
+                {(plan.ctaText || 'Join Now')} — ₹{Number(plan.price || 0).toLocaleString('en-IN')}
+              </button>
+            </motion.div>
+          ))}
         </motion.div>
       </main>
     </div>
-  );
+  )
 }

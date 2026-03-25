@@ -9,6 +9,7 @@ import College from '../models/College.js'
 import IdeaValidation from '../models/IdeaValidation.js'
 import Notification from '../models/Notification.js'
 import Course from '../models/Course.js'
+import Plan from '../models/Plan.js'
 import CollegeRankingApplication from '../models/CollegeRankingApplication.js'
 import FellowshipApplication from '../models/FellowshipApplication.js'
 
@@ -258,6 +259,46 @@ router.delete('/grants/:id', protect, adminOnly, async (req, res) => {
   try {
     await Grant.findByIdAndDelete(req.params.id)
     res.json({ message: 'Grant deleted' })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+/* ============================================================
+   PLANS CRUD
+   ============================================================ */
+router.get('/plans', protect, adminOnly, async (_req, res) => {
+  try {
+    const plans = await Plan.find().sort({ sortOrder: 1, createdAt: 1 })
+    res.json(plans)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+router.post('/plans', protect, adminOnly, async (req, res) => {
+  try {
+    const plan = await Plan.create(req.body)
+    res.status(201).json(plan)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+router.put('/plans/:id', protect, adminOnly, async (req, res) => {
+  try {
+    const plan = await Plan.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    if (!plan) return res.status(404).json({ message: 'Plan not found' })
+    res.json(plan)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+router.delete('/plans/:id', protect, adminOnly, async (req, res) => {
+  try {
+    await Plan.findByIdAndDelete(req.params.id)
+    res.json({ message: 'Plan deleted' })
   } catch (err) {
     res.status(500).json({ message: err.message })
   }

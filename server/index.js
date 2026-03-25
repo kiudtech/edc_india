@@ -10,7 +10,9 @@ import userRoutes from './routes/user.js'
 import adminRoutes from './routes/admin.js'
 import collegeRoutes from './routes/college.js'
 import validationRoutes from './routes/validation.js'
+import planRoutes from './routes/plan.js'
 import { ensureAdminUser } from './config/ensureAdmin.js'
+import { ensureDefaultPlans } from './config/ensureDefaultPlans.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: path.join(__dirname, '.env') })
@@ -28,6 +30,7 @@ app.use('/api/user', userRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/college', collegeRoutes)
 app.use('/api/validation', validationRoutes)
+app.use('/api/plans', planRoutes)
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))
 
@@ -36,6 +39,7 @@ const PORT = process.env.PORT || 5000
 const startServer = async () => {
   await connectDB()
   await ensureAdminUser()
+  await ensureDefaultPlans()
 
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 }
