@@ -52,16 +52,50 @@ export default function StartupApplicationPage() {
     termsAccepted: false,
   });
 
+  const readJsonSafely = async (response) => {
+    const text = await response.text();
+    if (!text) return {};
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error('Server returned an invalid response. Please try again.');
+    }
+  };
+
+  const postJsonWithRetry = async (url, body, retries = 1) => {
+    let lastError;
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await readJsonSafely(response);
+        if (!response.ok) throw new Error(data.message || 'Request failed');
+        return data;
+      } catch (err) {
+        lastError = err;
+        const retriable = String(err?.message || '').toLowerCase().includes('failed to fetch')
+          || String(err?.message || '').toLowerCase().includes('network')
+          || String(err?.message || '').toLowerCase().includes('econnreset');
+        if (attempt < retries && retriable) {
+          await new Promise((resolve) => setTimeout(resolve, 400));
+          continue;
+        }
+      }
+    }
+    throw lastError || new Error('Request failed');
+  };
+
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       setError('');
-      const response = await fetch(`${API_BASE}/api/auth/google-profile`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: credentialResponse.credential }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Google Auth Failed');
+      const data = await postJsonWithRetry(
+        `${API_BASE}/api/auth/google-profile`,
+        { token: credentialResponse.credential },
+        1
+      );
 
       setForm((prev) => ({
         ...prev,
@@ -91,22 +125,16 @@ export default function StartupApplicationPage() {
     setError('');
     setSubmitting(true);
     try {
-      const joinRes = await fetch(`${API_BASE}/api/auth/join`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          startupName: form.startupName,
-          startupStage: form.startupStage,
-          industry: form.industry,
-          ideaSummary: form.ideaSummary,
-          termsAccepted: form.termsAccepted,
-        }),
-      });
-      const joinData = await joinRes.json();
-      if (!joinRes.ok) throw new Error(joinData.message || 'Registration failed');
+      const joinData = await postJsonWithRetry(`${API_BASE}/api/auth/join`, {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        startupName: form.startupName,
+        startupStage: form.startupStage,
+        industry: form.industry,
+        ideaSummary: form.ideaSummary,
+        termsAccepted: form.termsAccepted,
+      }, 0);
       
       navigate('/payment', {
         state: {
