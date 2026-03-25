@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { API_BASE } from '../config';
 
@@ -27,7 +27,15 @@ const industryOptions = [
 ];
 
 export default function StartupApplicationPage() {
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const params = new URLSearchParams(location.search);
+  const selectedPlan = location.state?.selectedPlan || {};
+  const queryPlanPrice = Number(params.get('planPrice'));
+  const queryPlanName = params.get('planName') || '';
+  const planAmount = Number(selectedPlan.price) > 0 ? Number(selectedPlan.price) : (Number.isFinite(queryPlanPrice) && queryPlanPrice > 0 ? queryPlanPrice : 2500);
+  const planName = selectedPlan.name || queryPlanName || 'Startup Membership';
   
   const [view, setView] = useState('auth'); // 'auth' -> 'form'
   const [error, setError] = useState('');
@@ -104,10 +112,10 @@ export default function StartupApplicationPage() {
         state: {
           userId: joinData.userId,
           founderId: joinData.founderId,
-          amount: 2500,
+          amount: planAmount,
           type: 'membership',
-          planName: 'Startup Membership',
-          successSubtitle: "You've successfully joined the EDC India Startup Membership.",
+          planName,
+          successSubtitle: `You've successfully joined the EDC India ${planName}.`,
         },
       });
     } catch (err) {
@@ -125,9 +133,9 @@ export default function StartupApplicationPage() {
       <header className="bg-gradient-to-r from-blue-600 to-indigo-700 py-16 text-center text-white">
         <motion.div initial="hidden" animate="visible" variants={fadeUp}>
           <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full bg-blue-500/30 px-4 py-1.5 text-xs font-semibold text-white shadow-sm ring-1 ring-white/20">
-            Startup Membership — ₹2,500
+            {planName} — ₹{planAmount.toLocaleString('en-IN')}
           </div>
-          <h1 className="text-4xl font-bold">Join Startup Membership</h1>
+          <h1 className="text-4xl font-bold">Join {planName}</h1>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-blue-100 sm:text-base px-4">
             Start your entrepreneurial journey with EDC India
           </p>
@@ -206,7 +214,7 @@ export default function StartupApplicationPage() {
             </div>
             
             <button type="submit" disabled={submitting} className="mt-6 w-full rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50">
-              {submitting ? 'Processing...' : 'Proceed to Payment - ₹2,500'}
+              {submitting ? 'Processing...' : `Proceed to Payment - ₹${planAmount.toLocaleString('en-IN')}`}
             </button>
           </motion.form>
         )}

@@ -842,8 +842,10 @@ function PlansSection() {
   const api = useApi()
   const [plans, setPlans] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState(null)
+  const [saving, setSaving] = useState(false)
 
   const emptyPlan = {
     name: '',
@@ -861,16 +863,22 @@ function PlansSection() {
   }
   const [form, setForm] = useState(emptyPlan)
 
-  const fetch_ = () => { setLoading(true); api.get('/api/admin/plans').then(setPlans).finally(() => setLoading(false)) }
+  const fetch_ = () => {
+    setLoading(true)
+    setError('')
+    api.get('/api/admin/plans').then(setPlans).catch((err) => setError(err.message || 'Failed to load plans')).finally(() => setLoading(false))
+  }
   useEffect(() => { fetch_() }, [])
 
   const openNew = () => {
+    setError('')
     setEditing(null)
     setForm({ ...emptyPlan, sortOrder: plans.length + 1 })
     setShowForm(true)
   }
 
   const openEdit = (p) => {
+    setError('')
     setEditing(p)
     setForm({
       name: p.name || '',
@@ -889,7 +897,46 @@ function PlansSection() {
     setShowForm(true)
   }
 
+  const slugify = (value) =>
+    String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+
+  const closeForm = () => {
+    setShowForm(false)
+    setSaving(false)
+    setError('')
+  }
+
   const save = async () => {
+    setError('')
+
+    const derivedSlug = slugify(form.slug || form.name)
+    if (!form.name.trim()) {
+      setError('Plan name is required.')
+      return
+    }
+    if (!derivedSlug) {
+      setError('Slug is required. Use letters, numbers and hyphens.')
+      return
+    }
+    if (!form.ctaText.trim()) {
+      setError('CTA text is required.')
+      return
+    }
+    if (!form.ctaRoute.trim()) {
+      setError('CTA route is required.')
+      return
+    }
+    if (Number(form.price) < 0) {
+      setError('Price cannot be negative.')
+      return
+    }
+
+    setSaving(true)
+
     const features = form.featuresText
       .split('\n')
       .map((f) => f.trim())
@@ -910,16 +957,27 @@ function PlansSection() {
       isActive: form.isActive,
     }
 
-    if (editing) await api.put(`/api/admin/plans/${editing._id}`, payload)
-    else await api.post('/api/admin/plans', payload)
+    try {
+      if (editing) await api.put(`/api/admin/plans/${editing._id}`, payload)
+      else await api.post('/api/admin/plans', payload)
 
-    setShowForm(false)
-    fetch_()
+      closeForm()
+      fetch_()
+    } catch (err) {
+      setError(err.message || 'Failed to save plan')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const remove = async (id) => {
-    await api.del(`/api/admin/plans/${id}`)
-    fetch_()
+    setError('')
+    try {
+      await api.del(`/api/admin/plans/${id}`)
+      fetch_()
+    } catch (err) {
+      setError(err.message || 'Failed to delete plan')
+    }
   }
 
   return (
@@ -928,6 +986,12 @@ function PlansSection() {
         <span className="text-xs text-slate-400">{plans.length} plan(s)</span>
         <button onClick={openNew} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">+ Add Plan</button>
       </div>
+
+      {error && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+          {error}
+        </div>
+      )}
 
       {loading ? <Spinner /> : (
         <div className="overflow-x-auto rounded-xl border bg-white">
@@ -970,21 +1034,22 @@ function PlansSection() {
         </div>
       )}
 
-      <Modal open={showForm} onClose={() => setShowForm(false)} title={editing ? 'Edit Plan' : 'Add Plan'}>
+      <Modal open={showForm} onClose={closeForm} title={editing ? 'Edit Plan' : 'Add Plan'}>
         <div className="space-y-3">
+          <p className="text-xs font-medium text-slate-500">Fields marked with <span className="text-red-500">*</span> are required.</p>
           <div className="grid grid-cols-2 gap-3">
-            <FormField label="Name" value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} />
-            <FormField label="Slug" value={form.slug} onChange={(v) => setForm((f) => ({ ...f, slug: v }))} placeholder="startup-membership" />
+            <FormField label="Name *" value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} />
+            <FormField label="Slug *" value={form.slug} onChange={(v) => setForm((f) => ({ ...f, slug: slugify(v) }))} placeholder="startup-membership" />
           </div>
           <FormField label="Badge" value={form.badge} onChange={(v) => setForm((f) => ({ ...f, badge: v }))} placeholder="Most Popular" />
           <FormField label="Description" value={form.description} onChange={(v) => setForm((f) => ({ ...f, description: v }))} textarea />
           <div className="grid grid-cols-2 gap-3">
-            <FormField label="Price" type="number" value={form.price} onChange={(v) => setForm((f) => ({ ...f, price: v }))} />
+            <FormField label="Price *" type="number" value={form.price} onChange={(v) => setForm((f) => ({ ...f, price: v }))} />
             <FormField label="Billing Text" value={form.billingText} onChange={(v) => setForm((f) => ({ ...f, billingText: v }))} placeholder="/ one-time" />
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <FormField label="CTA Text" value={form.ctaText} onChange={(v) => setForm((f) => ({ ...f, ctaText: v }))} placeholder="Join Now" />
-            <FormField label="CTA Route" value={form.ctaRoute} onChange={(v) => setForm((f) => ({ ...f, ctaRoute: v }))} placeholder="/startup-application" />
+            <FormField label="CTA Text *" value={form.ctaText} onChange={(v) => setForm((f) => ({ ...f, ctaText: v }))} placeholder="Join Now" />
+            <FormField label="CTA Route *" value={form.ctaRoute} onChange={(v) => setForm((f) => ({ ...f, ctaRoute: v }))} placeholder="/startup-application" />
           </div>
           <FormField label="Sort Order" type="number" value={form.sortOrder} onChange={(v) => setForm((f) => ({ ...f, sortOrder: v }))} />
           <FormField label="Features (one per line)" value={form.featuresText} onChange={(v) => setForm((f) => ({ ...f, featuresText: v }))} textarea />
@@ -998,7 +1063,9 @@ function PlansSection() {
               Active on website
             </label>
           </div>
-          <button onClick={save} className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">{editing ? 'Update Plan' : 'Create Plan'}</button>
+          <button onClick={save} disabled={saving} className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60">
+            {saving ? 'Saving...' : (editing ? 'Update Plan' : 'Create Plan')}
+          </button>
         </div>
       </Modal>
     </div>

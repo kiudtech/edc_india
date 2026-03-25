@@ -53,6 +53,24 @@ router.post('/join', async (req, res) => {
 
     const existing = await User.findOne({ email: email.toLowerCase() })
     if (existing) {
+      if (existing.role !== 'admin' && existing.membershipStatus === 'pending') {
+        existing.name = name || existing.name
+        existing.phone = phone || existing.phone
+        existing.startupName = startupName || existing.startupName
+        existing.startupStage = startupStage || existing.startupStage
+        existing.industry = industry || existing.industry
+        existing.ideaSummary = ideaSummary || existing.ideaSummary
+        existing.termsAccepted = true
+        await existing.save()
+
+        return res.status(200).json({
+          message: 'This email is already registered with pending membership. Proceed to payment.',
+          userId: existing._id,
+          founderId: existing.founderId,
+          existingPendingUser: true,
+        })
+      }
+
       return res.status(400).json({ message: 'This email is already registered.' })
     }
 

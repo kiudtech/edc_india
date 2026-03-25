@@ -80,19 +80,50 @@ const defaultPlans = [
 export default function JoinPage() {
   const navigate = useNavigate()
   const [plans, setPlans] = useState(defaultPlans)
+  const [plansError, setPlansError] = useState('')
 
   useEffect(() => {
     const fetchPlans = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/api/plans`)
-        if (!res.ok) return
-        const data = await res.json()
-        if (Array.isArray(data) && data.length > 0) {
-          setPlans(data)
+      setPlansError('')
+
+      const isLocalhost = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname)
+      const apiFromEnv = (API_BASE || '').trim()
+      const baseCandidates = Array.from(new Set([
+        apiFromEnv,
+        '',
+        ...(apiFromEnv ? [] : ['http://localhost:5000']),
+        ...(isLocalhost ? ['http://127.0.0.1:5000'] : []),
+      ]))
+
+      let lastFailure = ''
+
+      for (const base of baseCandidates) {
+        try {
+          const res = await fetch(`${base}/api/plans`, { cache: 'no-store' })
+          if (!res.ok) {
+            lastFailure = `Plans API responded with status ${res.status}.`
+            continue
+          }
+
+          const contentType = res.headers.get('content-type') || ''
+          if (!contentType.includes('application/json')) {
+            lastFailure = 'Plans API is returning non-JSON content. Check VITE_API_URL or deployment rewrites for /api routes.'
+            continue
+          }
+
+          const data = await res.json()
+          if (Array.isArray(data)) {
+            setPlans(data)
+            return
+          }
+
+          lastFailure = 'Plans API did not return a valid list.'
+        } catch {
+          lastFailure = 'Could not connect to plans API endpoint.'
         }
-      } catch {
-        // Keep defaults when backend is unavailable.
       }
+
+      setPlansError(`${lastFailure || 'Unable to load latest plans from backend.'} Showing default plans.`)
     }
 
     fetchPlans()
@@ -128,6 +159,11 @@ export default function JoinPage() {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-12 relative z-20">
+        {plansError && (
+          <div className="mx-auto mb-5 max-w-6xl rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+            {plansError}
+          </div>
+        )}
         <motion.div
           initial="hidden"
           animate="visible"
@@ -158,7 +194,23 @@ export default function JoinPage() {
                 ))}
               </ul>
               <button
-                onClick={() => navigate(plan.ctaRoute || '/join')}
+                onClick={() => {
+                  const route = (plan.ctaRoute || '/join').trim()
+                  const normalizedRoute = route.startsWith('/') ? route : `/${route}`
+                  const planPrice = Number(plan.price || 0)
+                  const qs = `planSlug=${encodeURIComponent(plan.slug || '')}&planName=${encodeURIComponent(plan.name || '')}&planPrice=${encodeURIComponent(String(planPrice))}`
+                  const separator = normalizedRoute.includes('?') ? '&' : '?'
+
+                  navigate(`${normalizedRoute}${separator}${qs}`, {
+                    state: {
+                      selectedPlan: {
+                        slug: plan.slug || '',
+                        name: plan.name || '',
+                        price: planPrice,
+                      },
+                    },
+                  })
+                }}
                 className={`mt-auto w-full rounded-2xl px-6 py-4 text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-95 shadow-md hover:shadow-xl ${(plan.isPopular || index === 0) ? 'bg-primary hover:bg-blue-800 hover:shadow-lg' : 'bg-ink hover:bg-slate-800'}`}
               >
                 {(plan.ctaText || 'Join Now')} — ₹{Number(plan.price || 0).toLocaleString('en-IN')}

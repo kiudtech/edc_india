@@ -281,6 +281,12 @@ router.post('/plans', protect, adminOnly, async (req, res) => {
     const plan = await Plan.create(req.body)
     res.status(201).json(plan)
   } catch (err) {
+    if (err?.code === 11000) {
+      return res.status(400).json({ message: 'Plan slug already exists. Please use a unique slug.' })
+    }
+    if (err?.name === 'ValidationError') {
+      return res.status(400).json({ message: err.message })
+    }
     res.status(500).json({ message: err.message })
   }
 })
@@ -291,6 +297,12 @@ router.put('/plans/:id', protect, adminOnly, async (req, res) => {
     if (!plan) return res.status(404).json({ message: 'Plan not found' })
     res.json(plan)
   } catch (err) {
+    if (err?.code === 11000) {
+      return res.status(400).json({ message: 'Plan slug already exists. Please use a unique slug.' })
+    }
+    if (err?.name === 'ValidationError') {
+      return res.status(400).json({ message: err.message })
+    }
     res.status(500).json({ message: err.message })
   }
 })

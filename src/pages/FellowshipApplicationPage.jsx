@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
 import { API_BASE } from '../config';
@@ -11,11 +11,20 @@ const fadeUp = {
 };
 
 export default function FellowshipApplicationPage() {
+  const location = useLocation();
   const navigate = useNavigate();
   const { login, user } = useAuth();
+  const authUserId = user?.id || user?._id;
+
+  const params = new URLSearchParams(location.search);
+  const selectedPlan = location.state?.selectedPlan || {};
+  const queryPlanPrice = Number(params.get('planPrice'));
+  const queryPlanName = params.get('planName') || '';
+  const planAmount = Number(selectedPlan.price) > 0 ? Number(selectedPlan.price) : (Number.isFinite(queryPlanPrice) && queryPlanPrice > 0 ? queryPlanPrice : 5000);
+  const planName = selectedPlan.name || queryPlanName || 'Fellowship Program';
   
   // Decide view based on whether user is already logged in
-  const [view, setView] = useState(user?._id ? 'form' : 'auth'); 
+  const [view, setView] = useState(authUserId ? 'form' : 'auth'); 
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -63,7 +72,7 @@ export default function FellowshipApplicationPage() {
 
   const handleProceedToPayment = async (e) => {
     e.preventDefault();
-    if (!user?._id) {
+    if (!authUserId) {
       setStatus('Please login first, then continue with fellowship payment.');
       setView('auth');
       return;
@@ -71,11 +80,11 @@ export default function FellowshipApplicationPage() {
     
     navigate('/payment', {
       state: {
-        userId: user._id,
+        userId: authUserId,
         founderId: user.founderId,
-        amount: 5000,
+        amount: planAmount,
         type: 'fellowship',
-        planName: 'Fellowship Program',
+        planName,
         successSubtitle: 'Your fellowship payment has been received successfully.',
       },
     });
@@ -89,7 +98,7 @@ export default function FellowshipApplicationPage() {
       <header className="bg-gradient-to-r from-blue-600 to-indigo-700 py-16 text-center text-white">
         <motion.div initial="hidden" animate="visible" variants={fadeUp}>
           <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full bg-blue-500/30 px-4 py-1.5 text-xs font-semibold text-white shadow-sm ring-1 ring-white/20">
-            EDC Fellowship — ₹5,000
+            {planName} — ₹{planAmount.toLocaleString('en-IN')}
           </div>
           <h1 className="text-4xl font-bold">Fellowship Application Form</h1>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-blue-100 sm:text-base px-4">
@@ -156,7 +165,7 @@ export default function FellowshipApplicationPage() {
             </div>
             
             <button type="submit" disabled={submitting} className="mt-8 w-full rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50">
-              Proceed to Payment - ₹5,000
+              Proceed to Payment - ₹{planAmount.toLocaleString('en-IN')}
             </button>
           </motion.form>
         )}

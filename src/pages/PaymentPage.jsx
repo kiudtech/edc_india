@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { API_BASE } from '../config'
 
@@ -21,39 +21,99 @@ export default function PaymentPage() {
   const [success, setSuccess] = useState(false)
   const [txnData, setTxnData] = useState(null)
   const [error, setError] = useState('')
-
-  // Fake card form state
-  const [card, setCard] = useState({
-    number: '4111 1111 1111 1111',
-    expiry: '12/28',
-    cvv: '123',
-    name: '',
-  })
+  const [razorpayReady, setRazorpayReady] = useState(false)
 
   if (!userId) return <Navigate to="/join" replace />
 
-  const handlePay = async (e) => {
-    e.preventDefault()
+  useEffect(() => {
+    if (window.Razorpay) {
+      setRazorpayReady(true)
+      return
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.async = true
+    script.onload = () => setRazorpayReady(true)
+    script.onerror = () => setError('Failed to load Razorpay SDK. Please refresh and try again.')
+    document.body.appendChild(script)
+  }, [])
+
+  const handlePay = async () => {
     setError('')
     setProcessing(true)
 
     try {
-      // Simulate a 2-second payment processing delay
-      await new Promise((r) => setTimeout(r, 2000))
-
-      const res = await fetch(`${API_BASE}/api/payment/process`, {
+      const createOrderRes = await fetch(`${API_BASE}/api/payment/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, amount, type: paymentType }),
+        body: JSON.stringify({ userId, amount, type: paymentType, planName }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message)
+      const orderData = await createOrderRes.json()
+      if (!createOrderRes.ok) throw new Error(orderData.message || 'Failed to create payment order.')
 
-      setTxnData(data)
-      setSuccess(true)
+      if (!window.Razorpay) {
+        throw new Error('Razorpay SDK is not ready. Please refresh and try again.')
+      }
+
+      const razorpay = new window.Razorpay({
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'EDC India',
+        description: planName,
+        order_id: orderData.orderId,
+        prefill: {
+          name: orderData.user?.name || '',
+          email: orderData.user?.email || '',
+          contact: orderData.user?.phone || '',
+        },
+        notes: {
+          founderId: founderId || '',
+          userId,
+          paymentType,
+        },
+        theme: {
+          color: '#0f4c81',
+        },
+        handler: async (response) => {
+          try {
+            const verifyRes = await fetch(`${API_BASE}/api/payment/verify`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                userId,
+                amount,
+                type: paymentType,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            })
+            const verifyData = await verifyRes.json()
+            if (!verifyRes.ok) throw new Error(verifyData.message || 'Payment verification failed.')
+
+            setTxnData(verifyData)
+            setSuccess(true)
+          } catch (verifyErr) {
+            setError(verifyErr.message || 'Payment verification failed.')
+          } finally {
+            setProcessing(false)
+          }
+        },
+        modal: {
+          ondismiss: () => setProcessing(false),
+        },
+      })
+
+      razorpay.on('payment.failed', (response) => {
+        setError(response?.error?.description || 'Payment failed. Please try again.')
+        setProcessing(false)
+      })
+
+      razorpay.open()
     } catch (err) {
       setError(err.message)
-    } finally {
       setProcessing(false)
     }
   }
@@ -76,7 +136,7 @@ export default function PaymentPage() {
           <>
             <div className="text-center">
               <h1 className="text-2xl font-semibold text-slate-900 sm:text-3xl">Complete Your Payment</h1>
-              <p className="mt-2 text-sm text-slate-500">Secure demo payment gateway</p>
+              <p className="mt-2 text-sm text-slate-500">Secure payment powered by Razorpay</p>
             </div>
 
             {/* Order Summary */}
@@ -90,75 +150,36 @@ export default function PaymentPage() {
               </div>
             </div>
 
-            {/* Card Form */}
-            <form onSubmit={handlePay} className="mt-6 rounded-3xl border border-secondary/40 bg-white p-6 shadow-xl sm:p-8">
-              <div className="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">Card Details</div>
-              <p className="mb-6 text-[11px] text-slate-400">This is a demo — no real charge will be made.</p>
+            <div className="mt-6 rounded-3xl border border-secondary/40 bg-white p-6 shadow-xl sm:p-8">
+              <div className="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">Razorpay Checkout</div>
+              <p className="mb-6 text-[11px] text-slate-400">You will be redirected to secure Razorpay payment.</p>
 
               {error && (
                 <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
               )}
 
-              <div className="grid gap-4">
-                <div>
-                  <label className="mb-1.5 block text-xs font-semibold text-slate-600">Card Number</label>
-                  <input
-                    value={card.number}
-                    onChange={(e) => setCard({ ...card, number: e.target.value })}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-mono text-sm tracking-wider text-slate-800"
-                    readOnly
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="mb-1.5 block text-xs font-semibold text-slate-600">Expiry</label>
-                    <input
-                      value={card.expiry}
-                      onChange={(e) => setCard({ ...card, expiry: e.target.value })}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-mono text-sm text-slate-800"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-xs font-semibold text-slate-600">CVV</label>
-                    <input
-                      value={card.cvv}
-                      onChange={(e) => setCard({ ...card, cvv: e.target.value })}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-mono text-sm text-slate-800"
-                      readOnly
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-xs font-semibold text-slate-600">Name on Card</label>
-                  <input
-                    value={card.name}
-                    onChange={(e) => setCard({ ...card, name: e.target.value })}
-                    placeholder="Your name"
-                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
-              </div>
-
               <button
-                type="submit"
-                disabled={processing}
+                type="button"
+                onClick={handlePay}
+                disabled={processing || !razorpayReady}
                 className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 disabled:opacity-50"
               >
                 {processing ? (
                   <>
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    Processing Payment...
+                    Opening Checkout...
                   </>
+                ) : !razorpayReady ? (
+                  'Loading Razorpay...'
                 ) : (
-                  `Pay ₹${amount.toLocaleString('en-IN')}`
+                  `Pay with Razorpay ₹${amount.toLocaleString('en-IN')}`
                 )}
               </button>
 
               <p className="mt-4 text-center text-[11px] text-slate-400">
-                🔒 Secure demo payment — no real card is charged
+                Razorpay supports cards, UPI, netbanking and wallets.
               </p>
-            </form>
+            </div>
           </>
         ) : (
           /* ─── Success Screen ─── */

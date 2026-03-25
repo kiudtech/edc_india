@@ -15,6 +15,10 @@ const paymentSchema = new mongoose.Schema(
       default: 'pending',
     },
     transactionId: { type: String, unique: true },
+    gateway: { type: String, default: 'razorpay' },
+    razorpayOrderId: { type: String, unique: true, sparse: true },
+    razorpayPaymentId: { type: String, unique: true, sparse: true },
+    razorpaySignature: { type: String },
   },
   { timestamps: true }
 )
