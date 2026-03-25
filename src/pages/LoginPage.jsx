@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { API_BASE } from '../config'
 import { GoogleLogin } from '@react-oauth/google'
-import { jwtDecode } from 'jwt-decode'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -15,12 +14,11 @@ export default function LoginPage() {
     setError('')
     setSubmitting(true)
     try {
-      const decoded = jwtDecode(credentialResponse.credential)
-      
+      // Send the raw Google token securely to our backend for verification
       const res = await fetch(`${API_BASE}/api/auth/google-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: decoded.email, googleId: decoded.sub }),
+        body: JSON.stringify({ token: credentialResponse.credential }),
       })
       const text = await res.text()
       let data

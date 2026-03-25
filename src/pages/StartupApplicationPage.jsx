@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
 import { API_BASE } from '../config';
 
@@ -10,12 +9,25 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const stageOptions = ['Ideation', 'Prototype', 'Early Revenue', 'Growth'];
-const industryOptions = ['Tech', 'Fintech', 'Healthtech', 'Edtech', 'E-commerce', 'Other'];
+const stageOptions = ['Idea Stage', 'MVP/Prototype', 'Early Traction', 'Growth', 'Scaling'];
+const industryOptions = [
+  'Technology',
+  'Healthcare/HealthTech',
+  'Education/EdTech',
+  'Finance/FinTech',
+  'Agriculture/AgriTech',
+  'E-Commerce',
+  'Manufacturing',
+  'Clean Energy/CleanTech',
+  'Food & Beverage',
+  'Real Estate/PropTech',
+  'Media & Entertainment',
+  'Logistics/Supply Chain',
+  'Other',
+];
 
 export default function StartupApplicationPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
   
   const [view, setView] = useState('auth'); // 'auth' -> 'form'
   const [error, setError] = useState('');
@@ -35,7 +47,7 @@ export default function StartupApplicationPage() {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       setError('');
-      const response = await fetch(`${API_BASE}/api/auth/google-login`, {
+      const response = await fetch(`${API_BASE}/api/auth/google-profile`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: credentialResponse.credential }),
@@ -45,10 +57,9 @@ export default function StartupApplicationPage() {
 
       setForm((prev) => ({
         ...prev,
-        name: data.user.name,
-        email: data.user.email,
+        name: data.profile.name,
+        email: data.profile.email,
       }));
-      login(data.user, data.token);
       setView('form');
     } catch (err) {
       setError(err.message);
@@ -79,27 +90,22 @@ export default function StartupApplicationPage() {
           name: form.name,
           email: form.email,
           phone: form.phone,
-          password: 'google-oauth',
-          planRequested: 'Startup Membership',
-          meta: {
-            startupName: form.startupName,
-            startupStage: form.startupStage,
-            industry: form.industry,
-            ideaSummary: form.ideaSummary,
-          },
+          startupName: form.startupName,
+          startupStage: form.startupStage,
+          industry: form.industry,
+          ideaSummary: form.ideaSummary,
+          termsAccepted: form.termsAccepted,
         }),
       });
       const joinData = await joinRes.json();
       if (!joinRes.ok) throw new Error(joinData.message || 'Registration failed');
-
-      login(joinData.user, joinData.token);
       
       navigate('/payment', {
         state: {
-          userId: joinData.user._id,
-          founderId: joinData.user.founderId,
+          userId: joinData.userId,
+          founderId: joinData.founderId,
           amount: 2500,
-          type: 'startup_membership',
+          type: 'membership',
           planName: 'Startup Membership',
           successSubtitle: "You've successfully joined the EDC India Startup Membership.",
         },

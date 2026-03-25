@@ -46,7 +46,7 @@ export default function FellowshipApplicationPage() {
         fullName: data.user.name,
         email: data.user.email,
       }));
-      login(data.user, data.token); // Optional: log them in immediately
+      login(data.token, data.user); // Optional: log them in immediately
       setView('form');
     } catch (err) {
       setError(err.message);

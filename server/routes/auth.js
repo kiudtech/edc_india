@@ -1,10 +1,40 @@
 import { Router } from 'express'
 import jwt from 'jsonwebtoken'
 import crypto from 'crypto'
+import { OAuth2Client } from 'google-auth-library'
 import User from '../models/User.js'
 import Counter from '../models/Counter.js'
 
 const router = Router()
+const client = new OAuth2Client()
+
+const getGoogleAudiences = () => {
+  const configured = process.env.GOOGLE_CLIENT_IDS || process.env.GOOGLE_CLIENT_ID || ''
+  return configured
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean)
+}
+
+const verifyGoogleToken = async (idToken) => {
+  const audiences = getGoogleAudiences()
+
+  if (!audiences.length) {
+    throw new Error('Google OAuth is not configured on the server.')
+  }
+
+  let lastError
+  for (const audience of audiences) {
+    try {
+      const ticket = await client.verifyIdToken({ idToken, audience })
+      return ticket.getPayload()
+    } catch (err) {
+      lastError = err
+    }
+  }
+
+  throw lastError || new Error('Failed to verify Google token.')
+}
 
 // ── Join / Register ──
 router.post('/join', async (req, res) => {
@@ -108,10 +138,17 @@ router.post('/login', async (req, res) => {
 // Google Login
 router.post('/google-login', async (req, res) => {
   try {
-    const { email, googleId } = req.body
+    const { token } = req.body
+    
+    if (!token) {
+      return res.status(400).json({ message: 'Google Token is required.' })
+    }
+
+    const payload = await verifyGoogleToken(token)
+    const { email } = payload
 
     if (!email) {
-      return res.status(400).json({ message: 'Email is required.' })
+      return res.status(400).json({ message: 'Email not provided by Google.' })
     }
 
     const user = await User.findOne({ email: email.toLowerCase() })
@@ -124,10 +161,10 @@ router.post('/google-login', async (req, res) => {
       })
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' })
+    const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' })
 
     res.json({
-      token,
+      token: jwtToken,
       user: {
         id: user._id,
         name: user.name,
@@ -143,7 +180,41 @@ router.post('/google-login', async (req, res) => {
       },
     })
   } catch (err) {
-    res.status(500).json({ message: err.message })
+    console.error('Google Auth Error:', err)
+    res.status(500).json({ message: 'Invalid or expired Google Token.' })
+  }
+})
+
+// Google Profile (for signup/prefill flows)
+router.post('/google-profile', async (req, res) => {
+  try {
+    const { token } = req.body
+
+    if (!token) {
+      return res.status(400).json({ message: 'Google Token is required.' })
+    }
+
+    const payload = await verifyGoogleToken(token)
+    const { email, name, picture, email_verified: emailVerified } = payload
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email not provided by Google.' })
+    }
+
+    const existingUser = await User.findOne({ email: email.toLowerCase() }).select('_id email role membershipStatus founderId')
+
+    res.json({
+      profile: {
+        email,
+        name: name || '',
+        picture: picture || '',
+        emailVerified: Boolean(emailVerified),
+      },
+      existingUser,
+    })
+  } catch (err) {
+    console.error('Google Profile Error:', err)
+    res.status(500).json({ message: 'Invalid or expired Google Token.' })
   }
 })
 
