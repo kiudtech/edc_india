@@ -109,7 +109,7 @@ export default function StartupApplicationPage() {
     if (!form.termsAccepted) { setError('Please accept Terms & Conditions.'); return; }
     setError(''); setSubmitting(true);
     try {
-      const joinData = await postJson(`${API_BASE}/api/auth/join`, {
+      const joinData = await postJsonWithRetry(`${API_BASE}/api/auth/join`, {
         name: form.name, email: form.email, phone: form.phone,
         startupName: form.startupName, startupStage: form.startupStage,
         industry: form.industry, ideaSummary: form.ideaSummary, termsAccepted: form.termsAccepted,
