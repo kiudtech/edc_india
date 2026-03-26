@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -21,6 +21,7 @@ export default function FellowshipApplicationPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { login, user } = useAuth();
+  useEffect(() => { setTimeout(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }) }, 0) }, []);
   const authUserId = user?.id || user?._id;
 
   const params = new URLSearchParams(location.search);

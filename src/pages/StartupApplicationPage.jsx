@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
@@ -26,6 +26,7 @@ const perks = [
 export default function StartupApplicationPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  useEffect(() => { setTimeout(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }) }, 0) }, []);
 
   const params = new URLSearchParams(location.search);
   const selectedPlan = location.state?.selectedPlan || {};

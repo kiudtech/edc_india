@@ -214,20 +214,66 @@ const Counter = ({ value, label, prefix = '', suffix = '+', className = 'mt-3 te
 
 const Lightbox = ({ item, onClose }) => {
   if (!item) return null
+  const galleryItem = galleryItems.find((g) => g.label === item)
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 p-4 sm:p-6">
-      <div className="w-full max-w-lg rounded-3xl bg-white p-5 shadow-2xl sm:max-w-3xl sm:p-8">
-        <div className="text-sm uppercase tracking-[0.2em] text-slate-400">Startup Showcase</div>
-        <div className="mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">{item}</div>
-        <div className="mt-4 h-40 rounded-2xl bg-gradient-to-br from-primary/10 via-secondary/10 to-accent sm:h-64" />
-        <button
-          onClick={onClose}
-          className="mt-6 w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white"
-        >
-          Close
-        </button>
-      </div>
-    </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
+      onClick={onClose}
+    >
+      {/* Blurred backdrop using the actual image */}
+      {galleryItem && (
+        <div
+          className="absolute inset-0 scale-110 bg-cover bg-center blur-2xl brightness-[0.3]"
+          style={{ backgroundImage: `url(/stories/${galleryItem.file})` }}
+        />
+      )}
+      <div className="absolute inset-0 bg-black/60" />
+
+      {/* Modal */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        className="relative z-10 w-full max-w-3xl overflow-hidden rounded-3xl shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Image */}
+        {galleryItem && (
+          <div className="relative">
+            <img
+              src={`/stories/${galleryItem.file}`}
+              alt={galleryItem.label}
+              className="w-full max-h-[65vh] object-cover object-center"
+            />
+            {/* gradient overlay on image */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+            {/* close button */}
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm border border-white/20 transition hover:bg-black/60"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            {/* label on image */}
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-sm mb-2">
+                EDC India · Startup Showcase
+              </div>
+              <div className="text-2xl font-extrabold text-white">{galleryItem.label}</div>
+              <div className="mt-1 text-sm text-white/60">{galleryItem.desc}</div>
+            </div>
+          </div>
+        )}
+      </motion.div>
+
+      {/* Click outside hint */}
+      <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs text-white/30">Click anywhere outside to close</p>
+    </motion.div>
   )
 }
 
@@ -678,70 +724,86 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ RANK YOUR COLLEGE ═══════════════ */}
-      <section id="ranking" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-12">
-          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Apply for Recognition</div>
-          <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Rank Your College</h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">Get recognized by India's most transparent innovation & incubation ranking.</p>
-        </motion.div>
-        <motion.div className="mx-auto max-w-3xl rounded-2xl border border-slate-100 bg-white p-8 shadow-lg" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }}>
-          <form onSubmit={async (e) => {
-            e.preventDefault();
-            const formData = {
-              collegeName: e.target.collegeName.value,
-              contactPerson: e.target.contactPerson.value,
-              email: e.target.email.value,
-              phone: e.target.phone.value,
-              message: e.target.message.value,
-            };
-            try {
-              const response = await fetch('/api/admin/college-ranking-application', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-              });
-              if (response.ok) {
-                alert('Application submitted successfully!');
-                e.target.reset();
-              } else {
-                alert('Failed to submit application. Please try again.');
-              }
-            } catch (error) {
-              alert('An error occurred. Please try again.');
-            }
-          }}>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="collegeName" className="block text-sm font-medium text-slate-700">College/University Name *</label>
-                <input type="text" name="collegeName" id="collegeName" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+      <section id="ranking" className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50/40 py-20 sm:py-28">
+        <div className="absolute -top-32 -right-32 h-[400px] w-[400px] rounded-full bg-blue-100/60 blur-[100px]" />
+        <div className="absolute -bottom-32 -left-32 h-[400px] w-[400px] rounded-full bg-indigo-100/60 blur-[100px]" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-primary mb-6">🏆 Apply for Recognition</div>
+            <h2 className="text-4xl font-extrabold text-slate-900 sm:text-5xl">Rank Your <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">College</span></h2>
+            <p className="mx-auto mt-4 max-w-xl text-slate-500">Get recognized by India's most transparent innovation & incubation ranking.</p>
+          </motion.div>
+
+          <div className="grid gap-10 lg:grid-cols-2 items-center">
+            {/* Left — stats/benefits */}
+            <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="space-y-5">
+              {[
+                { icon: '🏛️', title: '70+ Universities', desc: 'Already ranked and recognized by EDC India' },
+                { icon: '📊', title: 'Transparent Evaluation', desc: 'On-ground, data-driven ranking methodology' },
+                { icon: '🏆', title: 'National Recognition', desc: 'Awards, certificates, and public recognition' },
+                { icon: '🌐', title: 'Global Visibility', desc: "Featured in EDC India's national reports and media" },
+              ].map((item, i) => (
+                <motion.div key={i} variants={staggerItem} whileHover={{ x: 4 }} className="flex items-start gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-blue-100">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-2xl">{item.icon}</div>
+                  <div>
+                    <div className="font-bold text-slate-800">{item.title}</div>
+                    <div className="mt-0.5 text-sm text-slate-500">{item.desc}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Right — form */}
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="relative">
+              <div className="absolute -inset-2 rounded-3xl bg-gradient-to-br from-blue-100 to-indigo-100 blur-xl opacity-60" />
+              <div className="relative rounded-3xl border border-slate-100 bg-white p-8 shadow-xl">
+                <div className="mb-6 flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-secondary text-2xl text-white shadow-lg">🏆</div>
+                  <div>
+                    <div className="font-bold text-slate-900">Quick Application</div>
+                    <div className="text-xs text-slate-500">Takes less than 2 minutes</div>
+                  </div>
+                </div>
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  const formData = { collegeName: e.target.collegeName.value, contactPerson: e.target.contactPerson.value, email: e.target.email.value, phone: e.target.phone.value, message: e.target.message.value };
+                  try {
+                    const response = await fetch('/api/admin/college-ranking-application', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
+                    if (response.ok) { alert('Application submitted successfully!'); e.target.reset(); }
+                    else alert('Failed to submit. Please try again.');
+                  } catch { alert('An error occurred. Please try again.'); }
+                }}>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {[
+                      { id: 'collegeName', label: 'College / University Name', type: 'text', span: 2 },
+                      { id: 'contactPerson', label: 'Contact Person', type: 'text', span: 1 },
+                      { id: 'phone', label: 'Phone Number', type: 'tel', span: 1 },
+                      { id: 'email', label: 'Email Address', type: 'email', span: 2 },
+                    ].map((f) => (
+                      <div key={f.id} className={f.span === 2 ? 'sm:col-span-2' : ''}>
+                        <label htmlFor={f.id} className="text-xs font-semibold uppercase tracking-wide text-slate-500">{f.label} *</label>
+                        <input type={f.type} name={f.id} id={f.id} required className="mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 transition focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                      </div>
+                    ))}
+                    <div className="sm:col-span-2">
+                      <label htmlFor="message" className="text-xs font-semibold uppercase tracking-wide text-slate-500">Message</label>
+                      <textarea name="message" id="message" rows={3} className="mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 transition focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Tell us about your institution..." />
+                    </div>
+                  </div>
+                  <div className="mt-6 flex gap-3">
+                    <button type="submit" className="flex-1 rounded-xl bg-gradient-to-r from-primary to-secondary py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:opacity-90 active:scale-95">
+                      Apply for Ranking →
+                    </button>
+                    <Link to="/ranking" className="flex-1 rounded-xl border-2 border-slate-200 py-3.5 text-center text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
+                      Full Application
+                    </Link>
+                  </div>
+                </form>
               </div>
-              <div>
-                <label htmlFor="contactPerson" className="block text-sm font-medium text-slate-700">Contact Person *</label>
-                <input type="text" name="contactPerson" id="contactPerson" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email Address *</label>
-                <input type="email" name="email" id="email" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-slate-700">Phone Number *</label>
-                <input type="tel" name="phone" id="phone" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <label htmlFor="message" className="block text-sm font-medium text-slate-700">Message</label>
-              <textarea name="message" id="message" rows="3" className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
-            </div>
-            <div className="mt-6 flex gap-3">
-              <button type="submit" className="flex-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
-                Apply for Ranking
-              </button>
-              <Link to="/ranking" className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-                Full Application
-              </Link>
-            </div>
-          </form>
-        </motion.div>
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* ═══════════════ IMPACT ═══════════════ */}
@@ -763,31 +825,65 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ GALLERY ═══════════════ */}
-      <section id="gallery" className="bg-[#fafbfe] py-14 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Startup Showcase</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Stories That Inspire</h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">A glimpse into the journeys of founders, demo days, and global events.</p>
+      <section id="gallery" className="relative overflow-hidden bg-gradient-to-br from-[#0b1e4d] via-[#0f2d6b] to-[#1a3a8f] py-20 sm:py-28">
+        {/* bg grid */}
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
+        <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-blue-400/10 blur-[120px]" />
+        <div className="absolute -bottom-40 -left-40 h-[400px] w-[400px] rounded-full bg-indigo-400/10 blur-[100px]" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-white/70 backdrop-blur-sm mb-6">
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse" /> Startup Showcase
+            </div>
+            <h2 className="text-4xl font-extrabold text-white sm:text-5xl">Stories That <span className="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">Inspire</span></h2>
+            <p className="mx-auto mt-4 max-w-xl text-white/50 text-sm">A glimpse into the journeys of founders, demo days, and global events.</p>
           </motion.div>
-          <div className="mt-12 columns-1 gap-5 sm:columns-2 lg:columns-3">
-            {galleryItems.map((item) => (
-              <button
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {galleryItems.map((item, index) => (
+              <motion.button
                 key={item.label}
+                variants={staggerItem}
                 onClick={() => setLightbox(item.label)}
-                className="mb-5 w-full break-inside-avoid rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-100/50"
+                whileHover={{ y: -6, scale: 1.02 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+                className="group relative overflow-hidden rounded-2xl text-left focus:outline-none"
+                style={{ aspectRatio: index % 3 === 1 ? '4/3' : '16/10' }}
               >
+                {/* image */}
                 <img
                   src={`/stories/${item.file}`}
                   alt={item.label}
-                  className="h-36 w-full rounded-xl object-cover object-center"
+                  className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                   loading="lazy"
                 />
-                <div className="mt-3 text-sm font-bold text-slate-800">{item.label}</div>
-                <div className="mt-1 text-xs text-slate-500">{item.desc}</div>
-              </button>
+                {/* dark overlay always */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                {/* hover shimmer */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-indigo-600/0 group-hover:from-blue-600/20 group-hover:to-indigo-600/20 transition-all duration-500" />
+                {/* top badge */}
+                <div className="absolute top-3 left-3 rounded-full border border-white/20 bg-black/30 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
+                  EDC India
+                </div>
+                {/* play icon */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm border border-white/30 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
+                  <svg className="h-5 w-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                {/* bottom content */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
+                  <div className="text-sm font-bold text-white">{item.label}</div>
+                  <div className="mt-1 text-xs text-white/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">{item.desc}</div>
+                </div>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -827,7 +923,7 @@ const Home = () => {
             <p className="mx-auto mt-4 max-w-xl text-base text-slate-500">Pick your path and let's build together.</p>
           </motion.div>
 
-          <motion.div className="mt-16 grid gap-6 sm:grid-cols-2" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div className="mt-16 grid gap-6 sm:grid-cols-2 items-start" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {[
               { title: 'Startup Application', cta: 'Apply Now', icon: '🚀', gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50', accent: 'text-blue-600', ring: 'focus:ring-blue-500/20 focus:border-blue-500', btn: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700', desc: 'Join the EDC India startup ecosystem.' },
               { title: 'Investor Interest', cta: 'Join as Investor', icon: '💼', gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50', accent: 'text-emerald-600', ring: 'focus:ring-emerald-500/20 focus:border-emerald-500', btn: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700', desc: 'Connect with high-potential founders.' },
@@ -955,9 +1051,9 @@ const Home = () => {
               © {new Date().getFullYear()} Entrepreneurial Development Council India (EDC INDIA). All rights reserved.
             </div>
             <div className="flex gap-6 text-xs text-white/40">
-              <a href="#" className="transition hover:text-white">Privacy Policy</a>
-              <a href="#" className="transition hover:text-white">Terms of Service</a>
-              <a href="#" className="transition hover:text-white">Refund Policy</a>
+              <Link to="/terms" className="transition hover:text-white">Privacy Policy</Link>
+              <Link to="/terms" className="transition hover:text-white">Terms of Service</Link>
+              <Link to="/terms" className="transition hover:text-white">Refund Policy</Link>
             </div>
           </div>
           <div className="border-t border-white/5 py-3 text-center text-[11px] text-white/20">

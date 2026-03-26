@@ -30,7 +30,7 @@ const phases = [
 ];
 
 export default function FellowshipPage() {
-  useEffect(() => { window.scrollTo(0, 0) }, []);
+  useEffect(() => { setTimeout(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }) }, 0) }, []);
 
   return (
     <div className="bg-white text-slate-800 overflow-x-hidden">
