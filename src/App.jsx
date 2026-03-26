@@ -25,12 +25,12 @@ import CollegeRankingApplicationPage from './pages/CollegeRankingApplicationPage
 import TermsPage from './pages/TermsPage'
 
 const offerings = [
-  { title: 'Idea Validation', desc: 'Get a detailed validation report and clear direction for your next step.', icon: '🔍' },
-  { title: 'EDC Membership', desc: 'Join India’s growing entrepreneurial community for everything you need.', icon: '🤝' },
-  { title: 'Entrepreneurial Fellowship', desc: 'A 1-year intensive program to build startups from scratch.', icon: '🎓' },
-  { title: 'Innovation & Incubation Ranking', desc: 'Transparent, on-ground evaluation of colleges and universities.', icon: '🏆' },
-  { title: 'Grant Support', desc: 'Assistance in securing government and private grants.', icon: '📋' },
-  { title: 'College Incubation', desc: 'Partnering with institutions to build on-campus startup ecosystems.', icon: '🏛️' },
+  { title: 'Idea Validation', desc: 'Get a detailed validation report and clear direction for your next step.', icon: '🔍', route: '/join-validation' },
+  { title: 'EDC Membership', desc: 'Join India\u2019s growing entrepreneurial community for everything you need.', icon: '🤝', route: '/join' },
+  { title: 'Entrepreneurial Fellowship', desc: 'A 1-year intensive program to build startups from scratch.', icon: '🎓', route: '/fellowship' },
+  { title: 'Innovation & Incubation Ranking', desc: 'Transparent, on-ground evaluation of colleges and universities.', icon: '🏆', route: '/ranking' },
+  { title: 'Grant Support', desc: 'Assistance in securing government and private grants.', icon: '📋', route: '/join' },
+  { title: 'College Incubation', desc: 'Partnering with institutions to build on-campus startup ecosystems.', icon: '🏛️', route: '/college-apply' },
 ]
 const timeline = [
   { year: '2019', title: 'Founded', text: 'EDC India was created with a belief that entrepreneurship is a mindset.' },
@@ -337,70 +337,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ═══════════════ PLANS ═══════════════ */}
-      <section id="plans" className="bg-[#fafbfe] py-14 sm:py-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 xl:max-w-6xl">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Membership Plans</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Choose Your Plan</h2>
-            <p className="mt-3 text-sm text-slate-500">Two pathways to grow your startup with EDC India</p>
-          </motion.div>
-          <motion.div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <motion.div variants={staggerItem} className="relative rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" whileHover={{ scale: 1.02 }}>
-              <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-[10px] font-semibold text-blue-600">Most Popular</div>
-              <h3 className="mt-4 text-lg font-bold text-slate-900">Startup Membership</h3>
-              <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-primary">₹2,500</span>
-                <span className="text-xs text-slate-500">one-time</span>
-              </div>
-              <p className="mt-3 text-xs leading-relaxed text-slate-500">Full access to the EDC India startup ecosystem, mentorship, events, grants, and funding opportunities.</p>
-              <ul className="mt-5 space-y-2.5 text-xs text-slate-600">
-                {['Unique Founder ID (BUB-XXXX)', 'Access to Events & Workshops', 'Grant & Funding Directory', 'Investor Network Access', 'Community & Announcements', 'Course Enrollment', 'Dedicated Support Tickets'].map((f) => (
-                  <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-green-500">✓</span>{f}</li>
-                ))}
-              </ul>
-              <button onClick={() => navigate('/join')} className="mt-6 w-full rounded-full bg-primary py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200/50 transition hover:bg-blue-700">
-                Join Now — ₹2,500
-              </button>
-            </motion.div>
-            <motion.div variants={staggerItem} className="relative rounded-2xl border-2 border-purple-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" whileHover={{ scale: 1.02 }}>
-              <div className="inline-flex items-center gap-2 rounded-full bg-purple-50 px-3 py-1 text-[10px] font-semibold text-purple-600">Expert Review</div>
-              <h3 className="mt-4 text-lg font-bold text-slate-900">Idea Validation</h3>
-              <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-purple-600">₹5,000</span>
-                <span className="text-xs text-slate-500">one-time</span>
-              </div>
-              <p className="mt-3 text-xs leading-relaxed text-slate-500">Get your startup idea validated by experts, receive feedback, certification, and a member account.</p>
-              <ul className="mt-5 space-y-2.5 text-xs text-slate-600">
-                {['Expert Idea Review & Feedback', 'Validation Certificate', 'Auto Member Account + Founder ID', 'Access to Full Ecosystem', 'Priority Admin Review', 'Startup Stage Assessment', 'Innovation Report'].map((f) => (
-                  <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-purple-500">✓</span>{f}</li>
-                ))}
-              </ul>
-              <button onClick={() => navigate('/join-validation')} className="mt-6 w-full rounded-full bg-purple-600 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-200/50 transition hover:bg-purple-700">
-                Join Now — ₹5,000
-              </button>
-            </motion.div>
-            <motion.div variants={staggerItem} className="relative rounded-2xl border-2 border-indigo-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" whileHover={{ scale: 1.02 }}>
-              <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-semibold text-indigo-600">Career + Startup</div>
-              <h3 className="mt-4 text-lg font-bold text-slate-900">Fellowship Program</h3>
-              <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-indigo-600">₹5,000</span>
-                <span className="text-xs text-slate-500">one-time</span>
-              </div>
-              <p className="mt-3 text-xs leading-relaxed text-slate-500">A structured fellowship track to build entrepreneurial skills with execution support, mentorship, and growth opportunities.</p>
-              <ul className="mt-5 space-y-2.5 text-xs text-slate-600">
-                {['Execution-focused learning path', 'Mentor support and progress guidance', 'Communication and pitch practice', 'Career and startup exposure', 'Network with founders and peers', 'Funding opportunity readiness'].map((f) => (
-                  <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-indigo-500">✓</span>{f}</li>
-                ))}
-              </ul>
-              <button onClick={() => navigate('/fellowship-application')} className="mt-6 w-full rounded-full bg-indigo-600 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200/50 transition hover:bg-indigo-700">
-                Join Fellowship — ₹5,000
-              </button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* ═══════════════ ABOUT ═══════════════ */}
       <section id="about" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
         <motion.div className="grid gap-10 lg:grid-cols-2" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
@@ -474,6 +410,102 @@ const Home = () => {
         </div>
       </section>
 
+      {/* ═══════════════ FUNDING ═══════════════ */}
+      <section id="funding" className="bg-white py-14 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
+            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Startup Funding Support</div>
+            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Your Path to Funding</h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">A structured approach to make your startup investor-ready.</p>
+          </motion.div>
+          <div className="relative mt-12">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-0.5 bg-slate-200"></div>
+            <div className="relative flex justify-between">
+              {fundingSteps.map((step, index) => (
+                <div key={step.step} className="flex flex-col items-center text-center">
+                  <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white font-bold">{index + 1}</div>
+                  <div className="mt-2 text-sm font-bold text-slate-800">{step.step}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            {fundingSteps.map((step, index) => (
+              <div key={step.step} className="relative rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-100/50">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-xl">{step.icon}</div>
+                <div className="mt-1 text-[10px] font-bold uppercase tracking-wider text-blue-400">Step {index + 1}</div>
+                <div className="mt-2 text-sm font-bold text-slate-800">{step.step}</div>
+                <div className="mt-1 text-xs text-slate-500">{step.text}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ PLANS ═══════════════ */}
+      <section id="plans" className="bg-[#fafbfe] py-14 sm:py-20">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 xl:max-w-6xl">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
+            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Membership Plans</div>
+            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Choose Your Plan</h2>
+            <p className="mt-3 text-sm text-slate-500">Two pathways to grow your startup with EDC India</p>
+          </motion.div>
+          <motion.div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <motion.div variants={staggerItem} className="relative rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" whileHover={{ scale: 1.02 }}>
+              <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-[10px] font-semibold text-blue-600">Most Popular</div>
+              <h3 className="mt-4 text-lg font-bold text-slate-900">Startup Membership</h3>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="text-3xl font-bold text-primary">₹2,500</span>
+                <span className="text-xs text-slate-500">one-time</span>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-slate-500">Full access to the EDC India startup ecosystem, mentorship, events, grants, and funding opportunities.</p>
+              <ul className="mt-5 space-y-2.5 text-xs text-slate-600">
+                {['Unique Founder ID (BUB-XXXX)', 'Access to Events & Workshops', 'Grant & Funding Directory', 'Investor Network Access', 'Community & Announcements', 'Course Enrollment', 'Dedicated Support Tickets'].map((f) => (
+                  <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-green-500">✓</span>{f}</li>
+                ))}
+              </ul>
+              <button onClick={() => navigate('/join')} className="mt-6 w-full rounded-full bg-primary py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200/50 transition hover:bg-blue-700">
+                Join Now — ₹2,500
+              </button>
+            </motion.div>
+            <motion.div variants={staggerItem} className="relative rounded-2xl border-2 border-purple-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" whileHover={{ scale: 1.02 }}>
+              <div className="inline-flex items-center gap-2 rounded-full bg-purple-50 px-3 py-1 text-[10px] font-semibold text-purple-600">Expert Review</div>
+              <h3 className="mt-4 text-lg font-bold text-slate-900">Idea Validation</h3>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="text-3xl font-bold text-purple-600">₹5,000</span>
+                <span className="text-xs text-slate-500">one-time</span>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-slate-500">Get your startup idea validated by experts, receive feedback, certification, and a member account.</p>
+              <ul className="mt-5 space-y-2.5 text-xs text-slate-600">
+                {['Expert Idea Review & Feedback', 'Validation Certificate', 'Auto Member Account + Founder ID', 'Access to Full Ecosystem', 'Priority Admin Review', 'Startup Stage Assessment', 'Innovation Report'].map((f) => (
+                  <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-purple-500">✓</span>{f}</li>
+                ))}
+              </ul>
+              <button onClick={() => navigate('/join-validation')} className="mt-6 w-full rounded-full bg-purple-600 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-200/50 transition hover:bg-purple-700">
+                Join Now — ₹5,000
+              </button>
+            </motion.div>
+            <motion.div variants={staggerItem} className="relative rounded-2xl border-2 border-indigo-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" whileHover={{ scale: 1.02 }}>
+              <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-semibold text-indigo-600">Career + Startup</div>
+              <h3 className="mt-4 text-lg font-bold text-slate-900">Fellowship Program</h3>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="text-3xl font-bold text-indigo-600">₹5,000</span>
+                <span className="text-xs text-slate-500">one-time</span>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-slate-500">A structured fellowship track to build entrepreneurial skills with execution support, mentorship, and growth opportunities.</p>
+              <ul className="mt-5 space-y-2.5 text-xs text-slate-600">
+                {['Execution-focused learning path', 'Mentor support and progress guidance', 'Communication and pitch practice', 'Career and startup exposure', 'Network with founders and peers', 'Funding opportunity readiness'].map((f) => (
+                  <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-indigo-500">✓</span>{f}</li>
+                ))}
+              </ul>
+              <button onClick={() => navigate('/fellowship-application')} className="mt-6 w-full rounded-full bg-indigo-600 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200/50 transition hover:bg-indigo-700">
+                Join Fellowship — ₹5,000
+              </button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ═══════════════ COURSES ═══════════════ */}
       <section id="courses" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
         <motion.div className="grid gap-8 lg:grid-cols-[1.1fr_1fr]" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
@@ -505,73 +537,6 @@ const Home = () => {
               ))}
             </div>
           </motion.div>
-        </motion.div>
-      </section>
-
-      {/* ═══════════════ RANK YOUR COLLEGE ═══════════════ */}
-      <section id="ranking" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-12">
-          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Apply for Recognition</div>
-          <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Rank Your College</h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">Get recognized by India's most transparent innovation & incubation ranking.</p>
-        </motion.div>
-        <motion.div className="mx-auto max-w-3xl rounded-2xl border border-slate-100 bg-white p-8 shadow-lg" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }}>
-          <form onSubmit={async (e) => {
-            e.preventDefault();
-            const formData = {
-              collegeName: e.target.collegeName.value,
-              contactPerson: e.target.contactPerson.value,
-              email: e.target.email.value,
-              phone: e.target.phone.value,
-              message: e.target.message.value,
-            };
-            try {
-              const response = await fetch('/api/admin/college-ranking-application', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-              });
-              if (response.ok) {
-                alert('Application submitted successfully!');
-                e.target.reset();
-              } else {
-                alert('Failed to submit application. Please try again.');
-              }
-            } catch (error) {
-              alert('An error occurred. Please try again.');
-            }
-          }}>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="collegeName" className="block text-sm font-medium text-slate-700">College/University Name *</label>
-                <input type="text" name="collegeName" id="collegeName" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-              </div>
-              <div>
-                <label htmlFor="contactPerson" className="block text-sm font-medium text-slate-700">Contact Person *</label>
-                <input type="text" name="contactPerson" id="contactPerson" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email Address *</label>
-                <input type="email" name="email" id="email" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-slate-700">Phone Number *</label>
-                <input type="tel" name="phone" id="phone" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <label htmlFor="message" className="block text-sm font-medium text-slate-700">Message</label>
-              <textarea name="message" id="message" rows="3" className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
-            </div>
-            <div className="mt-6 flex gap-3">
-              <button type="submit" className="flex-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
-                Apply for Ranking
-              </button>
-              <Link to="/college-ranking-application" className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-                Full Application
-              </Link>
-            </div>
-          </form>
         </motion.div>
       </section>
 
@@ -649,35 +614,88 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ═══════════════ FUNDING ═══════════════ */}
-      <section id="funding" className="bg-white py-14 sm:py-20">
+      {/* ═══════════════ RANK YOUR COLLEGE ═══════════════ */}
+      <section id="ranking" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-12">
+          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Apply for Recognition</div>
+          <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Rank Your College</h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">Get recognized by India's most transparent innovation & incubation ranking.</p>
+        </motion.div>
+        <motion.div className="mx-auto max-w-3xl rounded-2xl border border-slate-100 bg-white p-8 shadow-lg" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }}>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            const formData = {
+              collegeName: e.target.collegeName.value,
+              contactPerson: e.target.contactPerson.value,
+              email: e.target.email.value,
+              phone: e.target.phone.value,
+              message: e.target.message.value,
+            };
+            try {
+              const response = await fetch('/api/admin/college-ranking-application', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+              });
+              if (response.ok) {
+                alert('Application submitted successfully!');
+                e.target.reset();
+              } else {
+                alert('Failed to submit application. Please try again.');
+              }
+            } catch (error) {
+              alert('An error occurred. Please try again.');
+            }
+          }}>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="collegeName" className="block text-sm font-medium text-slate-700">College/University Name *</label>
+                <input type="text" name="collegeName" id="collegeName" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label htmlFor="contactPerson" className="block text-sm font-medium text-slate-700">Contact Person *</label>
+                <input type="text" name="contactPerson" id="contactPerson" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email Address *</label>
+                <input type="email" name="email" id="email" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-slate-700">Phone Number *</label>
+                <input type="tel" name="phone" id="phone" required className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <label htmlFor="message" className="block text-sm font-medium text-slate-700">Message</label>
+              <textarea name="message" id="message" rows="3" className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+            </div>
+            <div className="mt-6 flex gap-3">
+              <button type="submit" className="flex-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+                Apply for Ranking
+              </button>
+              <Link to="/college-ranking-application" className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                Full Application
+              </Link>
+            </div>
+          </form>
+        </motion.div>
+      </section>
+
+      {/* ═══════════════ IMPACT ═══════════════ */}
+      <section id="impact" className="bg-white py-14 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Startup Funding Support</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Your Path to Funding</h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">A structured approach to make your startup investor-ready.</p>
+            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Our Impact</div>
+            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Numbers That Speak</h2>
           </motion.div>
-          <div className="relative mt-12">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-0.5 bg-slate-200"></div>
-            <div className="relative flex justify-between">
-              {fundingSteps.map((step, index) => (
-                <div key={step.step} className="flex flex-col items-center text-center">
-                  <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white font-bold">{index + 1}</div>
-                  <div className="mt-2 text-sm font-bold text-slate-800">{step.step}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-            {fundingSteps.map((step, index) => (
-              <div key={step.step} className="relative rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-100/50">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-xl">{step.icon}</div>
-                <div className="mt-1 text-[10px] font-bold uppercase tracking-wider text-blue-400">Step {index + 1}</div>
-                <div className="mt-2 text-sm font-bold text-slate-800">{step.step}</div>
-                <div className="mt-1 text-xs text-slate-500">{step.text}</div>
-              </div>
+          <motion.div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            {impactStats.map((stat) => (
+              <motion.div key={stat.label} variants={staggerItem} whileHover={{ scale: 1.05, y: -4 }} className="card-hover-glow rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm transition hover:shadow-lg hover:shadow-blue-100/50">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl">{stat.icon}</div>
+                <Counter value={stat.value} label={stat.label} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -699,7 +717,7 @@ const Home = () => {
                 <img
                   src={`/stories/${item.file}`}
                   alt={item.label}
-                  className="h-36 w-full rounded-xl object-cover"
+                  className="h-36 w-full rounded-xl object-cover object-center"
                   loading="lazy"
                 />
                 <div className="mt-3 text-sm font-bold text-slate-800">{item.label}</div>
@@ -707,24 +725,6 @@ const Home = () => {
               </button>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ═══════════════ IMPACT ═══════════════ */}
-      <section id="impact" className="bg-white py-14 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Our Impact</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Numbers That Speak</h2>
-          </motion.div>
-          <motion.div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            {impactStats.map((stat) => (
-              <motion.div key={stat.label} variants={staggerItem} whileHover={{ scale: 1.05, y: -4 }} className="card-hover-glow rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm transition hover:shadow-lg hover:shadow-blue-100/50">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl">{stat.icon}</div>
-                <Counter value={stat.value} label={stat.label} />
-              </motion.div>
-            ))}
-          </motion.div>
         </div>
       </section>
 
