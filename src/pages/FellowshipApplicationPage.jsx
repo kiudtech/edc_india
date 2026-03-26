@@ -40,20 +40,64 @@ export default function FellowshipApplicationPage() {
     phone: '', education: '', city: '', startupIdea: '', message: '',
   });
 
-  const postJson = async (url, body) => {
-    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    const text = await res.text();
-    const data = text ? JSON.parse(text) : {};
-    if (!res.ok) throw new Error(data.message || 'Request failed');
-    return data;
+
+  const readJsonSafely = async (response) => {
+    const text = await response.text();
+    if (!text) return {};
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error('Server returned an invalid response. Please try again.');
+    }
+  };
+
+  const postJsonWithRetry = async (url, body, retries = 1) => {
+    let lastError;
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await readJsonSafely(response);
+        if (!response.ok) throw new Error(data.message || 'Request failed');
+        return data;
+      } catch (err) {
+        lastError = err;
+        const msg = String(err?.message || '').toLowerCase();
+        const retriable = msg.includes('failed to fetch')
+          || msg.includes('network')
+          || msg.includes('econnreset')
+          || msg.includes('invalid response');
+        if (attempt < retries && retriable) {
+          await new Promise((resolve) => setTimeout(resolve, 800));
+          continue;
+        }
+        break;
+      }
+    }
+    throw lastError || new Error('Request failed');
+
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       setError('');
-      const data = await postJson(`${API_BASE}/api/auth/google-login`, { token: credentialResponse.credential });
-      setForm((prev) => ({ ...prev, fullName: data.user.name, email: data.user.email }));
-      login(data.token, data.user);
+
+      const data = await postJsonWithRetry(
+        `${API_BASE}/api/auth/google-login`,
+        { token: credentialResponse.credential },
+        2
+      );
+
+      setForm((prev) => ({
+        ...prev,
+        fullName: data.user.name,
+        email: data.user.email,
+      }));
+      login(data.token, data.user); // Optional: log them in immediately
+
       setView('form');
     } catch (err) { setError(err.message); }
   };

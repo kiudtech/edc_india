@@ -48,18 +48,53 @@ export default function StartupApplicationPage() {
     try { return JSON.parse(text); } catch { throw new Error('Server returned an invalid response.'); }
   };
 
-  const postJson = async (url, body) => {
-    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    const data = await readJsonSafely(response);
-    if (!response.ok) throw new Error(data.message || 'Request failed');
-    return data;
+
+  const postJsonWithRetry = async (url, body, retries = 1) => {
+    let lastError;
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await readJsonSafely(response);
+        if (!response.ok) throw new Error(data.message || 'Request failed');
+        return data;
+      } catch (err) {
+        lastError = err;
+        const msg = String(err?.message || '').toLowerCase();
+        const retriable = msg.includes('failed to fetch')
+          || msg.includes('network')
+          || msg.includes('econnreset')
+          || msg.includes('invalid response');
+        if (attempt < retries && retriable) {
+          await new Promise((resolve) => setTimeout(resolve, 800));
+          continue;
+        }
+        break;
+      }
+    }
+    throw lastError || new Error('Request failed');
+
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       setError('');
-      const data = await postJson(`${API_BASE}/api/auth/google-profile`, { token: credentialResponse.credential });
-      setForm((prev) => ({ ...prev, name: data.profile.name, email: data.profile.email }));
+
+      const data = await postJsonWithRetry(
+        `${API_BASE}/api/auth/google-profile`,
+        { token: credentialResponse.credential },
+        2
+      );
+
+      setForm((prev) => ({
+        ...prev,
+        name: data.profile.name,
+        email: data.profile.email,
+      }));
+
       setView('form');
     } catch (err) { setError(err.message); }
   };
