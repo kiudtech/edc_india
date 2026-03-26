@@ -231,6 +231,60 @@ const Lightbox = ({ item, onClose }) => {
   )
 }
 
+const ContactCard = ({ form }) => {
+  const [open, setOpen] = useState(false)
+  return (
+    <motion.div
+      variants={staggerItem}
+      layout
+      className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-lg transition-all duration-300"
+    >
+      <div className={`h-1.5 w-full bg-gradient-to-r ${form.gradient}`} />
+      <div className="p-7">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${form.bg} text-3xl shadow-sm`}>
+              {form.icon}
+            </div>
+            <div>
+              <div className={`text-base font-bold ${form.accent}`}>{form.title}</div>
+              <div className="text-xs text-slate-500 mt-0.5">{form.desc}</div>
+            </div>
+          </div>
+          <button
+            onClick={() => setOpen(!open)}
+            className={`ml-4 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${open ? 'border-slate-300 bg-slate-100 rotate-45' : 'border-slate-200 bg-white hover:bg-slate-50'}`}
+          >
+            <svg className="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </div>
+
+        <motion.div
+          initial={false}
+          animate={{ height: open ? 'auto' : 0, opacity: open ? 1 : 0 }}
+          transition={{ duration: 0.35, ease: 'easeInOut' }}
+          style={{ overflow: 'hidden' }}
+        >
+          <div className="mt-5 grid gap-3">
+            {['Full Name', 'Email Address', 'Organization / Startup'].map((ph) => (
+              <input
+                key={ph}
+                className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 ${form.ring}`}
+                placeholder={ph}
+              />
+            ))}
+            <button className={`mt-1 w-full rounded-2xl px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all duration-200 hover:shadow-xl active:scale-95 ${form.btn}`}>
+              {form.cta} →
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
+  )
+}
+
 const Home = () => {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState(courseTabs[0])
@@ -763,34 +817,24 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ CONTACT ═══════════════ */}
-      <section id="contact" className="bg-white py-14 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section id="contact" className="relative bg-gradient-to-br from-[#f0f4ff] via-white to-[#fff7f0] py-20 sm:py-28 overflow-hidden">
+        <div className="pointer-events-none absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-blue-100/40 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-40 -right-40 h-[500px] w-[500px] rounded-full bg-orange-100/30 blur-3xl" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Get Started</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Applications & Partnerships</h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">Ready to join the ecosystem? Fill out the relevant form below.</p>
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Get Started</div>
+            <h2 className="mt-4 text-3xl font-extrabold text-slate-900 sm:text-4xl lg:text-5xl">Applications & Partnerships</h2>
+            <p className="mx-auto mt-4 max-w-xl text-base text-slate-500">Pick your path and let's build together.</p>
           </motion.div>
-          <motion.div className="mt-12 grid gap-6 sm:grid-cols-2" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+
+          <motion.div className="mt-16 grid gap-6 sm:grid-cols-2" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {[
-              { title: 'Startup Application', cta: 'Apply Now', icon: '🚀' },
-              { title: 'Investor Interest', cta: 'Join as Investor', icon: '💼' },
-              { title: 'College Partnership', cta: 'Partner With Us', icon: '🏛️' },
-              { title: 'Newsletter', cta: 'Subscribe', icon: '📩' },
+              { title: 'Startup Application', cta: 'Apply Now', icon: '🚀', gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50', accent: 'text-blue-600', ring: 'focus:ring-blue-500/20 focus:border-blue-500', btn: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700', desc: 'Join the EDC India startup ecosystem.' },
+              { title: 'Investor Interest', cta: 'Join as Investor', icon: '💼', gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50', accent: 'text-emerald-600', ring: 'focus:ring-emerald-500/20 focus:border-emerald-500', btn: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700', desc: 'Connect with high-potential founders.' },
+              { title: 'College Partnership', cta: 'Partner With Us', icon: '🏛️', gradient: 'from-purple-500 to-pink-600', bg: 'bg-purple-50', accent: 'text-purple-600', ring: 'focus:ring-purple-500/20 focus:border-purple-500', btn: 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700', desc: 'Build an on-campus startup ecosystem.' },
+              { title: 'Newsletter', cta: 'Subscribe', icon: '📩', gradient: 'from-orange-500 to-rose-500', bg: 'bg-orange-50', accent: 'text-orange-600', ring: 'focus:ring-orange-500/20 focus:border-orange-500', btn: 'bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600', desc: 'Stay updated with funding & events.' },
             ].map((form) => (
-              <motion.form key={form.title} variants={staggerItem} whileHover={{ y: -2 }} className="animated-border rounded-2xl border border-slate-100 bg-[#fafbfe] p-6 shadow-sm transition hover:shadow-md">
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">{form.icon}</span>
-                  <div className="text-sm font-bold text-slate-800">{form.title}</div>
-                </div>
-                <div className="mt-4 grid gap-3">
-                  <input className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20" placeholder="Full Name" />
-                  <input className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20" placeholder="Email Address" />
-                  <input className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20" placeholder="Organization / Startup" />
-                </div>
-                <button className="mt-4 w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
-                  {form.cta}
-                </button>
-              </motion.form>
+              <ContactCard key={form.title} form={form} />
             ))}
           </motion.div>
         </div>
