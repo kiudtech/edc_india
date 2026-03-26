@@ -76,13 +76,16 @@ export default function StartupApplicationPage() {
         return data;
       } catch (err) {
         lastError = err;
-        const retriable = String(err?.message || '').toLowerCase().includes('failed to fetch')
-          || String(err?.message || '').toLowerCase().includes('network')
-          || String(err?.message || '').toLowerCase().includes('econnreset');
+        const msg = String(err?.message || '').toLowerCase();
+        const retriable = msg.includes('failed to fetch')
+          || msg.includes('network')
+          || msg.includes('econnreset')
+          || msg.includes('invalid response');
         if (attempt < retries && retriable) {
-          await new Promise((resolve) => setTimeout(resolve, 400));
+          await new Promise((resolve) => setTimeout(resolve, 800));
           continue;
         }
+        break;
       }
     }
     throw lastError || new Error('Request failed');
@@ -94,7 +97,7 @@ export default function StartupApplicationPage() {
       const data = await postJsonWithRetry(
         `${API_BASE}/api/auth/google-profile`,
         { token: credentialResponse.credential },
-        1
+        2
       );
 
       setForm((prev) => ({

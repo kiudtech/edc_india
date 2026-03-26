@@ -16,27 +16,69 @@ export default function LoginPage() {
     password: '',
   })
 
+  // Helper to read JSON safely from a response
+  const readJsonSafely = async (response) => {
+    const text = await response.text()
+    if (!text) return {}
+    try {
+      return JSON.parse(text)
+    } catch {
+      throw new Error('Server returned an invalid response. Make sure the backend is running. ' + text.substring(0, 100))
+    }
+  }
+
+  // Wrapper to automatically retry if the server is waking up
+  const postJsonWithRetry = async (url, body, retries = 1) => {
+    let lastError
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        })
+        const data = await readJsonSafely(response)
+        if (!response.ok) throw new Error(data.message || 'Request failed')
+        return data
+      } catch (err) {
+        lastError = err
+        const message = String(err?.message || '').toLowerCase()
+        const retriable = message.includes('failed to fetch')
+          || message.includes('network')
+          || message.includes('econnreset')
+          || message.includes('invalid response') /* handles HTML error pages from waking servers */
+        if (attempt < retries && retriable) {
+          await new Promise((resolve) => setTimeout(resolve, 800)) // give backend time to spin up
+          continue
+        }
+        break // exit if not retriable
+      }
+    }
+    throw lastError || new Error('Request failed')
+  }
+
   const handleGoogleSuccess = async (credentialResponse) => {
     setError('')
     setGoogleSubmitting(true)
     try {
       // Send the raw Google token securely to our backend for verification
-      const res = await fetch(`${API_BASE}/api/auth/google-login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: credentialResponse.credential }),
-      })
-      const text = await res.text()
-      let data
-      try { data = JSON.parse(text) } catch { throw new Error('Server returned an invalid response. Make sure the backend is running.') }
-      if (!res.ok) throw new Error(data.message || 'Login failed')
+      const data = await postJsonWithRetry(
+        `${API_BASE}/api/auth/google-login`,
+        { token: credentialResponse.credential },
+        2 // attempt up to 3 times (1 initial + 2 retries)
+      )
 
       login(data.token, data.user)
       if (data.user.role === 'admin') navigate('/admin')
       else navigate('/dashboard')
     } catch (err) {
       console.error(err)
-      setError(err.message || 'An error occurred during Google sign in.')
+      // Extract clean error message without the truncated HTML response
+      let errorMsg = err.message || 'An error occurred during Google sign in.'
+      if (errorMsg.includes('Server returned an invalid response.')) {
+        errorMsg = 'Server is waking up. Please try again in a few seconds.'
+      }
+      setError(errorMsg)
     } finally {
       setGoogleSubmitting(false)
     }
@@ -48,19 +90,14 @@ export default function LoginPage() {
     setAdminSubmitting(true)
 
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const data = await postJsonWithRetry(
+        `${API_BASE}/api/auth/login`,
+        {
           identifier: adminCredentials.identifier,
           password: adminCredentials.password,
-        }),
-      })
-
-      const text = await res.text()
-      let data
-      try { data = JSON.parse(text) } catch { throw new Error('Server returned an invalid response. Make sure the backend is running.') }
-      if (!res.ok) throw new Error(data.message || 'Admin login failed')
+        },
+        1
+      )
 
       if (data.user?.role !== 'admin') {
         throw new Error('This account does not have admin access.')
@@ -70,7 +107,11 @@ export default function LoginPage() {
       navigate('/admin')
     } catch (err) {
       console.error(err)
-      setError(err.message || 'An error occurred during admin login.')
+      let errorMsg = err.message || 'An error occurred during admin login.'
+      if (errorMsg.includes('Server returned an invalid response.')) {
+        errorMsg = 'Server is waking up. Please try again in a few seconds.'
+      }
+      setError(errorMsg)
     } finally {
       setAdminSubmitting(false)
     }
