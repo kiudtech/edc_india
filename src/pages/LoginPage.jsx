@@ -9,12 +9,6 @@ export default function LoginPage() {
   const { login } = useAuth()
   const [error, setError] = useState('')
   const [googleSubmitting, setGoogleSubmitting] = useState(false)
-  const [adminSubmitting, setAdminSubmitting] = useState(false)
-  const [showAdminLogin, setShowAdminLogin] = useState(false)
-  const [adminCredentials, setAdminCredentials] = useState({
-    identifier: '',
-    password: '',
-  })
 
   // Helper to read JSON safely from a response
   const readJsonSafely = async (response) => {
@@ -84,39 +78,6 @@ export default function LoginPage() {
     }
   }
 
-  const handleAdminLogin = async (e) => {
-    e.preventDefault()
-    setError('')
-    setAdminSubmitting(true)
-
-    try {
-      const data = await postJsonWithRetry(
-        `${API_BASE}/api/auth/login`,
-        {
-          identifier: adminCredentials.identifier,
-          password: adminCredentials.password,
-        },
-        1
-      )
-
-      if (data.user?.role !== 'admin') {
-        throw new Error('This account does not have admin access.')
-      }
-
-      login(data.token, data.user)
-      navigate('/admin')
-    } catch (err) {
-      console.error(err)
-      let errorMsg = err.message || 'An error occurred during admin login.'
-      if (errorMsg.includes('Server returned an invalid response.')) {
-        errorMsg = 'Server is waking up. Please try again in a few seconds.'
-      }
-      setError(errorMsg)
-    } finally {
-      setAdminSubmitting(false)
-    }
-  }
-
   return (
     <div className="min-h-screen bg-accent">
       {/* Navbar */}
@@ -161,50 +122,6 @@ export default function LoginPage() {
                 width={300}
                 text="signin_with"
               />
-            )}
-          </div>
-
-          <div className="mt-6 border-t border-slate-200 pt-5">
-            <button
-              type="button"
-              onClick={() => setShowAdminLogin((prev) => !prev)}
-              className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
-              {showAdminLogin ? 'Hide Admin Login' : 'Login as Admin'}
-            </button>
-
-            {showAdminLogin && (
-              <form onSubmit={handleAdminLogin} className="mt-4 space-y-3">
-                <div>
-                  <label className="mb-1 block text-xs font-semibold text-slate-600">Admin Email or Founder ID</label>
-                  <input
-                    type="text"
-                    value={adminCredentials.identifier}
-                    onChange={(e) => setAdminCredentials((prev) => ({ ...prev, identifier: e.target.value }))}
-                    required
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-800 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    placeholder="admin@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs font-semibold text-slate-600">Password</label>
-                  <input
-                    type="password"
-                    value={adminCredentials.password}
-                    onChange={(e) => setAdminCredentials((prev) => ({ ...prev, password: e.target.value }))}
-                    required
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-800 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    placeholder="Enter admin password"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={adminSubmitting}
-                  className="w-full rounded-xl bg-slate-800 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-900 disabled:opacity-50"
-                >
-                  {adminSubmitting ? 'Signing in...' : 'Sign In to Admin Dashboard'}
-                </button>
-              </form>
             )}
           </div>
         </div>

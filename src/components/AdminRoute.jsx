@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import AdminLoginPage from '../pages/AdminLoginPage'
 
 export default function AdminRoute({ children }) {
   const { user, loading } = useAuth()
@@ -15,8 +16,9 @@ export default function AdminRoute({ children }) {
     )
   }
 
-  if (!user) return <Navigate to="/login" replace />
-  if (user.role !== 'admin') return <Navigate to="/dashboard" replace />
+  // If no user is logged in, show the Admin Login page directly on the /admin route
+  if (!user) return <AdminLoginPage />
 
+  // If a non-admin user tries to access the admin area, redirect them to their dashboard
   return children
 }
