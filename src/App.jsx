@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { BrowserRouter, Route, Routes, Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -7,6 +7,7 @@ import 'swiper/css'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
+import ScrollToTop from './components/ScrollToTop'
 import SiteNavbar from './components/SiteNavbar'
 import JoinPage from './pages/JoinPage'
 import PaymentPage from './pages/PaymentPage'
@@ -20,17 +21,18 @@ import FellowshipPage from './pages/FellowshipPage'
 import FellowshipApplicationPage from './pages/FellowshipApplicationPage'
 import StartupApplicationPage from './pages/StartupApplicationPage'
 import MembershipValidationPage from './pages/MembershipValidationPage'
+import StartupMembershipPage from './pages/StartupMembershipPage'
 import RankingPage from './pages/RankingPage'
 import CollegeRankingApplicationPage from './pages/CollegeRankingApplicationPage'
 import TermsPage from './pages/TermsPage'
 
 const offerings = [
-  { title: 'Idea Validation', desc: 'Get a detailed validation report and clear direction for your next step.', icon: '🔍', route: '/join-validation' },
-  { title: 'EDC Membership', desc: 'Join India\u2019s growing entrepreneurial community for everything you need.', icon: '🤝', route: '/join' },
+  { title: 'Idea Validation', desc: 'Get a detailed validation report and clear direction for your next step.', icon: '🔍', route: '/membership-validation' },
+  { title: 'EDC Membership', desc: 'Join India\u2019s growing entrepreneurial community for everything you need.', icon: '🤝', route: '/startup-membership' },
   { title: 'Entrepreneurial Fellowship', desc: 'A 1-year intensive program to build startups from scratch.', icon: '🎓', route: '/fellowship' },
   { title: 'Innovation & Incubation Ranking', desc: 'Transparent, on-ground evaluation of colleges and universities.', icon: '🏆', route: '/ranking' },
-  { title: 'Grant Support', desc: 'Assistance in securing government and private grants.', icon: '📋', route: '/join' },
-  { title: 'College Incubation', desc: 'Partnering with institutions to build on-campus startup ecosystems.', icon: '🏛️', route: '/college-apply' },
+  { title: 'Fund Support', desc: 'Assistance in securing government and private grants.', icon: '📋', route: '/join' },
+  { title: 'Incubation Accelerator', desc: 'Partnering with institutions to build on-campus startup ecosystems.', icon: '🏛️', route: '/college-apply' },
 ]
 const timeline = [
   { year: '2019', title: 'Founded', text: 'EDC India was created with a belief that entrepreneurship is a mindset.' },
@@ -178,26 +180,35 @@ const staggerItem = {
 }
 const MotionDiv = motion.div
 
-const Counter = ({ value, label }) => {
+const Counter = ({ value, label, prefix = '', suffix = '+', className = 'mt-3 text-3xl font-bold text-primary' }) => {
   const [count, setCount] = useState(0)
+  const elRef = useRef(null)
+  const hasRun = useRef(false)
+
   useEffect(() => {
-    let start = 0
-    const duration = 1400
-    const startTime = performance.now()
-    const step = (now) => {
-      const progress = Math.min((now - startTime) / duration, 1)
-      const eased = 1 - Math.pow(1 - progress, 3)
-      start = Math.floor(eased * value)
-      setCount(start)
-      if (progress < 1) requestAnimationFrame(step)
-    }
-    requestAnimationFrame(step)
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !hasRun.current) {
+        hasRun.current = true
+        const duration = 1600
+        const startTime = performance.now()
+        const step = (now) => {
+          const progress = Math.min((now - startTime) / duration, 1)
+          const eased = 1 - Math.pow(1 - progress, 3)
+          setCount(Math.floor(eased * value))
+          if (progress < 1) requestAnimationFrame(step)
+        }
+        requestAnimationFrame(step)
+      }
+    }, { threshold: 0.3 })
+    if (elRef.current) observer.observe(elRef.current)
+    return () => observer.disconnect()
   }, [value])
+
   return (
-    <>
-      <div className="mt-3 text-3xl font-bold text-primary">{count.toLocaleString('en-IN')}+</div>
+    <div ref={elRef}>
+      <div className={className}>{prefix}{count.toLocaleString('en-IN')}{suffix}</div>
       <div className="mt-1 text-xs font-medium text-slate-600">{label}</div>
-    </>
+    </div>
   )
 }
 
@@ -246,7 +257,7 @@ const Home = () => {
               label === 'Home' ? (
                 <a key={label} href={`#${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</a>
               ) : label === 'Fellowship' || label === 'Membership' || label === 'Ranking' ? (
-                <Link key={label} to={`/${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</Link>
+                <Link key={label} to={label === 'Membership' ? '/startup-membership' : `/${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</Link>
               ) : (
                 <a key={label} href={`#${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</a>
               )
@@ -322,15 +333,14 @@ const Home = () => {
           </motion.div>
           <motion.div className="mt-14 grid w-full max-w-3xl grid-cols-2 gap-5 sm:grid-cols-4 xl:max-w-4xl xl:gap-6" variants={staggerContainer} initial="hidden" animate="visible">
             {[
-              { value: '500+', label: 'Startups', icon: '🚀' },
-              { value: '₹50Cr+', label: 'Funding Raised', icon: '💰' },
-              { value: '100+', label: 'Partners', icon: '🤝' },
-              { value: '25+', label: 'Countries', icon: '🌏' },
+              { num: 500, label: 'Startups', icon: '🚀', suffix: '+' },
+              { num: 50, label: 'Funding Raised', icon: '💰', prefix: '₹', suffix: 'Cr+' },
+              { num: 100, label: 'Partners', icon: '🤝', suffix: '+' },
+              { num: 25, label: 'Countries', icon: '🌏', suffix: '+' },
             ].map((stat) => (
               <motion.div key={stat.label} variants={staggerItem} className="card-hover-glow rounded-2xl border border-slate-100 bg-white/80 p-4 text-center shadow-sm backdrop-blur transition duration-300 hover:-translate-y-1">
                 <div className="text-lg">{stat.icon}</div>
-                <div className="mt-1 text-xl font-bold text-primary sm:text-2xl xl:text-3xl">{stat.value}</div>
-                <div className="mt-0.5 text-[11px] font-medium text-slate-500">{stat.label}</div>
+                <Counter value={stat.num} label={stat.label} prefix={stat.prefix || ''} suffix={stat.suffix} className="mt-1 text-xl font-bold text-primary sm:text-2xl xl:text-3xl" />
               </motion.div>
             ))}
           </motion.div>
@@ -403,7 +413,7 @@ const Home = () => {
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">{item.icon}</div>
                 <div className="mt-4 text-sm font-bold text-slate-800">{item.title}</div>
                 <div className="mt-2 text-xs leading-relaxed text-slate-500">{item.desc}</div>
-                <a href="#" className="mt-4 inline-block text-xs font-semibold text-primary">Explore →</a>
+                <button onClick={() => navigate(item.route)} className="mt-4 inline-block text-xs font-semibold text-primary">Explore →</button>
               </motion.div>
             ))}
           </motion.div>
@@ -464,7 +474,7 @@ const Home = () => {
                   <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-green-500">✓</span>{f}</li>
                 ))}
               </ul>
-              <button onClick={() => navigate('/join')} className="mt-6 w-full rounded-full bg-primary py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200/50 transition hover:bg-blue-700">
+              <button onClick={() => navigate('/startup-membership')} className="mt-6 w-full rounded-full bg-primary py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200/50 transition hover:bg-blue-700">
                 Join Now — ₹2,500
               </button>
             </motion.div>
@@ -481,7 +491,7 @@ const Home = () => {
                   <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-purple-500">✓</span>{f}</li>
                 ))}
               </ul>
-              <button onClick={() => navigate('/join-validation')} className="mt-6 w-full rounded-full bg-purple-600 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-200/50 transition hover:bg-purple-700">
+              <button onClick={() => navigate('/membership-validation')} className="mt-6 w-full rounded-full bg-purple-600 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-200/50 transition hover:bg-purple-700">
                 Join Now — ₹5,000
               </button>
             </motion.div>
@@ -489,7 +499,7 @@ const Home = () => {
               <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-semibold text-indigo-600">Career + Startup</div>
               <h3 className="mt-4 text-lg font-bold text-slate-900">Fellowship Program</h3>
               <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-indigo-600">₹5,000</span>
+                <span className="text-3xl font-bold text-indigo-600">₹10,000</span>
                 <span className="text-xs text-slate-500">one-time</span>
               </div>
               <p className="mt-3 text-xs leading-relaxed text-slate-500">A structured fellowship track to build entrepreneurial skills with execution support, mentorship, and growth opportunities.</p>
@@ -498,8 +508,8 @@ const Home = () => {
                   <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-indigo-500">✓</span>{f}</li>
                 ))}
               </ul>
-              <button onClick={() => navigate('/fellowship-application')} className="mt-6 w-full rounded-full bg-indigo-600 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200/50 transition hover:bg-indigo-700">
-                Join Fellowship — ₹5,000
+              <button onClick={() => navigate('/fellowship')} className="mt-6 w-full rounded-full bg-indigo-600 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200/50 transition hover:bg-indigo-700">
+                Join Fellowship — ₹10,000
               </button>
             </motion.div>
           </motion.div>
@@ -572,14 +582,13 @@ const Home = () => {
           </div>
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[
-              { value: '120+', label: 'Partner Hubs' },
-              { value: '27', label: 'States Covered' },
-              { value: '45K+', label: 'Student Reach' },
-              { value: '300+', label: 'Innovation Labs' },
+              { num: 120, label: 'Partner Hubs' },
+              { num: 27, label: 'States Covered' },
+              { num: 45, label: 'Student Reach', suffix: 'K+' },
+              { num: 300, label: 'Innovation Labs' },
             ].map((stat) => (
               <div key={stat.label} className="rounded-xl border border-slate-100 bg-white p-5 text-center shadow-sm">
-                <div className="text-xl font-bold text-primary">{stat.value}</div>
-                <div className="mt-1 text-xs font-medium text-slate-500">{stat.label}</div>
+                <Counter value={stat.num} label={stat.label} suffix={stat.suffix || '+'} className="text-xl font-bold text-primary" />
               </div>
             ))}
           </div>
@@ -673,7 +682,7 @@ const Home = () => {
               <button type="submit" className="flex-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
                 Apply for Ranking
               </button>
-              <Link to="/college-ranking-application" className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+              <Link to="/ranking" className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
                 Full Application
               </Link>
             </div>
@@ -923,6 +932,7 @@ function AppContent() {
 
   return (
     <>
+      <ScrollToTop />
       {!hideGlobalNavbar && <SiteNavbar />}
       <Routes>
         <Route path="/" element={<Home />} />
@@ -938,6 +948,7 @@ function AppContent() {
         <Route path="/fellowship" element={<FellowshipPage />} />
         <Route path="/fellowship-application" element={<FellowshipApplicationPage />} />
         <Route path="/membership-validation" element={<MembershipValidationPage />} />
+        <Route path="/startup-membership" element={<StartupMembershipPage />} />
         <Route path="/ranking" element={<RankingPage />} />
         <Route path="/college-ranking-application" element={<CollegeRankingApplicationPage />} />
         <Route path="/terms" element={<TermsPage />} />

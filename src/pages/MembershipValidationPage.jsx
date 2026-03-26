@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const MembershipValidationPage = () => {
+  useEffect(() => { window.scrollTo(0, 0) }, [])
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
@@ -64,8 +65,7 @@ const MembershipValidationPage = () => {
 
         <motion.section className="mb-16 text-center" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
           <h2 className="text-3xl font-bold text-slate-900">💰 Simple & Powerful Pricing</h2>
-          <p className="mt-4 text-slate-600">Idea Validation: ₹5,000</p>
-          <p className="text-slate-600">EDC Membership (1 Year): <span className="line-through">₹2,500</span></p>
+          <p className="mt-4 text-slate-600">Startup Membership: ₹5,000</p>
           <p className="mt-2 text-2xl font-bold text-primary">Today You Pay Only ₹5,000</p>
           <p className="font-semibold text-slate-800">And get 1-Year Membership FREE</p>
         </motion.section>
