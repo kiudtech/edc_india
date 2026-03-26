@@ -960,6 +960,12 @@ const Home = () => {
               <a href="#" className="transition hover:text-white">Refund Policy</a>
             </div>
           </div>
+          <div className="border-t border-white/5 py-3 text-center text-[11px] text-white/20">
+            Powered by{' '}
+            <a href="https://www.kiudtech.com/" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition">
+              Kiudtech Solutions
+            </a>
+          </div>
         </div>
       </footer>
     </MotionDiv>
