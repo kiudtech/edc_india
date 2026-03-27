@@ -26,6 +26,7 @@ import StartupMembershipPage from './pages/StartupMembershipPage'
 import RankingPage from './pages/RankingPage'
 import CollegeRankingApplicationPage from './pages/CollegeRankingApplicationPage'
 import TermsPage from './pages/TermsPage'
+import NotFoundPage from './pages/NotFoundPage'
 import { API_BASE } from './config'
 
 const offerings = [
@@ -1073,6 +1074,7 @@ function AppContent() {
         <Route path="/ranking" element={<RankingPage />} />
         <Route path="/college-ranking-application" element={<CollegeRankingApplicationPage />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   )
