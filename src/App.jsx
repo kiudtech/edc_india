@@ -26,6 +26,7 @@ import StartupMembershipPage from './pages/StartupMembershipPage'
 import RankingPage from './pages/RankingPage'
 import CollegeRankingApplicationPage from './pages/CollegeRankingApplicationPage'
 import TermsPage from './pages/TermsPage'
+import { API_BASE } from './config'
 
 const offerings = [
   { title: 'Idea Validation', desc: 'Get a detailed validation report and clear direction for your next step.', icon: '🔍', route: '/membership-validation' },
@@ -149,6 +150,65 @@ const impactStats = [
   { label: 'Institutes', value: 100, icon: '🏫' },
   { label: 'Startups', value: 500, icon: '🚀' },
   { label: 'Members', value: 3000, icon: '👥' },
+]
+
+const defaultPlans = [
+  {
+    slug: 'startup-membership',
+    name: 'Startup Membership',
+    badge: 'Most Popular',
+    description: 'Full access to the EDC India startup ecosystem, mentorship, events, grants, and funding opportunities.',
+    price: 2500,
+    billingText: '/ one-time',
+    ctaText: 'Join Now',
+    ctaRoute: '/startup-application',
+    features: [
+      'Unique Founder ID (BUB-XXXX)',
+      'Access to Events & Workshops',
+      'Grant & Funding Directory',
+      'Investor Network Access',
+      'Community & Announcements',
+      'Course Enrollment',
+      'Dedicated Support Tickets',
+    ],
+  },
+  {
+    slug: 'idea-validation',
+    name: 'Idea Validation',
+    badge: 'Expert Review',
+    description: 'Get your startup idea validated by experts, receive feedback, certification, and a member account.',
+    price: 5000,
+    billingText: '/ one-time',
+    ctaText: 'Join Now',
+    ctaRoute: '/join-validation',
+    features: [
+      'Expert Idea Review & Feedback',
+      'Validation Certificate',
+      'Auto Member Account + Founder ID',
+      'Access to Full Ecosystem',
+      'Priority Admin Review',
+      'Startup Stage Assessment',
+      'Innovation Report',
+    ],
+  },
+  {
+    slug: 'fellowship-program',
+    name: 'Fellowship Program',
+    badge: 'Career + Startup',
+    description: 'A structured fellowship track to build entrepreneurial skills with execution support, mentorship, and growth opportunities.',
+    price: 5000,
+    billingText: '/ one-time',
+    ctaText: 'Join Fellowship',
+    ctaRoute: '/fellowship-application',
+    features: [
+      'Execution-focused learning path',
+      'Mentor support and progress guidance',
+      'Communication and pitch practice',
+      'Career and startup exposure',
+      'Network with founders and peers',
+      'Funding opportunity readiness',
+    ],
+  },
 ]
 
 const fadeUp = {
@@ -337,7 +397,56 @@ const Home = () => {
   const [activeTab, setActiveTab] = useState(courseTabs[0])
   const [lightbox, setLightbox] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [plans, setPlans] = useState(defaultPlans)
+  const [plansError, setPlansError] = useState('')
   const heroHeadlineWords = 'Entrepreneurship is not just about starting a company — it’s about building a mindset.'.split(' ')
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      setPlansError('')
+
+      const isLocalhost = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname)
+      const apiFromEnv = (API_BASE || '').trim()
+      const baseCandidates = Array.from(new Set([
+        apiFromEnv,
+        '',
+        ...(apiFromEnv ? [] : ['http://localhost:5000']),
+        ...(isLocalhost ? ['http://127.0.0.1:5000'] : []),
+      ]))
+
+      let lastFailure = ''
+
+      for (const base of baseCandidates) {
+        try {
+          const res = await fetch(`${base}/api/plans`, { cache: 'no-store' })
+          if (!res.ok) {
+            lastFailure = `Plans API responded with status ${res.status}.`
+            continue
+          }
+
+          const contentType = res.headers.get('content-type') || ''
+          if (!contentType.includes('application/json')) {
+            lastFailure = 'Plans API is returning non-JSON content. Check VITE_API_URL or deployment rewrites for /api routes.'
+            continue
+          }
+
+          const data = await res.json()
+          if (Array.isArray(data)) {
+            setPlans(data)
+            return
+          }
+
+          lastFailure = 'Plans API did not return a valid list.'
+        } catch {
+          lastFailure = 'Could not connect to plans API endpoint.'
+        }
+      }
+
+      setPlansError(`${lastFailure || 'Unable to load latest plans from backend.'} Showing default plans.`)
+    }
+
+    fetchPlans()
+  }, [])
 
   return (
     <MotionDiv
@@ -381,7 +490,7 @@ const Home = () => {
                 <a key={label} href={`#${label.toLowerCase()}`} className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={() => setMobileMenuOpen(false)}>{label}</a>
               ))}
               <Link to="/login" className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={() => setMobileMenuOpen(false)}>Login</Link>
-              <a href="#plans" onClick={() => setMobileMenuOpen(false)} className="mt-2 block w-full rounded-full bg-secondary px-5 py-2.5 text-center text-xs font-semibold text-white shadow-glow">Join Now</a>
+              <Link to="/join" onClick={() => setMobileMenuOpen(false)} className="mt-2 block w-full rounded-full bg-secondary px-5 py-2.5 text-center text-xs font-semibold text-white shadow-glow">Join Now</Link>
             </div>
           </div>
         )}
@@ -424,9 +533,9 @@ const Home = () => {
               Courses, Funding, Global Exposure &amp; Startup Growth Ecosystem
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <a href="#plans" className="cta-pulse group rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-200/60 transition hover:shadow-xl hover:shadow-blue-200/80 lg:px-8 lg:py-4 lg:text-base">
+              <Link to="/join" className="cta-pulse group rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-200/60 transition hover:shadow-xl hover:shadow-blue-200/80 lg:px-8 lg:py-4 lg:text-base">
                 Join Now <span className="ml-1 inline-block transition group-hover:translate-x-1">→</span>
-              </a>
+              </Link>
               <a href="#programs" className="rounded-full border border-slate-300 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:shadow-md lg:px-8 lg:py-4 lg:text-base">
                 Explore Programs
               </a>
@@ -562,57 +671,49 @@ const Home = () => {
             <p className="mt-3 text-sm text-slate-500">Two pathways to grow your startup with EDC India</p>
           </motion.div>
           <motion.div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <motion.div variants={staggerItem} className="relative rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" whileHover={{ scale: 1.02 }}>
-              <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-[10px] font-semibold text-blue-600">Most Popular</div>
-              <h3 className="mt-4 text-lg font-bold text-slate-900">Startup Membership</h3>
-              <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-primary">₹2,500</span>
-                <span className="text-xs text-slate-500">one-time</span>
+            {plansError && (
+              <div className="col-span-full mx-auto mb-5 w-full rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 text-center">
+                {plansError}
               </div>
-              <p className="mt-3 text-xs leading-relaxed text-slate-500">Full access to the EDC India startup ecosystem, mentorship, events, grants, and funding opportunities.</p>
-              <ul className="mt-5 space-y-2.5 text-xs text-slate-600">
-                {['Unique Founder ID (BUB-XXXX)', 'Access to Events & Workshops', 'Grant & Funding Directory', 'Investor Network Access', 'Community & Announcements', 'Course Enrollment', 'Dedicated Support Tickets'].map((f) => (
-                  <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-green-500">✓</span>{f}</li>
-                ))}
-              </ul>
-              <button onClick={() => navigate('/startup-membership')} className="mt-6 w-full rounded-full bg-primary py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200/50 transition hover:bg-blue-700">
-                Join Now — ₹2,500
-              </button>
-            </motion.div>
-            <motion.div variants={staggerItem} className="relative rounded-2xl border-2 border-purple-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" whileHover={{ scale: 1.02 }}>
-              <div className="inline-flex items-center gap-2 rounded-full bg-purple-50 px-3 py-1 text-[10px] font-semibold text-purple-600">Expert Review</div>
-              <h3 className="mt-4 text-lg font-bold text-slate-900">Idea Validation</h3>
-              <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-purple-600">₹5,000</span>
-                <span className="text-xs text-slate-500">one-time</span>
-              </div>
-              <p className="mt-3 text-xs leading-relaxed text-slate-500">Get your startup idea validated by experts, receive feedback, certification, and a member account.</p>
-              <ul className="mt-5 space-y-2.5 text-xs text-slate-600">
-                {['Expert Idea Review & Feedback', 'Validation Certificate', 'Auto Member Account + Founder ID', 'Access to Full Ecosystem', 'Priority Admin Review', 'Startup Stage Assessment', 'Innovation Report'].map((f) => (
-                  <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-purple-500">✓</span>{f}</li>
-                ))}
-              </ul>
-              <button onClick={() => navigate('/membership-validation')} className="mt-6 w-full rounded-full bg-purple-600 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-200/50 transition hover:bg-purple-700">
-                Join Now — ₹5,000
-              </button>
-            </motion.div>
-            <motion.div variants={staggerItem} className="relative rounded-2xl border-2 border-indigo-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" whileHover={{ scale: 1.02 }}>
-              <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-semibold text-indigo-600">Career + Startup</div>
-              <h3 className="mt-4 text-lg font-bold text-slate-900">Fellowship Program</h3>
-              <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-indigo-600">₹10,000</span>
-                <span className="text-xs text-slate-500">one-time</span>
-              </div>
-              <p className="mt-3 text-xs leading-relaxed text-slate-500">A structured fellowship track to build entrepreneurial skills with execution support, mentorship, and growth opportunities.</p>
-              <ul className="mt-5 space-y-2.5 text-xs text-slate-600">
-                {['Execution-focused learning path', 'Mentor support and progress guidance', 'Communication and pitch practice', 'Career and startup exposure', 'Network with founders and peers', 'Funding opportunity readiness'].map((f) => (
-                  <li key={f} className="flex items-start gap-2"><span className="mt-0.5 text-indigo-500">✓</span>{f}</li>
-                ))}
-              </ul>
-              <button onClick={() => navigate('/fellowship')} className="mt-6 w-full rounded-full bg-indigo-600 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200/50 transition hover:bg-indigo-700">
-                Join Fellowship — ₹10,000
-              </button>
-            </motion.div>
+            )}
+            {plans.map((plan, index) => {
+              const planThemes = [
+                { border: 'border border-slate-200', badgeTheme: 'bg-blue-50 text-blue-600', priceTheme: 'text-primary', checkColor: 'text-green-500', btnTheme: 'bg-primary shadow-blue-200/50 hover:bg-blue-700' },
+                { border: 'border-2 border-purple-200', badgeTheme: 'bg-purple-50 text-purple-600', priceTheme: 'text-purple-600', checkColor: 'text-purple-500', btnTheme: 'bg-purple-600 shadow-purple-200/50 hover:bg-purple-700' },
+                { border: 'border-2 border-indigo-200', badgeTheme: 'bg-indigo-50 text-indigo-600', priceTheme: 'text-indigo-600', checkColor: 'text-indigo-500', btnTheme: 'bg-indigo-600 shadow-indigo-200/50 hover:bg-indigo-700' },
+              ];
+              const theme = planThemes[index % planThemes.length];
+
+              return (
+                <motion.div key={plan.slug || `${plan.name}-${index}`} variants={staggerItem} className={`relative rounded-2xl bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${theme.border}`} whileHover={{ scale: 1.02 }}>
+                  {plan.badge && (
+                    <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-semibold ${theme.badgeTheme}`}
+                    >
+                      {plan.badge}
+                    </div>
+                  )}
+                  <h3 className="mt-4 text-lg font-bold text-slate-900">{plan.name}</h3>
+                  <div className="mt-2 flex items-baseline gap-1">
+                    <span className={`text-3xl font-bold ${theme.priceTheme}`}>₹{Number(plan.price || 0).toLocaleString('en-IN')}</span>
+                    <span className="text-xs text-slate-500">{plan.billingText || 'one-time'}</span>
+                  </div>
+                  <p className="mt-3 text-xs leading-relaxed text-slate-500">{plan.description}</p>
+                  <ul className="mt-5 space-y-2.5 text-xs text-slate-600 bg-white">
+                    {(plan.features || []).map((f, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className={`mt-0.5 ${theme.checkColor}`}>✓</span>{f}
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    onClick={() => navigate((plan.ctaRoute || '/join').trim().startsWith('/') ? (plan.ctaRoute || '/join').trim() : `/${(plan.ctaRoute || 'join').trim()}`)}
+                    className={`mt-6 w-full rounded-full py-3 text-sm font-semibold text-white shadow-lg transition ${theme.btnTheme}`}
+                  >
+                    {(plan.ctaText || 'Join Now')} — ₹{Number(plan.price || 0).toLocaleString('en-IN')}
+                  </button>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>
