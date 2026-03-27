@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { API_BASE } from '../config';
+import SiteFooter from '../components/SiteFooter';
 
 const fadeUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
@@ -125,6 +126,7 @@ export default function StartupApplicationPage() {
   const inputClass = 'mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 transition focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20';
 
   return (
+    <>
     <div className="min-h-screen flex flex-col lg:flex-row">
 
       {/* ── LEFT PANEL ── */}
@@ -276,5 +278,7 @@ export default function StartupApplicationPage() {
         </div>
       </div>
     </div>
+    <SiteFooter />
+    </>
   );
 }

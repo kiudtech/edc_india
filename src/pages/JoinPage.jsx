@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { API_BASE } from '../config'
+import SiteFooter from '../components/SiteFooter'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -138,6 +139,7 @@ export default function JoinPage() {
   }
 
   return (
+    <>
     <div className="bg-accent min-h-screen text-ink pb-24 font-sans selection:bg-primary/20 selection:text-primary">
       {/* Hero Section */}
       <header className="relative overflow-hidden py-24 text-center sm:py-32">
@@ -220,5 +222,7 @@ export default function JoinPage() {
         </motion.div>
       </main>
     </div>
+    <SiteFooter />
+    </>
   )
 }

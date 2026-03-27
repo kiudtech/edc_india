@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { GoogleLogin } from '@react-oauth/google'
 import { jwtDecode } from 'jwt-decode'
 import { API_BASE } from '../config'
+import SiteFooter from '../components/SiteFooter'
 
 const fadeUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }
@@ -204,6 +205,7 @@ export default function IdeaValidationPage() {
   )
 
   return (
+    <>
     <div className="min-h-screen flex flex-col lg:flex-row">
 
       {/* LEFT PANEL */}
@@ -399,5 +401,7 @@ export default function IdeaValidationPage() {
         </div>
       </div>
     </div>
+    <SiteFooter />
+    </>
   )
 }

@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
 import { API_BASE } from '../config';
+import SiteFooter from '../components/SiteFooter';
 
 const fadeUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
@@ -120,6 +121,7 @@ export default function FellowshipApplicationPage() {
   const inputClass = 'mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 transition focus:bg-white focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20';
 
   return (
+    <>
     <div className="min-h-screen flex flex-col lg:flex-row">
 
       {/* LEFT PANEL */}
@@ -247,5 +249,7 @@ export default function FellowshipApplicationPage() {
         </div>
       </div>
     </div>
+    <SiteFooter />
+    </>
   );
 }
