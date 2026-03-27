@@ -1050,7 +1050,7 @@ function AppContent() {
     location.pathname === '/' ||
     location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/dashboard') ||
-['/payment', '/join-validation', '/college-apply'].includes(location.pathname)
+['/payment', '/college-apply'].includes(location.pathname)
 
   return (
     <>

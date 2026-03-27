@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import SiteFooter from '../components/SiteFooter';
 
 const fadeUp = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } } };
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
@@ -177,6 +178,8 @@ export default function MembershipValidationPage() {
           <motion.p variants={fadeUp} className="mt-8 text-sm text-white/30 italic">"Right idea + right direction = real growth."</motion.p>
         </motion.div>
       </section>
+
+      <SiteFooter />
     </div>
   );
 }
