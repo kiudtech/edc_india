@@ -86,7 +86,7 @@ function Modal({ open, onClose, title, children }) {
   if (!open) return null
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm" onClick={onClose}>
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-x-visible overflow-y-auto rounded-2xl border border-slate-100 bg-white p-4 shadow-2xl sm:p-6" onClick={e => e.stopPropagation()}>
         <div className="mb-5 flex items-center justify-between">
           <h3 className="text-lg font-bold text-slate-800">{title}</h3>
           <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
@@ -1037,30 +1037,95 @@ function PlansSection() {
       <Modal open={showForm} onClose={closeForm} title={editing ? 'Edit Plan' : 'Add Plan'}>
         <div className="space-y-3">
           <p className="text-xs font-medium text-slate-500">Fields marked with <span className="text-red-500">*</span> are required.</p>
-          <div className="grid grid-cols-2 gap-3">
-            <FormField label="Name *" value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} />
-            <FormField label="Slug *" value={form.slug} onChange={(v) => setForm((f) => ({ ...f, slug: slugify(v) }))} placeholder="startup-membership" />
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <FormField
+              label="Name *"
+              value={form.name}
+              onChange={(v) => setForm((f) => ({ ...f, name: v }))}
+              info="Enter a clear plan name shown to users, for example: Startup Membership or Idea Validation."
+            />
+            <FormField
+              label="Slug *"
+              value={form.slug}
+              onChange={(v) => setForm((f) => ({ ...f, slug: slugify(v) }))}
+              placeholder="startup-membership"
+              info="Unique technical identifier used by APIs and links. Use lowercase words with hyphens only, for example: startup-membership."
+            />
           </div>
-          <FormField label="Badge" value={form.badge} onChange={(v) => setForm((f) => ({ ...f, badge: v }))} placeholder="Most Popular" />
-          <FormField label="Description" value={form.description} onChange={(v) => setForm((f) => ({ ...f, description: v }))} textarea />
-          <div className="grid grid-cols-2 gap-3">
-            <FormField label="Price *" type="number" value={form.price} onChange={(v) => setForm((f) => ({ ...f, price: v }))} />
-            <FormField label="Billing Text" value={form.billingText} onChange={(v) => setForm((f) => ({ ...f, billingText: v }))} placeholder="/ one-time" />
+          <FormField
+            label="Badge"
+            value={form.badge}
+            onChange={(v) => setForm((f) => ({ ...f, badge: v }))}
+            placeholder="Most Popular"
+            info="Optional short highlight text displayed on the card. Keep it concise, usually 1-3 words."
+          />
+          <FormField
+            label="Description"
+            value={form.description}
+            onChange={(v) => setForm((f) => ({ ...f, description: v }))}
+            textarea
+            info="Write a short summary of what this plan includes and who it is for. Aim for 1-2 crisp sentences."
+          />
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <FormField
+              label="Price *"
+              type="number"
+              value={form.price}
+              onChange={(v) => setForm((f) => ({ ...f, price: v }))}
+              info="Enter only the numeric amount in INR, without commas or currency symbol. Example: 2500"
+            />
+            <FormField
+              label="Billing Text"
+              value={form.billingText}
+              onChange={(v) => setForm((f) => ({ ...f, billingText: v }))}
+              placeholder="/ one-time"
+              info="Text shown next to price to indicate billing period, such as / one-time, / month, or / year."
+            />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <FormField label="CTA Text *" value={form.ctaText} onChange={(v) => setForm((f) => ({ ...f, ctaText: v }))} placeholder="Join Now" />
-            <FormField label="CTA Route *" value={form.ctaRoute} onChange={(v) => setForm((f) => ({ ...f, ctaRoute: v }))} placeholder="/startup-application" />
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <FormField
+              label="CTA Text *"
+              value={form.ctaText}
+              onChange={(v) => setForm((f) => ({ ...f, ctaText: v }))}
+              placeholder="Join Now"
+              info="Button text users will click. Use action words such as Join Now, Apply Now, or Start Validation."
+            />
+            <FormField
+              label="CTA Route *"
+              value={form.ctaRoute}
+              onChange={(v) => setForm((f) => ({ ...f, ctaRoute: v }))}
+              placeholder="/startup-application"
+              info="Internal page route opened by the button. Must start with / and should map to an existing frontend path."
+            />
           </div>
-          <FormField label="Sort Order" type="number" value={form.sortOrder} onChange={(v) => setForm((f) => ({ ...f, sortOrder: v }))} />
-          <FormField label="Features (one per line)" value={form.featuresText} onChange={(v) => setForm((f) => ({ ...f, featuresText: v }))} textarea />
-          <div className="grid grid-cols-2 gap-3">
+          <FormField
+            label="Sort Order"
+            type="number"
+            value={form.sortOrder}
+            onChange={(v) => setForm((f) => ({ ...f, sortOrder: v }))}
+            info="Controls display priority. Lower number appears first on the website (for example 1 before 2)."
+          />
+          <FormField
+            label="Features (one per line)"
+            value={form.featuresText}
+            onChange={(v) => setForm((f) => ({ ...f, featuresText: v }))}
+            textarea
+            info="Enter one benefit per line. Each non-empty line becomes a bullet point on the plan card."
+          />
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <label className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm">
               <input type="checkbox" checked={form.isPopular} onChange={(e) => setForm((f) => ({ ...f, isPopular: e.target.checked }))} className="rounded" />
-              Mark as popular
+              <span className="inline-flex items-center gap-1.5">
+                Mark as popular
+                <FieldHint text="Enable this to visually highlight the plan as recommended in pricing sections." />
+              </span>
             </label>
             <label className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm">
               <input type="checkbox" checked={form.isActive} onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.checked }))} className="rounded" />
-              Active on website
+              <span className="inline-flex items-center gap-1.5">
+                Active on website
+                <FieldHint text="Only active plans are visible on user-facing pages and available to be selected." />
+              </span>
             </label>
           </div>
           <button onClick={save} disabled={saving} className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60">
@@ -1783,11 +1848,83 @@ function Info({ label, value }) {
   )
 }
 
-function FormField({ label, value, onChange, type = 'text', textarea, placeholder }) {
+function FieldHint({ text }) {
+  const [open, setOpen] = useState(false)
+  const [tipPos, setTipPos] = useState({ top: 0, left: 12, width: 260 })
+
+  const placeTooltip = (el) => {
+    if (!el || typeof window === 'undefined') return
+
+    const rect = el.getBoundingClientRect()
+    const viewportPadding = 12
+    const width = Math.min(320, Math.max(220, window.innerWidth - viewportPadding * 2))
+
+    let left = rect.left + rect.width / 2 - width / 2
+    left = Math.max(viewportPadding, Math.min(left, window.innerWidth - width - viewportPadding))
+
+    let top = rect.bottom + 10
+    const estimatedHeight = 84
+    if (top + estimatedHeight > window.innerHeight - viewportPadding) {
+      top = Math.max(viewportPadding, rect.top - estimatedHeight - 10)
+    }
+
+    setTipPos({ top, left, width })
+  }
+
+  const showTip = (e) => {
+    placeTooltip(e.currentTarget)
+    setOpen(true)
+  }
+
+  const hideTip = () => setOpen(false)
+
+  const toggleTip = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (open) {
+      setOpen(false)
+      return
+    }
+    placeTooltip(e.currentTarget)
+    setOpen(true)
+  }
+
+  return (
+    <>
+      <button
+      type="button"
+      tabIndex={0}
+      aria-label={text}
+      onMouseEnter={showTip}
+      onMouseLeave={hideTip}
+      onFocus={showTip}
+      onBlur={hideTip}
+      onClick={toggleTip}
+      className="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-slate-300 bg-white text-[10px] font-bold text-slate-500 outline-none transition hover:border-blue-400 hover:text-blue-600 focus:border-blue-500 focus:text-blue-600"
+    >
+      i
+    </button>
+    {open && (
+      <div
+        className="pointer-events-none fixed z-[120] rounded-lg bg-slate-900 px-2.5 py-2 text-[11px] font-medium leading-relaxed text-white shadow-xl"
+        style={{ top: `${tipPos.top}px`, left: `${tipPos.left}px`, width: `${tipPos.width}px` }}
+      >
+        {text}
+      </div>
+    )}
+    </>
+  )
+}
+
+function FormField({ label, value, onChange, type = 'text', textarea, placeholder, info }) {
   const cls = 'mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20'
   return (
     <div>
-      <label className="text-xs font-bold text-slate-500">{label}</label>
+      <div className="flex items-center gap-1.5">
+        <label className="text-xs font-bold text-slate-500">{label}</label>
+        {info && <FieldHint text={info} />}
+      </div>
+      {info && <p className="mt-1 text-[11px] leading-relaxed text-slate-500 md:hidden">{info}</p>}
       {textarea
         ? <textarea value={value} onChange={e => onChange(e.target.value)} rows={3} className={cls} placeholder={placeholder} />
         : <input type={type} value={value} onChange={e => onChange(e.target.value)} className={cls} placeholder={placeholder} />
