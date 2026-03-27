@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
+import { Rocket, Lightbulb, Users, Trophy, BookOpen, Building2, Target, Globe, Handshake, Star, Search, GraduationCap, TrendingUp, DollarSign, Briefcase, BarChart3, Zap, RefreshCw, MapPin, Mail, Phone, University, ChevronRight } from 'lucide-react'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
@@ -30,12 +31,12 @@ import NotFoundPage from './pages/NotFoundPage'
 import { API_BASE } from './config'
 
 const offerings = [
-  { title: 'Idea Validation', desc: 'Get a detailed validation report and clear direction for your next step.', icon: '🔍', route: '/membership-validation' },
-  { title: 'EDC Membership', desc: 'Join India\u2019s growing entrepreneurial community for everything you need.', icon: '🤝', route: '/startup-membership' },
-  { title: 'Entrepreneurial Fellowship', desc: 'A 1-year intensive program to build startups from scratch.', icon: '🎓', route: '/fellowship' },
-  { title: 'Innovation & Incubation Ranking', desc: 'Transparent, on-ground evaluation of colleges and universities.', icon: '🏆', route: '/ranking' },
-  { title: 'Fund Support', desc: 'Assistance in securing government and private grants.', icon: '📋', route: '/join' },
-  { title: 'Incubation Accelerator', desc: 'Partnering with institutions to build on-campus startup ecosystems.', icon: '🏛️', route: '/college-apply' },
+  { title: 'Idea Validation', desc: 'Get a detailed validation report and clear direction for your next step.', icon: <Search className="h-6 w-6" />, route: '/membership-validation' },
+  { title: 'EDC Membership', desc: 'Join India\u2019s growing entrepreneurial community for everything you need.', icon: <Users className="h-6 w-6" />, route: '/startup-membership' },
+  { title: 'Entrepreneurial Fellowship', desc: 'A 1-year intensive program to build startups from scratch.', icon: <GraduationCap className="h-6 w-6" />, route: '/fellowship' },
+  { title: 'Innovation & Incubation Ranking', desc: 'Transparent, on-ground evaluation of colleges and universities.', icon: <Trophy className="h-6 w-6" />, route: '/ranking' },
+  { title: 'Fund Support', desc: 'Assistance in securing government and private grants.', icon: <DollarSign className="h-6 w-6" />, route: '/join' },
+  { title: 'Incubation Accelerator', desc: 'Partnering with institutions to build on-campus startup ecosystems.', icon: <Building2 className="h-6 w-6" />, route: '/college-apply' },
 ]
 const timeline = [
   { year: '2019', title: 'Founded', text: 'EDC India was created with a belief that entrepreneurship is a mindset.' },
@@ -72,11 +73,11 @@ const courseTabs = [
 ]
 const logos = ['IITs', 'NITs', 'IIMs', 'Global Uni', 'Innovation Hub', 'Tech Park', 'Startup Inc']
 const fundingSteps = [
-  { step: 'Idea Validation', text: 'Understand your idea stage and market potential.', icon: '🔍' },
-  { step: 'Pitch and finance support', text: 'Get support for your pitch and financial planning.', icon: '📑' },
-  { step: 'Pitch Presentation', text: 'Craft investor-ready materials and get coaching.', icon: '📊' },
-  { step: 'Grant and fund Support', text: 'Assistance in securing government and private grants.', icon: '📋' },
-  { step: 'Growth', text: 'Scale your startup with our ecosystem support.', icon: '🚀' },
+  { step: 'Idea Validation', text: 'Understand your idea stage and market potential.', icon: <Search className="h-5 w-5" /> },
+  { step: 'Pitch and finance support', text: 'Get support for your pitch and financial planning.', icon: <Briefcase className="h-5 w-5" /> },
+  { step: 'Pitch Presentation', text: 'Craft investor-ready materials and get coaching.', icon: <BarChart3 className="h-5 w-5" /> },
+  { step: 'Grant and fund Support', text: 'Assistance in securing government and private grants.', icon: <DollarSign className="h-5 w-5" /> },
+  { step: 'Growth', text: 'Scale your startup with our ecosystem support.', icon: <TrendingUp className="h-5 w-5" /> },
 ]
 const galleryItems = [
   {
@@ -147,10 +148,10 @@ const testimonials = [
   },
 ]
 const impactStats = [
-  { label: 'Universities', value: 70, icon: '🏛️' },
-  { label: 'Institutes', value: 100, icon: '🏫' },
-  { label: 'Startups', value: 500, icon: '🚀' },
-  { label: 'Members', value: 3000, icon: '👥' },
+  { label: 'Universities', value: 70, icon: <University className="h-6 w-6" /> },
+  { label: 'Institutes', value: 100, icon: <Building2 className="h-6 w-6" /> },
+  { label: 'Startups', value: 500, icon: <Rocket className="h-6 w-6" /> },
+  { label: 'Members', value: 3000, icon: <Users className="h-6 w-6" /> },
 ]
 
 const defaultPlans = [
@@ -242,7 +243,7 @@ const staggerItem = {
 }
 const MotionDiv = motion.div
 
-const Counter = ({ value, label, prefix = '', suffix = '+', className = 'mt-3 text-3xl font-bold text-primary' }) => {
+const Counter = ({ value, label, prefix = '', suffix = '+', className = 'mt-3 text-3xl font-bold text-primary', labelClassName = 'mt-1 text-xs font-medium text-slate-600' }) => {
   const [count, setCount] = useState(0)
   const elRef = useRef(null)
   const hasRun = useRef(false)
@@ -269,7 +270,7 @@ const Counter = ({ value, label, prefix = '', suffix = '+', className = 'mt-3 te
   return (
     <div ref={elRef}>
       <div className={className}>{prefix}{count.toLocaleString('en-IN')}{suffix}</div>
-      <div className="mt-1 text-xs font-medium text-slate-600">{label}</div>
+      <div className={labelClassName}>{label}</div>
     </div>
   )
 }
@@ -498,17 +499,18 @@ const Home = () => {
       </nav>
 
       {/* ═══════════════ HERO ═══════════════ */}
-      <section id="home" className="relative overflow-hidden bg-gradient-to-br from-[#f0f4ff] via-white to-[#fff7f0]">
-        <div className="blob-float absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-blue-100/40 blur-3xl" />
-        <div className="blob-float-reverse absolute -bottom-32 -left-32 h-[400px] w-[400px] rounded-full bg-orange-100/30 blur-3xl" />
+      <section id="home" className="relative overflow-hidden bg-gradient-to-br from-[#0b1e4d] via-[#1a3a8f] to-[#0f2d6b]">
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
+        <div className="blob-float absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-blue-400/10 blur-3xl" />
+        <div className="blob-float-reverse absolute -bottom-32 -left-32 h-[400px] w-[400px] rounded-full bg-indigo-400/10 blur-3xl" />
         <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center justify-center px-4 py-20 text-center sm:px-6 sm:py-28 lg:py-32 xl:max-w-6xl xl:py-36">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ duration: 0.7 }}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-[11px] font-semibold text-blue-700">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
               Building founders through clarity, execution, and ecosystem support.
             </div>
             <motion.h1
-              className="mx-auto mt-8 max-w-5xl text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem]"
+              className="mx-auto mt-8 max-w-5xl text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem]"
               variants={staggerContainer}
               initial="hidden"
               animate="visible"
@@ -518,65 +520,67 @@ const Home = () => {
                   key={`${word}-${index}`}
                   variants={staggerItem}
                   data-text={word}
-                  className={`inline-block mr-3 ${index >= heroHeadlineWords.length - 4 ? 'hero-premium-accent' : ''}`}
+                  className={`inline-block mr-3 ${index >= heroHeadlineWords.length - 4 ? 'hero-premium-accent' : 'text-white'}`}
                 >
                   {word}
                 </motion.span>
               ))}
             </motion.h1>
             <motion.div
-              className="mx-auto mt-4 h-1 w-40 rounded-full bg-gradient-to-r from-blue-200 via-blue-500 to-blue-200"
+              className="mx-auto mt-4 h-1 w-40 rounded-full bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400"
               initial={{ opacity: 0, scaleX: 0.5 }}
               animate={{ opacity: 1, scaleX: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             />
-            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-500 sm:text-lg xl:text-xl xl:max-w-3xl">
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/60 sm:text-lg xl:text-xl xl:max-w-3xl">
               Courses, Funding, Global Exposure &amp; Startup Growth Ecosystem
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <Link to="/join" className="cta-pulse group rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-200/60 transition hover:shadow-xl hover:shadow-blue-200/80 lg:px-8 lg:py-4 lg:text-base">
+              <Link to="/join" className="cta-pulse group rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-blue-700 shadow-2xl transition hover:bg-blue-50 lg:px-8 lg:py-4 lg:text-base">
                 Join Now <span className="ml-1 inline-block transition group-hover:translate-x-1">→</span>
               </Link>
-              <a href="#programs" className="rounded-full border border-slate-300 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:shadow-md lg:px-8 lg:py-4 lg:text-base">
+              <a href="#programs" className="rounded-full border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 lg:px-8 lg:py-4 lg:text-base">
                 Explore Programs
               </a>
             </div>
           </motion.div>
           <motion.div className="mt-14 grid w-full max-w-3xl grid-cols-2 gap-5 sm:grid-cols-4 xl:max-w-4xl xl:gap-6" variants={staggerContainer} initial="hidden" animate="visible">
             {[
-              { num: 500, label: 'Startups', icon: '🚀', suffix: '+' },
-              { num: 50, label: 'Funding Raised', icon: '💰', prefix: '₹', suffix: 'Cr+' },
-              { num: 100, label: 'Partners', icon: '🤝', suffix: '+' },
-              { num: 25, label: 'Countries', icon: '🌏', suffix: '+' },
+              { num: 500, label: 'Startups', icon: <Rocket className="h-5 w-5 text-white/70" />, suffix: '+' },
+              { num: 50, label: 'Funding Raised', icon: <DollarSign className="h-5 w-5 text-white/70" />, prefix: '₹', suffix: 'Cr+' },
+              { num: 100, label: 'Partners', icon: <Handshake className="h-5 w-5 text-white/70" />, suffix: '+' },
+              { num: 25, label: 'Countries', icon: <Globe className="h-5 w-5 text-white/70" />, suffix: '+' },
             ].map((stat) => (
-              <motion.div key={stat.label} variants={staggerItem} className="card-hover-glow rounded-2xl border border-slate-100 bg-white/80 p-4 text-center shadow-sm backdrop-blur transition duration-300 hover:-translate-y-1">
-                <div className="text-lg">{stat.icon}</div>
-                <Counter value={stat.num} label={stat.label} prefix={stat.prefix || ''} suffix={stat.suffix} className="mt-1 text-xl font-bold text-primary sm:text-2xl xl:text-3xl" />
+              <motion.div key={stat.label} variants={staggerItem} className="card-hover-glow rounded-2xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm transition duration-300 hover:-translate-y-1">
+                <div className="flex justify-center">{stat.icon}</div>
+                <Counter value={stat.num} label={stat.label} prefix={stat.prefix || ''} suffix={stat.suffix} className="mt-1 text-xl font-bold text-white sm:text-2xl xl:text-3xl" labelClassName="mt-1 text-xs font-medium text-white/60" />
               </motion.div>
             ))}
           </motion.div>
         </div>
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none"><svg viewBox="0 0 1440 80" className="w-full fill-white"><path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" /></svg></div>
       </section>
 
       {/* ═══════════════ ABOUT ═══════════════ */}
-      <section id="about" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+      <section id="about" className="bg-gradient-to-br from-slate-50 to-blue-50/30 py-20 sm:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <motion.div className="grid gap-10 lg:grid-cols-2" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
           <motion.div variants={slideFromLeft} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Who We Are</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Empowering Startups Across India</h2>
+            <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Who We Are</div>
+            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Empowering Startups Across India</h2>
             <p className="mt-4 text-sm leading-relaxed text-slate-600">
               Entrepreneurial Development Council (EDC India) is a mission-driven organization working to build and strengthen the entrepreneurial ecosystem across India and globally. Since 2019, we have been actively working to spread entrepreneurial awareness, enable innovation, and help individuals understand that entrepreneurship is not limited to starting a startup — it is a way of thinking, solving, and creating impact.
             </p>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {[
-                { title: 'Vision for Startup India', icon: '🎯' },
-                { title: 'Global Entrepreneurship Focus', icon: '🌍' },
-                { title: 'Trusted Corporate Network', icon: '🤝' },
-                { title: 'Premium Talent Pipeline', icon: '⭐' },
+                { title: 'Vision for Startup India', icon: <Target className="h-5 w-5 text-blue-600" /> },
+                { title: 'Global Entrepreneurship Focus', icon: <Globe className="h-5 w-5 text-blue-600" /> },
+                { title: 'Trusted Corporate Network', icon: <Handshake className="h-5 w-5 text-blue-600" /> },
+                { title: 'Premium Talent Pipeline', icon: <Star className="h-5 w-5 text-blue-600" /> },
               ].map((item) => (
-                <div key={item.title} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-100/50">
+                <div key={item.title} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100/50">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{item.icon}</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">{item.icon}</span>
                     <div className="text-sm font-bold text-slate-800">{item.title}</div>
                   </div>
                   <div className="mt-2 text-xs text-slate-500">Building a high-impact entrepreneurship and innovation ecosystem.</div>
@@ -584,47 +588,48 @@ const Home = () => {
               ))}
             </div>
           </motion.div>
-          <motion.div variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 }} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:p-8">
-            <div className="text-xs uppercase tracking-[0.3em] text-slate-400">Growth Timeline</div>
+          <motion.div variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 }} className="rounded-2xl border border-slate-100 bg-gradient-to-br from-[#0b1e4d] to-[#1a3a8f] p-5 shadow-sm sm:p-8">
+            <div className="text-xs uppercase tracking-[0.3em] text-white/50">Growth Timeline</div>
             <div className="mt-6 space-y-6">
               {timeline.map((item, index) => (
                 <div key={item.year} className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div className="h-3 w-3 rounded-full bg-secondary" />
-                    {index !== timeline.length - 1 && <div className="h-full w-px bg-slate-200" />}
+                    <div className="h-3 w-3 rounded-full bg-cyan-400" />
+                    {index !== timeline.length - 1 && <div className="h-full w-px bg-white/20" />}
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-primary">{item.year}</div>
-                    <div className="text-sm font-bold text-slate-800">{item.title}</div>
-                    <div className="text-xs text-slate-500">{item.text}</div>
+                    <div className="text-sm font-bold text-cyan-300">{item.year}</div>
+                    <div className="text-sm font-bold text-white">{item.title}</div>
+                    <div className="text-xs text-white/60">{item.text}</div>
                   </div>
                 </div>
               ))}
             </div>
           </motion.div>
         </motion.div>
+        </div>
       </section>
 
       {/* ═══════════════ PROGRAMS ═══════════════ */}
-      <section id="programs" className="bg-white py-14 sm:py-20">
+      <section id="programs" className="bg-gradient-to-br from-[#0b1e4d] to-[#1a3a8f] py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">What We Do</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Everything Your Startup Needs</h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">End-to-end ecosystem support to take your idea from concept to global scale.</p>
+            <div className="inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/80 backdrop-blur-sm mb-4">What We Do</div>
+            <h2 className="mt-4 text-2xl font-bold text-white sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Everything Your Startup Needs</h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-white/60">End-to-end ecosystem support to take your idea from concept to global scale.</p>
           </motion.div>
           <motion.div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {offerings.map((item) => (
               <motion.div
                 key={item.title}
                 variants={staggerItem}
-                className="animated-border group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-100/50"
+                className="animated-border group rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:bg-white/15"
                 whileHover={{ scale: 1.03, y: -4 }}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">{item.icon}</div>
-                <div className="mt-4 text-sm font-bold text-slate-800">{item.title}</div>
-                <div className="mt-2 text-xs leading-relaxed text-slate-500">{item.desc}</div>
-                <button onClick={() => navigate(item.route)} className="mt-4 inline-block text-xs font-semibold text-primary">Explore →</button>
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 text-white transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">{item.icon}</div>
+                <div className="mt-4 text-sm font-bold text-white">{item.title}</div>
+                <div className="mt-2 text-xs leading-relaxed text-white/60">{item.desc}</div>
+                <button onClick={() => navigate(item.route)} className="mt-4 inline-block text-xs font-semibold text-cyan-300">Explore →</button>
               </motion.div>
             ))}
           </motion.div>
@@ -632,11 +637,11 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ FUNDING ═══════════════ */}
-      <section id="funding" className="bg-white py-14 sm:py-20">
+      <section id="funding" className="bg-white py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Startup Funding Support</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Your Path to Funding</h2>
+            <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Startup Funding Support</div>
+            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Your Path to Funding</h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">A structured approach to make your startup investor-ready.</p>
           </motion.div>
           <div className="relative mt-12">
@@ -644,7 +649,7 @@ const Home = () => {
             <div className="relative flex justify-between">
               {fundingSteps.map((step, index) => (
                 <div key={step.step} className="flex flex-col items-center text-center">
-                  <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white font-bold">{index + 1}</div>
+                  <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-bold shadow-lg">{index + 1}</div>
                   <div className="mt-2 text-sm font-bold text-slate-800">{step.step}</div>
                 </div>
               ))}
@@ -652,8 +657,8 @@ const Home = () => {
           </div>
           <div className="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {fundingSteps.map((step, index) => (
-              <div key={step.step} className="relative rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-100/50">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-xl">{step.icon}</div>
+              <div key={step.step} className="relative rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-200">{step.icon}</div>
                 <div className="mt-1 text-[10px] font-bold uppercase tracking-wider text-blue-400">Step {index + 1}</div>
                 <div className="mt-2 text-sm font-bold text-slate-800">{step.step}</div>
                 <div className="mt-1 text-xs text-slate-500">{step.text}</div>
@@ -664,11 +669,11 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ PLANS ═══════════════ */}
-      <section id="plans" className="bg-[#fafbfe] py-14 sm:py-20">
+      <section id="plans" className="bg-gradient-to-br from-slate-50 to-indigo-50/30 py-20 sm:py-28">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 xl:max-w-6xl">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Membership Plans</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Choose Your Plan</h2>
+            <div className="inline-block rounded-full bg-indigo-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-indigo-600 mb-4">Membership Plans</div>
+            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Choose Your Plan</h2>
             <p className="mt-3 text-sm text-slate-500">Two pathways to grow your startup with EDC India</p>
           </motion.div>
           <motion.div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
@@ -686,7 +691,7 @@ const Home = () => {
               const theme = planThemes[index % planThemes.length];
 
               return (
-                <motion.div key={plan.slug || `${plan.name}-${index}`} variants={staggerItem} className={`relative rounded-2xl bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${theme.border}`} whileHover={{ scale: 1.02 }}>
+                <motion.div key={plan.slug || `${plan.name}-${index}`} variants={staggerItem} className={`relative rounded-3xl bg-white p-8 shadow-xl transition hover:-translate-y-1 hover:shadow-2xl ${theme.border}`} whileHover={{ scale: 1.02 }}>
                   {plan.badge && (
                     <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-semibold ${theme.badgeTheme}`}
                     >
@@ -720,11 +725,12 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ COURSES ═══════════════ */}
-      <section id="courses" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+      <section id="courses" className="bg-white py-20 sm:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <motion.div className="grid gap-8 lg:grid-cols-[1.1fr_1fr]" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
           <motion.div variants={slideFromLeft} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Courses</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Entrepreneurship Learning Tracks</h2>
+            <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Courses</div>
+            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Entrepreneurship Learning Tracks</h2>
             <p className="mt-4 text-sm text-slate-600">Modular tracks built to guide founders from ideation to global expansion.</p>
             <div className="mt-6 flex flex-wrap gap-2">
               {courseTabs.map((tab) => (
@@ -738,7 +744,7 @@ const Home = () => {
               ))}
             </div>
           </motion.div>
-          <motion.div variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 }} className="animated-border rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:p-8">
+          <motion.div variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 }} className="rounded-2xl border-2 border-transparent bg-white p-5 shadow-sm sm:p-8" style={{ background: 'linear-gradient(white, white) padding-box, linear-gradient(135deg, #3b82f6, #06b6d4) border-box' }}>
             <div className="text-lg font-bold text-slate-800">{activeTab.name}</div>
             <p className="mt-3 text-sm text-slate-600">{activeTab.description}</p>
             <div className="mt-6 space-y-3">
@@ -751,15 +757,16 @@ const Home = () => {
             </div>
           </motion.div>
         </motion.div>
+        </div>
       </section>
 
       {/* ═══════════════ PARTNERS ═══════════════ */}
-      <section id="partners" className="bg-[#fafbfe] py-14 sm:py-20">
+      <section id="partners" className="bg-gradient-to-br from-[#0b1e4d] to-[#1a3a8f] py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">College Tie-Ups</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Trusted by Leading Institutions</h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">Partnering with top universities and incubation hubs across India.</p>
+            <div className="inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/80 backdrop-blur-sm mb-4">College Tie-Ups</div>
+            <h2 className="mt-4 text-2xl font-bold text-white sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Trusted by Leading Institutions</h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-white/60">Partnering with top universities and incubation hubs across India.</p>
           </motion.div>
           <div className="mt-10">
             <Swiper
@@ -776,7 +783,7 @@ const Home = () => {
             >
               {logos.map((logo) => (
                 <SwiperSlide key={logo}>
-                  <div className="flex h-20 items-center justify-center rounded-xl border border-slate-100 bg-white text-sm font-semibold text-slate-600 shadow-sm transition hover:shadow-md">
+                  <div className="flex h-20 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
                     {logo}
                   </div>
                 </SwiperSlide>
@@ -785,13 +792,14 @@ const Home = () => {
           </div>
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[
-              { num: 120, label: 'Partner Hubs' },
-              { num: 27, label: 'States Covered' },
-              { num: 45, label: 'Student Reach', suffix: 'K+' },
-              { num: 300, label: 'Innovation Labs' },
+              { num: 120, label: 'Partner Hubs', icon: <Building2 className="h-5 w-5" /> },
+              { num: 27, label: 'States Covered', icon: <MapPin className="h-5 w-5" /> },
+              { num: 45, label: 'Student Reach', suffix: 'K+', icon: <Users className="h-5 w-5" /> },
+              { num: 300, label: 'Innovation Labs', icon: <Zap className="h-5 w-5" /> },
             ].map((stat) => (
-              <div key={stat.label} className="rounded-xl border border-slate-100 bg-white p-5 text-center shadow-sm">
-                <Counter value={stat.num} label={stat.label} suffix={stat.suffix || '+'} className="text-xl font-bold text-primary" />
+              <div key={stat.label} className="rounded-xl border border-white/10 bg-white/10 p-5 text-center backdrop-blur-sm">
+                <div className="flex justify-center text-white/60 mb-2">{stat.icon}</div>
+                <Counter value={stat.num} label={stat.label} suffix={stat.suffix || '+'} className="text-xl font-bold text-white" labelClassName="mt-1 text-xs font-medium text-white/60" />
               </div>
             ))}
           </div>
@@ -799,11 +807,11 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ INSTITUTIONAL PRESENCE ═══════════════ */}
-      <section className="overflow-hidden bg-white py-14 sm:py-20">
+      <section className="overflow-hidden bg-white py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Our Presence</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Our Institutional Presence</h2>
+            <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Our Presence</div>
+            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Our Institutional Presence</h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">Empowering entrepreneurship across leading institutions nationwide.</p>
           </motion.div>
         </div>
@@ -910,17 +918,17 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ IMPACT ═══════════════ */}
-      <section id="impact" className="bg-white py-14 sm:py-20">
+      <section id="impact" className="bg-white py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Our Impact</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Numbers That Speak</h2>
+            <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Our Impact</div>
+            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Numbers That Speak</h2>
           </motion.div>
           <motion.div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {impactStats.map((stat) => (
-              <motion.div key={stat.label} variants={staggerItem} whileHover={{ scale: 1.05, y: -4 }} className="card-hover-glow rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm transition hover:shadow-lg hover:shadow-blue-100/50">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl">{stat.icon}</div>
-                <Counter value={stat.value} label={stat.label} />
+              <motion.div key={stat.label} variants={staggerItem} whileHover={{ scale: 1.05, y: -4 }} className="card-hover-glow rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm transition hover:shadow-xl hover:border-blue-100">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-200">{stat.icon}</div>
+                <Counter value={stat.value} label={stat.label} className="mt-3 text-3xl font-bold text-blue-600" labelClassName="mt-1 text-xs font-medium text-slate-500" />
               </motion.div>
             ))}
           </motion.div>
@@ -991,16 +999,16 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ TESTIMONIALS ═══════════════ */}
-      <section id="testimonials" className="bg-[#fafbfe] py-14 sm:py-20">
+      <section id="testimonials" className="bg-white py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Testimonials</div>
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Trusted by Founders & Investors</h2>
+            <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Testimonials</div>
+            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Trusted by Founders & Investors</h2>
           </motion.div>
           <motion.div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {testimonials.map((item) => (
-              <motion.div key={item.name} variants={staggerItem} whileHover={{ y: -4 }} className="animated-border rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:shadow-lg hover:shadow-blue-100/50">
-                <div className="text-3xl text-blue-200">&ldquo;</div>
+              <motion.div key={item.name} variants={staggerItem} whileHover={{ y: -4 }} className="rounded-3xl border border-slate-100 bg-white p-8 shadow-lg transition hover:shadow-2xl">
+                <div className="text-3xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">&ldquo;</div>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.text}</p>
                 <div className="mt-5 flex items-center gap-3 border-t border-slate-100 pt-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{item.initials}</div>

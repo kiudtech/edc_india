@@ -122,7 +122,7 @@ body {
 .hero-premium-accent {
   position: relative;
   display: inline-block;
-  background-image: linear-gradient(120deg, #1e3a8a 0%, #2563eb 24%, #60a5fa 48%, #2563eb 72%, #1d4ed8 100%);
+  background-image: linear-gradient(120deg, #93c5fd 0%, #67e8f9 30%, #ffffff 50%, #67e8f9 70%, #93c5fd 100%);
   background-size: 220% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -136,7 +136,7 @@ body {
   left: 0;
   top: 0;
   z-index: -1;
-  color: rgba(37, 99, 235, 0.28);
+  color: rgba(147, 197, 253, 0.3);
   filter: blur(10px);
   animation: premium-blue-halo 4.6s ease-in-out infinite;
   pointer-events: none;

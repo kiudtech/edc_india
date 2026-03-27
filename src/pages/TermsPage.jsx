@@ -21,7 +21,7 @@ const Section = ({ number, title, children }) => (
 );
 
 export default function TermsPage() {
-  useEffect(() => { setTimeout(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }) }, 0) }, []);
+  ;
 
   return (
     <div className="bg-white min-h-screen text-slate-800">
