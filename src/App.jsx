@@ -464,11 +464,11 @@ const Home = () => {
             <div className="text-sm font-semibold text-slate-800">EDC India</div>
           </div>
           <div className="hidden items-center gap-6 text-xs font-semibold text-slate-600 md:flex lg:gap-8 lg:text-sm">
-            {['Home', 'About', 'Programs', 'Fellowship', 'Membership', 'Ranking', 'Partners', 'Contact'].map((label) => (
+            {['Home', 'About', 'Programs', 'Fellowship', 'Membership', 'Validation', 'Ranking', 'Partners', 'Contact'].map((label) => (
               label === 'Home' ? (
                 <a key={label} href={`#${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</a>
-              ) : label === 'Fellowship' || label === 'Membership' || label === 'Ranking' || label === 'About' ? (
-                <Link key={label} to={label === 'Membership' ? '/startup-membership' : `/${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</Link>
+              ) : label === 'Fellowship' || label === 'Membership' || label === 'Ranking' || label === 'About' || label === 'Validation' ? (
+                <Link key={label} to={label === 'Membership' ? '/startup-membership' : label === 'Validation' ? '/membership-validation' : `/${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</Link>
               ) : (
                 <a key={label} href={`#${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</a>
               )

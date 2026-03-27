@@ -5,7 +5,8 @@ const navItems = [
   { label: 'Home', to: '/' },
   { label: 'About', to: '/about' },
   { label: 'Fellowship', to: '/fellowship' },
-  { label: 'Membership', to: '/membership-validation' },
+  { label: 'Membership', to: '/startup-membership' },
+  { label: 'Validation', to: '/membership-validation' },
   { label: 'Ranking', to: '/ranking' },
 ]
 
