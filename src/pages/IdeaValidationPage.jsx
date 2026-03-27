@@ -208,7 +208,7 @@ export default function IdeaValidationPage() {
                   <div className="sm:col-span-2">
                     <label className="flex cursor-pointer items-start gap-3">
                       <input type="checkbox" checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-slate-300 text-purple-600 focus:ring-purple-600" />
-                      <span className="text-xs text-slate-500">I agree to the <a href="/terms" target="_blank" className="font-semibold text-purple-600 hover:underline">Terms & Conditions</a> and <span className="font-semibold text-purple-600">Privacy Policy</span> of EDC India.</span>
+                      <span className="text-xs text-slate-500">I agree to the <a href="/terms" target="_blank" className="font-semibold text-purple-600 hover:underline">Terms & Conditions</a> and <a href="/terms" target="_blank" className="font-semibold text-purple-600 hover:underline">Privacy Policy</a> of EDC India.</span>
                     </label>
                   </div>
                 </div>

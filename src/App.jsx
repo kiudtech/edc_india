@@ -467,7 +467,7 @@ const Home = () => {
             {['Home', 'About', 'Programs', 'Fellowship', 'Membership', 'Ranking', 'Partners', 'Contact'].map((label) => (
               label === 'Home' ? (
                 <a key={label} href={`#${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</a>
-              ) : label === 'Fellowship' || label === 'Membership' || label === 'Ranking' ? (
+              ) : label === 'Fellowship' || label === 'Membership' || label === 'Ranking' || label === 'About' ? (
                 <Link key={label} to={label === 'Membership' ? '/startup-membership' : `/${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</Link>
               ) : (
                 <a key={label} href={`#${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</a>

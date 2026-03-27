@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { API_BASE } from '../config';
 
@@ -262,7 +262,7 @@ export default function StartupApplicationPage() {
                     <label className="flex cursor-pointer items-start gap-3">
                       <input type="checkbox" name="termsAccepted" checked={form.termsAccepted} onChange={handleChange} className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600" />
                       <span className="text-xs text-slate-500">
-                        I agree to the <span className="font-semibold text-blue-600">Terms & Conditions</span> and <span className="font-semibold text-blue-600">Privacy Policy</span> of EDC India.
+                        I agree to the <Link to="/terms" target="_blank" className="font-semibold text-blue-600 hover:underline">Terms & Conditions</Link> and <Link to="/terms" target="_blank" className="font-semibold text-blue-600 hover:underline">Privacy Policy</Link> of EDC India.
                       </span>
                     </label>
                   </div>
