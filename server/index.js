@@ -18,14 +18,21 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: path.join(__dirname, '.env') })
 
 const app = express()
-const allowedOrigins = (process.env.FRONTEND_URL || '')
+const configuredOrigins = (process.env.FRONTEND_URL || '')
   .split(',')
   .map((o) => o.trim())
   .filter(Boolean)
 
+const allowedOrigins = new Set(configuredOrigins)
+
+// In local development, allow any localhost/127.0.0.1 port to avoid CORS issues
+// when switching Vite ports (5173, 5174, etc.) or using direct backend URLs.
+const isLocalOrigin = (origin) => /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin || '')
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+    const isDev = process.env.NODE_ENV !== 'production'
+    if (!origin || allowedOrigins.has('*') || allowedOrigins.has(origin) || (isDev && isLocalOrigin(origin))) {
       callback(null, true)
     } else {
       callback(new Error(`CORS blocked: ${origin}`))
@@ -34,6 +41,13 @@ app.use(cors({
   credentials: true,
 }))
 app.use(express.json())
+
+app.use((err, _req, res, next) => {
+  if (err?.message?.startsWith('CORS blocked:')) {
+    return res.status(403).json({ message: err.message })
+  }
+  return next(err)
+})
 
 app.use('/api/auth', authRoutes)
 app.use('/api/payment', paymentRoutes)

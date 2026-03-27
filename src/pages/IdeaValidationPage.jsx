@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { GoogleLogin } from '@react-oauth/google'
 import { jwtDecode } from 'jwt-decode'
@@ -27,6 +27,17 @@ const perks = [
 const inputClass = 'mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 transition focus:bg-white focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20'
 
 export default function IdeaValidationPage() {
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const selectedPlan = location.state?.selectedPlan || {}
+  const queryPlanPrice = Number(params.get('planPrice'))
+  const planPrice = Number(selectedPlan.price) > 0
+    ? Number(selectedPlan.price)
+    : (Number.isFinite(queryPlanPrice) && queryPlanPrice > 0 ? queryPlanPrice : 5000)
+  const planName = (selectedPlan.name || params.get('planName') || 'Idea Validation').trim()
+  const planSlug = String(selectedPlan.slug || params.get('planSlug') || 'idea-validation').trim().toLowerCase()
+  const formattedPlanPrice = `₹${planPrice.toLocaleString('en-IN')}`
+
   const [step, setStep] = useState(0)
   const [form, setForm] = useState({ founderName:'', founderEmail:'', founderPhone:'', startupName:'', idea:'', innovationDescription:'', industry:'', stage:'' })
   const [error, setError] = useState('')
@@ -34,8 +45,41 @@ export default function IdeaValidationPage() {
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [validationId, setValidationId] = useState(null)
   const [result, setResult] = useState(null)
+  const [razorpayReady, setRazorpayReady] = useState(false)
 
   const handleChange = (e) => { const { name, value } = e.target; setForm((prev) => ({ ...prev, [name]: value })) }
+
+  useEffect(() => {
+    if (window.Razorpay) {
+      setRazorpayReady(true)
+      return
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.async = true
+    script.onload = () => setRazorpayReady(true)
+    script.onerror = () => setError('Failed to load Razorpay SDK. Please refresh and try again.')
+    document.body.appendChild(script)
+  }, [])
+
+  const parseApiResponse = async (res, fallbackMessage) => {
+    const contentType = res.headers.get('content-type') || ''
+
+    if (contentType.includes('application/json')) {
+      return res.json()
+    }
+
+    const text = await res.text()
+    if (!res.ok) {
+      if ((text || '').trim().startsWith('<')) {
+        throw new Error('Server returned HTML instead of JSON. Check backend URL/proxy and CORS settings.')
+      }
+      throw new Error(text || fallbackMessage)
+    }
+
+    return {}
+  }
 
   const handleGoogleSuccess = (credentialResponse) => {
     try {
@@ -51,8 +95,17 @@ export default function IdeaValidationPage() {
     if (!termsAccepted) return setError('Please accept the Terms & Conditions.')
     setError(''); setSubmitting(true)
     try {
-      const res = await fetch(`${API_BASE}/api/validation/submit`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
-      const data = await res.json()
+      const res = await fetch(`${API_BASE}/api/validation/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          planSlug,
+          planName,
+          planPrice,
+        }),
+      })
+      const data = await parseApiResponse(res, 'Submission failed')
       if (!res.ok) throw new Error(data.message || 'Submission failed')
       setValidationId(data.validationId); setStep(2); window.scrollTo(0, 0)
     } catch (err) { setError(err.message) }
@@ -61,13 +114,86 @@ export default function IdeaValidationPage() {
 
   const handlePayment = async () => {
     setError(''); setSubmitting(true)
+    let checkoutOpened = false
     try {
-      const res = await fetch(`${API_BASE}/api/validation/process-payment`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ validationId }) })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Payment processing failed')
-      setResult(data); setStep(3)
+      if (!validationId) {
+        throw new Error('Validation submission was not found. Please submit the form again.')
+      }
+
+      if (!window.Razorpay) {
+        throw new Error('Razorpay SDK is not ready. Please refresh and try again.')
+      }
+
+      const createOrderRes = await fetch(`${API_BASE}/api/validation/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ validationId, planSlug }),
+      })
+
+      const orderData = await parseApiResponse(createOrderRes, 'Failed to create payment order')
+      if (!createOrderRes.ok) throw new Error(orderData.message || 'Failed to create payment order')
+
+      const razorpay = new window.Razorpay({
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'EDC India',
+        description: 'Idea Validation',
+        order_id: orderData.orderId,
+        prefill: {
+          name: orderData.user?.name || form.founderName || '',
+          email: orderData.user?.email || form.founderEmail || '',
+          contact: orderData.user?.phone || form.founderPhone || '',
+        },
+        notes: {
+          validationId,
+          planType: 'validation',
+        },
+        theme: {
+          color: '#7c3aed',
+        },
+        handler: async (response) => {
+          try {
+            const verifyRes = await fetch(`${API_BASE}/api/validation/verify-payment`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                validationId,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            })
+
+            const verifyData = await parseApiResponse(verifyRes, 'Payment verification failed')
+            if (!verifyRes.ok) throw new Error(verifyData.message || 'Payment verification failed')
+
+            setResult(verifyData)
+            setStep(3)
+          } catch (verifyErr) {
+            setError(verifyErr.message || 'Payment verification failed')
+          } finally {
+            setSubmitting(false)
+          }
+        },
+        modal: {
+          ondismiss: () => setSubmitting(false),
+        },
+      })
+
+      razorpay.on('payment.failed', (response) => {
+        setError(response?.error?.description || 'Payment failed. Please try again.')
+        setSubmitting(false)
+      })
+
+      razorpay.open()
+      checkoutOpened = true
     } catch (err) { setError(err.message) }
-    finally { setSubmitting(false) }
+    finally {
+      if (!checkoutOpened) {
+        setSubmitting(false)
+      }
+    }
   }
 
   const StepDot = ({ n }) => (
@@ -92,7 +218,7 @@ export default function IdeaValidationPage() {
           </div>
           <motion.div initial="hidden" animate="visible" variants={stagger}>
             <motion.div variants={fadeUp} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest backdrop-blur-sm mb-6">
-              💡 Idea Validation — ₹5,000
+              💡 {planName} — {formattedPlanPrice}
             </motion.div>
             <motion.h1 variants={fadeUp} className="text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl">
               Validate Your Idea.<br />
@@ -113,7 +239,7 @@ export default function IdeaValidationPage() {
         </div>
         <div className="relative z-10 mt-12 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
           <div className="text-xs text-white/40 uppercase tracking-widest mb-1">One-time fee</div>
-          <div className="text-4xl font-extrabold text-white">₹5,000</div>
+          <div className="text-4xl font-extrabold text-white">{formattedPlanPrice}</div>
           <div className="text-sm text-white/50 mt-1">Includes 1-Year EDC Membership FREE</div>
         </div>
       </div>
@@ -228,18 +354,18 @@ export default function IdeaValidationPage() {
               </motion.div>
               <motion.div variants={fadeUp} className="mt-8 rounded-2xl border border-slate-200 bg-white p-8 shadow-lg text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-50 text-3xl">💡</div>
-                <h3 className="mt-4 text-lg font-bold text-slate-800">Idea Validation Fee</h3>
+                <h3 className="mt-4 text-lg font-bold text-slate-800">{planName} Fee</h3>
                 <div className="mt-4 rounded-xl bg-slate-50 p-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Validation Report</span><span className="font-bold text-slate-800">₹5,000</span>
+                    <span className="text-slate-500">Validation Report</span><span className="font-bold text-slate-800">{formattedPlanPrice}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm mt-2">
                     <span className="text-slate-500">1-Year Membership</span><span className="font-bold text-green-600">FREE</span>
                   </div>
                 </div>
                 <p className="mt-4 text-xs text-slate-400">A member account will be created on payment.</p>
-                <button onClick={handlePayment} disabled={submitting} className="mt-6 w-full rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg transition hover:opacity-90 disabled:opacity-50">
-                  {submitting ? 'Processing...' : 'Pay ₹5,000 →'}
+                <button onClick={handlePayment} disabled={submitting || !razorpayReady} className="mt-6 w-full rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg transition hover:opacity-90 disabled:opacity-50">
+                  {submitting ? 'Opening Checkout...' : (!razorpayReady ? 'Loading Razorpay...' : `Pay ${formattedPlanPrice} →`)}
                 </button>
                 <button onClick={() => setStep(1)} className="mt-3 text-xs text-slate-400 hover:text-purple-600">← Go back</button>
               </motion.div>

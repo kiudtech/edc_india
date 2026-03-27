@@ -11,6 +11,9 @@ const ideaValidationSchema = new mongoose.Schema(
     innovationDescription: { type: String, default: '', trim: true },
     industry: { type: String, required: true },
     stage: { type: String, required: true },
+    planSlug: { type: String, default: 'idea-validation', trim: true, lowercase: true },
+    planName: { type: String, default: 'Idea Validation', trim: true },
+    planPrice: { type: Number, default: 5000, min: 0 },
     paymentStatus: {
       type: String,
       enum: ['pending', 'success', 'failed'],
