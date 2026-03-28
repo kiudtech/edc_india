@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { API_BASE } from '../config'
@@ -11,6 +11,32 @@ export default function LoginPage() {
   const { login } = useAuth()
   const [error, setError] = useState('')
   const [googleSubmitting, setGoogleSubmitting] = useState(false)
+  const [googleButtonWidth, setGoogleButtonWidth] = useState(280)
+  const googleAuthSlotRef = useRef(null)
+
+  useEffect(() => {
+    const updateGoogleButtonWidth = () => {
+      const viewport = typeof window !== 'undefined' ? window.innerWidth : 360
+      const fallbackWidth = viewport < 640 ? viewport - 120 : viewport - 160
+      const slotWidth = googleAuthSlotRef.current?.clientWidth || fallbackWidth
+      const targetWidth = slotWidth - 6
+      setGoogleButtonWidth(Math.max(170, Math.min(360, Math.floor(targetWidth))))
+    }
+
+    updateGoogleButtonWidth()
+
+    let resizeObserver
+    if (typeof ResizeObserver !== 'undefined' && googleAuthSlotRef.current) {
+      resizeObserver = new ResizeObserver(updateGoogleButtonWidth)
+      resizeObserver.observe(googleAuthSlotRef.current)
+    }
+
+    window.addEventListener('resize', updateGoogleButtonWidth)
+    return () => {
+      window.removeEventListener('resize', updateGoogleButtonWidth)
+      if (resizeObserver) resizeObserver.disconnect()
+    }
+  }, [])
 
   const readJsonSafely = async (response) => {
     const text = await response.text()
@@ -77,138 +103,135 @@ export default function LoginPage() {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 15, filter: 'blur(4px)' }}
       animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="flex flex-col min-h-[calc(100vh-73px)]"
+      className="flex min-h-[calc(100vh-73px)] flex-col"
     >
-      <div className="relative flex-1 grid lg:grid-cols-2 bg-slate-50 overflow-hidden">
-      
-      {/* Decorative Blob Effects */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/20 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-secondary/20 blur-[100px] pointer-events-none" />
+      <div className="relative flex-1 overflow-hidden bg-gradient-to-br from-[#0b1e4d] via-[#1a3a8f] to-[#0f2d6b]">
+        <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
+        <div className="blob-float absolute -right-32 -top-24 h-[420px] w-[420px] rounded-full bg-cyan-300/10 blur-3xl" />
+        <div className="blob-float-reverse absolute -bottom-28 -left-28 h-[360px] w-[360px] rounded-full bg-blue-300/10 blur-3xl" />
 
-      {/* Left Panel: Branding / Visuals */}
-      <div className="hidden lg:flex flex-col justify-between p-12 bg-white/40 backdrop-blur-3xl relative z-10 border-r border-slate-200/50 shadow-[10px_0_40px_-15px_rgba(0,0,0,0.05)]">
-        <div>
-          <Link to="/" className="inline-flex items-center gap-3 group">
-            <div className="p-2 bg-white rounded-2xl shadow-sm border border-slate-100 group-hover:shadow-md transition-shadow">
-              <img src="/logo.png" alt="EDC India" className="h-10 w-10 object-contain" />
+        <div className="relative mx-auto grid min-h-[calc(100vh-73px)] max-w-7xl items-stretch gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10 lg:px-8 lg:py-12">
+          <section className="hidden rounded-[2rem] border border-white/15 bg-white/5 p-10 text-white backdrop-blur-sm lg:flex lg:flex-col lg:justify-between">
+            <div>
+              <div className="flex items-center justify-between gap-4">
+                <Link to="/" className="inline-flex items-center gap-3 group">
+                  <div className="rounded-2xl border border-white/70 bg-white p-2.5 shadow-sm transition group-hover:bg-white">
+                    <img src="/logo.png" alt="EDC India" className="h-9 w-9 rounded-md bg-white object-contain p-0.5" />
+                  </div>
+                  <span className="text-xl font-bold tracking-tight text-white">EDC India</span>
+                </Link>
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/80 whitespace-nowrap">
+                  Member Access
+                </div>
+              </div>
+              <h2 className="mt-10 text-5xl font-extrabold leading-tight tracking-tight text-white">
+                Welcome Back,
+                <span className="block bg-gradient-to-r from-cyan-300 to-blue-200 bg-clip-text text-transparent">Founder</span>
+              </h2>
+              <p className="mt-5 max-w-lg text-base leading-relaxed text-white/70">
+                Access your dashboard, explore opportunities, and manage your startup journey with EDC India's ecosystem support.
+              </p>
+
+              <div className="mt-10 grid gap-3 sm:grid-cols-2">
+                {[
+                  { icon: '🚀', title: 'Growth Network', text: 'Connect with founders, mentors, and investors.' },
+                  { icon: '📋', title: 'Validation Insights', text: 'Track idea validation progress and reports.' },
+                  { icon: '💰', title: 'Funding Access', text: 'Discover grants, opportunities, and support.' },
+                  { icon: '🎓', title: 'Fellowship Tracks', text: 'Continue your entrepreneurship learning path.' },
+                ].map((item) => (
+                  <div key={item.title} className="rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-sm">
+                    <div className="text-lg">{item.icon}</div>
+                    <div className="mt-1 text-sm font-bold text-white">{item.title}</div>
+                    <div className="mt-1 text-xs leading-relaxed text-white/60">{item.text}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <span className="text-xl font-bold text-slate-800 tracking-tight">
-              EDC India
-            </span>
-          </Link>
-        </div>
 
-        <div className="max-w-md mt-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-sm font-semibold shadow-sm">
-            <span className="flex h-2 w-2 rounded-full bg-secondary animate-pulse"></span>
-            Elevate Your Journey
-          </div>
-          <h2 className="text-4xl font-extrabold tracking-tight text-ink mb-6 leading-tight">
-            Empower Your <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#2C6AE5]">Startup Vision.</span>
-          </h2>
-          <p className="text-lg text-slate-600 mb-10 leading-relaxed font-medium">
-            Join the elite community of innovators. Access world-class resources, networking, and validation tools to supercharge your startup journey.
-          </p>
-          
-          <div className="flex gap-4 items-center bg-white/60 p-4 rounded-2xl border border-white shadow-sm backdrop-blur-sm inline-flex">
-             <div className="flex -space-x-3">
-                <div className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-slate-200 shadow-sm"><img src="https://i.pravatar.cc/100?img=11" alt="User" className="w-full h-full object-cover" /></div>
-                <div className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-slate-200 shadow-sm"><img src="https://i.pravatar.cc/100?img=12" alt="User" className="w-full h-full object-cover" /></div>
-                <div className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-slate-200 shadow-sm"><img src="https://i.pravatar.cc/100?img=13" alt="User" className="w-full h-full object-cover" /></div>
-                <div className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-primary flex items-center justify-center text-xs font-bold text-white shadow-sm">+9k</div>
-             </div>
-             <div className="text-sm font-medium text-slate-600">
-               Trusted by <span className="text-slate-900 font-bold">10,000+</span> founders
-             </div>
-          </div>
-        </div>
+            <div className="mt-10 flex items-center gap-3 rounded-2xl border border-white/15 bg-white/5 p-4 text-sm text-white/75">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-base">🛡️</div>
+              Your access is secured through Google authentication.
+            </div>
+          </section>
 
-        <div className="mt-auto pt-10 text-sm font-medium text-slate-400">
-          © {new Date().getFullYear()} EDC India. All rights reserved.
-        </div>
-      </div>
+          <section className="flex w-full items-center justify-center py-1 sm:py-6">
+            <div className="w-full max-w-xl rounded-[1.6rem] border border-white/20 bg-white/95 p-4 shadow-[0_20px_60px_-20px_rgba(2,6,23,0.45)] backdrop-blur-xl sm:rounded-[2rem] sm:p-8 lg:p-9">
+              <div className="mb-7 text-center">
+                <Link to="/" className="mx-auto inline-flex items-center gap-2.5 lg:hidden">
+                  <img src="/logo.png" alt="EDC India" className="h-9 w-9 rounded-full bg-white object-contain p-0.5" />
+                  <span className="text-base font-bold text-slate-800">EDC India</span>
+                </Link>
+                <h1 className="mt-4 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Login to Continue</h1>
+                <p className="mt-2 text-sm font-medium text-slate-500 sm:text-base">Sign in securely and continue building with EDC India.</p>
+              </div>
 
-      {/* Right Panel: Login Form */}
-      <div className="flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-20 relative z-10 min-h-[calc(100vh-73px)] lg:min-h-full">
-        
-        <div className="mx-auto w-full max-w-md">
-          <div className="text-center lg:text-left mb-10 mt-10 lg:mt-0">
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl mb-3">
-              Welcome back
-            </h1>
-            <p className="text-base text-slate-500 font-medium">
-              Transform your ideas into reality. Please sign in to access your dashboard.
-            </p>
-          </div>
-
-          <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white shadow-2xl shadow-slate-200/50 relative overflow-hidden group hover:shadow-primary/5 transition-all duration-500">
-            {/* Inner top glow effect */}
-            <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            
-            <div className="p-8 sm:p-10">
               {error && (
-                <div className="mb-8 rounded-2xl border border-red-200 bg-red-50/80 p-4 text-sm text-red-600 flex items-start gap-3 backdrop-blur-sm shadow-sm transition-all duration-300">
-                  <svg className="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div className="mb-6 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-600 shadow-sm">
+                  <svg className="mt-0.5 h-5 w-5 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <span className="font-medium">{error}</span>
                 </div>
               )}
 
-              <div className="space-y-6">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-6">
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-200"></div>
+                    <div className="w-full border-t border-slate-200" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="bg-[#fbfcff] px-4 text-slate-500 rounded-full font-medium">
-                      Secure login with Google
-                    </span>
+                    <span className="rounded-full bg-slate-50 px-4 text-slate-500">Google Secure Login</span>
                   </div>
                 </div>
 
-                <div className="flex justify-center pt-4">
+                <div ref={googleAuthSlotRef} className="mt-6 flex w-full justify-center">
                   {googleSubmitting ? (
-                    <div className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-slate-50 border border-slate-100 shadow-inner w-full max-w-[300px] justify-center">
-                      <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <div className="flex w-full max-w-[360px] items-center justify-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-3.5 shadow-sm sm:px-8">
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                       <span className="text-sm font-semibold text-slate-600">Authenticating...</span>
                     </div>
                   ) : (
-                    <div className="hover:-translate-y-1 transition-transform duration-300 drop-shadow-sm">
-                      <GoogleLogin
-                        onSuccess={handleGoogleSuccess}
-                        onError={() => setError('Google sign-in failed. Please try again.')}
-                        shape="pill"
-                        theme="outline"
-                        size="large"
-                        width={300}
-                        text="continue_with"
-                      />
+                    <div className="google-auth-sparkle w-full max-w-[360px] transition-transform duration-300 hover:-translate-y-0.5">
+                      <svg className="google-auth-sparkle-svg" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+                        <rect className="google-auth-sparkle-track" x="1" y="1" width="98" height="38" rx="19" ry="19" pathLength="100" />
+                        <rect className="google-auth-sparkle-glow" x="1" y="1" width="98" height="38" rx="19" ry="19" pathLength="100" />
+                        <rect className="google-auth-sparkle-tail2" x="1" y="1" width="98" height="38" rx="19" ry="19" pathLength="100" />
+                        <rect className="google-auth-sparkle-core" x="1" y="1" width="98" height="38" rx="19" ry="19" pathLength="100" />
+                      </svg>
+                      <div className="google-auth-sparkle-content">
+                        <GoogleLogin
+                          onSuccess={handleGoogleSuccess}
+                          onError={() => setError('Google sign-in failed. Please try again.')}
+                          shape="pill"
+                          theme="outline"
+                          size="large"
+                          width={googleButtonWidth}
+                          text="continue_with"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
-              
-              <div className="mt-10 pt-6 border-t border-slate-100/80 text-center">
-                 <p className="text-sm text-slate-500 font-medium">
-                   Don't have an account?{' '}
-                   <Link to="/join" className="font-bold text-primary hover:text-secondary transition-colors duration-200 ml-1">
-                     Apply for Membership &rarr;
-                   </Link>
-                 </p>
+
+              <div className="mt-7 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-blue-700">
+                <p className="font-semibold">New to EDC India?</p>
+                <p className="mt-1 text-blue-700/80">Apply for a membership plan to get founder access and dashboard features.</p>
+              </div>
+
+              <div className="mt-6 text-center text-sm text-slate-500">
+                <Link to="/join" className="font-bold text-primary transition-colors hover:text-secondary">Apply for Membership →</Link>
               </div>
             </div>
-          </div>
-          
+          </section>
         </div>
       </div>
-    </div>
-    <SiteFooter />
-  </motion.div>
+
+      <SiteFooter />
+    </motion.div>
   )
 }
