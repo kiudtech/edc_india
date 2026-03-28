@@ -10,6 +10,7 @@ const sections = [
   { id: 'memberships', label: 'Memberships', icon: '🧩' },
   { id: 'payments', label: 'Payments', icon: '💳' },
   { id: 'tickets', label: 'Tickets', icon: '🎟️' },
+  { id: 'queries', label: 'Form Queries', icon: '📥' },
   { id: 'events', label: 'Events', icon: '📅' },
   { id: 'grants', label: 'Grants & Funding', icon: '💰' },
   { id: 'plans', label: 'Plans', icon: '🧾' },
@@ -18,6 +19,22 @@ const sections = [
   { id: 'courses', label: 'Courses', icon: '📚' },
   { id: 'notifications', label: 'Notifications', icon: '🔔' },
 ]
+
+const MENU_ALERT_KEYS = ['memberships', 'tickets', 'college-ranking', 'queries']
+const DEFAULT_SEEN_MENU_ALERTS = {
+  memberships: 0,
+  tickets: 0,
+  'college-ranking': 0,
+  queries: 0,
+}
+
+function normalizeSeenMenuAlerts(raw = {}) {
+  return MENU_ALERT_KEYS.reduce((acc, key) => {
+    const value = Number(raw?.[key] || 0)
+    acc[key] = Number.isFinite(value) && value > 0 ? Math.floor(value) : 0
+    return acc
+  }, {})
+}
 
 /* ─── Helper: fetch with auth ─── */
 function useApi() {
@@ -113,10 +130,115 @@ function exportCSV(filename, headers, rows) {
    MAIN ADMIN DASHBOARD
    =============================================================== */
 export default function AdminDashboardPage() {
+  const { get } = useApi()
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [active, setActive] = useState('analytics')
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [alertsHydrated, setAlertsHydrated] = useState(false)
+  const [alertsFetched, setAlertsFetched] = useState(false)
+  const [menuAlerts, setMenuAlerts] = useState({
+    memberships: 0,
+    tickets: 0,
+    'college-ranking': 0,
+    queries: 0,
+  })
+  const [seenMenuAlerts, setSeenMenuAlerts] = useState(DEFAULT_SEEN_MENU_ALERTS)
+  const alertStorageKey = 'edc-admin-seen-alerts:v1'
+
+  const markSectionAlertsSeen = useCallback((sectionId) => {
+    setSeenMenuAlerts((prev) => ({
+      ...prev,
+      [sectionId]: Number(menuAlerts[sectionId] || 0),
+    }))
+  }, [menuAlerts])
+
+  const getUnreadAlertCount = useCallback((sectionId) => {
+    const total = Number(menuAlerts[sectionId] || 0)
+    const seen = Number(seenMenuAlerts[sectionId] || 0)
+    return Math.max(0, total - seen)
+  }, [menuAlerts, seenMenuAlerts])
+
+  const activeSection = sections.find((s) => s.id === active)
+  const activeUnreadAlerts = getUnreadAlertCount(active)
+  const canMarkActiveAlertsRead = MENU_ALERT_KEYS.includes(active)
+
+  const refreshMenuAlerts = useCallback(async () => {
+    try {
+      const [analytics, queryItems, rankingItems] = await Promise.all([
+        get('/api/admin/analytics').catch(() => null),
+        get('/api/admin/contact-requests?status=new').catch(() => []),
+        get('/api/admin/college-ranking-applications').catch(() => []),
+      ])
+
+      const pendingRankingCount = Array.isArray(rankingItems)
+        ? rankingItems.filter((item) => String(item?.status || '').toLowerCase() === 'pending').length
+        : 0
+
+      setMenuAlerts({
+        memberships: Number(analytics?.pendingMembers || 0),
+        tickets: Number(analytics?.openTickets || 0),
+        'college-ranking': pendingRankingCount,
+        queries: Array.isArray(queryItems) ? queryItems.length : 0,
+      })
+      setAlertsFetched(true)
+    } catch {
+      // Keep previous alert counts if polling fails.
+    }
+  }, [get])
+
+  useEffect(() => {
+    refreshMenuAlerts()
+    const timer = setInterval(refreshMenuAlerts, 30000)
+    return () => clearInterval(timer)
+  }, [refreshMenuAlerts])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      const saved = window.localStorage.getItem(alertStorageKey)
+      if (!saved) {
+        setSeenMenuAlerts(DEFAULT_SEEN_MENU_ALERTS)
+        setAlertsHydrated(true)
+        return
+      }
+      const parsed = JSON.parse(saved)
+      setSeenMenuAlerts(normalizeSeenMenuAlerts(parsed))
+      setAlertsHydrated(true)
+    } catch {
+      setSeenMenuAlerts(DEFAULT_SEEN_MENU_ALERTS)
+      setAlertsHydrated(true)
+    }
+  }, [alertStorageKey])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      window.localStorage.setItem(alertStorageKey, JSON.stringify(seenMenuAlerts))
+    } catch {
+      // Ignore storage write errors.
+    }
+  }, [alertStorageKey, seenMenuAlerts])
+
+  useEffect(() => {
+    if (!alertsHydrated || !alertsFetched) return
+
+    setSeenMenuAlerts((prev) => {
+      let changed = false
+      const next = { ...prev }
+
+      Object.keys(menuAlerts).forEach((key) => {
+        const total = Number(menuAlerts[key] || 0)
+        const seen = Number(next[key] || 0)
+        if (seen > total) {
+          next[key] = total
+          changed = true
+        }
+      })
+
+      return changed ? next : prev
+    })
+  }, [menuAlerts, alertsHydrated, alertsFetched])
 
   const handleLogout = () => { logout(); navigate('/login') }
 
@@ -151,7 +273,10 @@ export default function AdminDashboardPage() {
           {sections.map(s => (
             <button
               key={s.id}
-              onClick={() => { setActive(s.id); setSidebarOpen(false) }}
+              onClick={() => {
+                setActive(s.id)
+                setSidebarOpen(false)
+              }}
               className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition duration-200 ${
                 active === s.id
                   ? 'bg-primary/10 font-bold text-primary shadow-sm'
@@ -160,7 +285,14 @@ export default function AdminDashboardPage() {
             >
               <span className="text-base">{s.icon}</span>
               <span>{s.label}</span>
-              {active === s.id && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" />}
+              <span className="ml-auto flex items-center gap-2">
+                {getUnreadAlertCount(s.id) > 0 && (
+                  <span className="inline-flex min-w-[1.2rem] items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                    {getUnreadAlertCount(s.id) > 99 ? '99+' : getUnreadAlertCount(s.id)}
+                  </span>
+                )}
+                {active === s.id && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
+              </span>
             </button>
           ))}
         </div>
@@ -221,6 +353,19 @@ export default function AdminDashboardPage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              {canMarkActiveAlertsRead && (
+                <button
+                  type="button"
+                  onClick={() => markSectionAlertsSeen(active)}
+                  disabled={activeUnreadAlerts === 0}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {activeUnreadAlerts > 0 ? `Mark Read (${activeUnreadAlerts})` : 'Alerts Cleared'}
+                </button>
+              )}
               <div className="hidden items-center gap-3 sm:flex">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-slate-700 to-slate-900 text-xs font-bold text-white shadow-md">
                   {user?.name?.charAt(0)?.toUpperCase() || 'A'}
@@ -236,10 +381,30 @@ export default function AdminDashboardPage() {
 
         {/* Section content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+          {canMarkActiveAlertsRead && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm">
+              <p className="text-xs font-medium text-slate-600 sm:text-sm">
+                Unread updates in <span className="font-semibold text-slate-800">{activeSection?.label || 'this section'}</span>: {activeUnreadAlerts}
+              </p>
+              <button
+                type="button"
+                onClick={() => markSectionAlertsSeen(active)}
+                disabled={activeUnreadAlerts === 0}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                {activeUnreadAlerts > 0 ? `Clear Alerts (${activeUnreadAlerts})` : 'No New Alerts'}
+              </button>
+            </div>
+          )}
+
           {active === 'analytics' && <AnalyticsSection />}
           {active === 'users' && <UsersSection />}
           {active === 'payments' && <PaymentsSection />}
           {active === 'tickets' && <TicketsSection />}
+          {active === 'queries' && <QueriesSection />}
           {active === 'events' && <EventsSection />}
           {active === 'grants' && <GrantsSection />}
           {active === 'plans' && <PlansSection />}
@@ -2023,7 +2188,124 @@ function CoursesSection() {
 }
 
 /* ===============================================================
-  12. NOTIFICATION MANAGEMENT
+  12. CONTACT / PARTNERSHIP QUERIES
+   =============================================================== */
+function QueriesSection() {
+  const api = useApi()
+  const [queries, setQueries] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [formType, setFormType] = useState('')
+  const [status, setStatus] = useState('')
+
+  const formLabels = {
+    startup_application: 'Startup Application',
+    investor_interest: 'Investor Interest',
+    college_partnership: 'College Partnership',
+    newsletter: 'Newsletter',
+  }
+
+  const formColors = {
+    startup_application: 'blue',
+    investor_interest: 'green',
+    college_partnership: 'purple',
+    newsletter: 'yellow',
+  }
+
+  const fetchQueries = useCallback(() => {
+    setLoading(true)
+    const q = new URLSearchParams()
+    if (formType) q.set('formType', formType)
+    if (status) q.set('status', status)
+    api.get(`/api/admin/contact-requests?${q.toString()}`).then(setQueries).finally(() => setLoading(false))
+  }, [formType, status])
+
+  useEffect(() => { fetchQueries() }, [fetchQueries])
+
+  const updateStatus = async (item, nextStatus) => {
+    await api.put(`/api/admin/contact-requests/${item._id}`, { status: nextStatus })
+    fetchQueries()
+  }
+
+  return (
+    <div>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <select value={formType} onChange={(e) => setFormType(e.target.value)} className="rounded-lg border px-3 py-2 text-sm">
+          <option value="">All Forms</option>
+          <option value="startup_application">Startup Application</option>
+          <option value="investor_interest">Investor Interest</option>
+          <option value="college_partnership">College Partnership</option>
+          <option value="newsletter">Newsletter</option>
+        </select>
+        <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-lg border px-3 py-2 text-sm">
+          <option value="">All Status</option>
+          <option value="new">New</option>
+          <option value="contacted">Contacted</option>
+          <option value="resolved">Resolved</option>
+        </select>
+        <span className="ml-auto text-xs text-slate-400">{queries.length} submission(s)</span>
+      </div>
+
+      {loading ? <Spinner /> : (
+        <div className="overflow-x-auto rounded-xl border bg-white">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 text-left text-xs font-medium uppercase text-slate-500">
+              <tr>
+                <th className="px-4 py-3">Name</th>
+                <th className="px-4 py-3">Contact</th>
+                <th className="px-4 py-3">From Form</th>
+                <th className="px-4 py-3">Organization</th>
+                <th className="px-4 py-3">Message</th>
+                <th className="px-4 py-3">Submitted</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {queries.map((q) => (
+                <tr key={q._id} className="border-t hover:bg-slate-50">
+                  <td className="px-4 py-3 font-medium text-slate-800">{q.fullName}</td>
+                  <td className="px-4 py-3">
+                    <div>{q.email}</div>
+                    <div className="text-xs text-slate-400">{q.phone}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge text={formLabels[q.formType] || q.formTitle || q.formType} color={formColors[q.formType] || 'gray'} />
+                  </td>
+                  <td className="px-4 py-3 text-xs text-slate-600">{q.organization || '—'}</td>
+                  <td className="max-w-[260px] px-4 py-3 text-xs text-slate-600">{q.message || '—'}</td>
+                  <td className="px-4 py-3 text-xs text-slate-500">{fmtDateTime(q.createdAt)}</td>
+                  <td className="px-4 py-3">{statusBadge(q.status)}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap gap-2">
+                      {q.status !== 'contacted' && (
+                        <button onClick={() => updateStatus(q, 'contacted')} className="rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-100">
+                          Mark Contacted
+                        </button>
+                      )}
+                      {q.status !== 'resolved' && (
+                        <button onClick={() => updateStatus(q, 'resolved')} className="rounded bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-600 hover:bg-emerald-100">
+                          Resolve
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {queries.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-4 py-8 text-center text-slate-400">No form submissions found</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ===============================================================
+  13. NOTIFICATION MANAGEMENT
    =============================================================== */
 function NotificationsSection() {
   const api = useApi()

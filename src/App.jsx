@@ -342,6 +342,59 @@ const Lightbox = ({ item, onClose }) => {
 
 const ContactCard = ({ form }) => {
   const [open, setOpen] = useState(false)
+  const [values, setValues] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    organization: '',
+    message: '',
+  })
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [submitSuccess, setSubmitSuccess] = useState('')
+
+  const setField = (field, value) => {
+    setValues((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSubmitError('')
+    setSubmitSuccess('')
+
+    if (!values.fullName.trim() || !values.email.trim() || !values.phone.trim()) {
+      setSubmitError('Please enter your name, email, and phone number to continue.')
+      return
+    }
+
+    setSubmitting(true)
+    try {
+      const response = await fetch(`${API_BASE}/api/admin/contact-requests`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          formType: form.formType,
+          formTitle: form.title,
+          fullName: values.fullName.trim(),
+          email: values.email.trim(),
+          phone: values.phone.trim(),
+          organization: values.organization.trim(),
+          message: values.message.trim(),
+        }),
+      })
+
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(data.message || 'Unable to submit your request right now.')
+
+      setSubmitSuccess(data.message || form.successMessage || `Thanks for your ${form.title.toLowerCase()} request. We will process your request shortly.`)
+      setValues({ fullName: '', email: '', phone: '', organization: '', message: '' })
+    } catch (err) {
+      setSubmitError(err.message || 'Unable to submit your request right now.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <motion.div
       variants={staggerItem}
@@ -376,18 +429,63 @@ const ContactCard = ({ form }) => {
           transition={{ duration: 0.35, ease: 'easeInOut' }}
           style={{ overflow: 'hidden' }}
         >
-          <div className="mt-5 grid gap-3">
-            {['Full Name', 'Email Address', 'Organization / Startup'].map((ph) => (
-              <input
-                key={ph}
-                className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 ${form.ring}`}
-                placeholder={ph}
-              />
-            ))}
-            <button className={`mt-1 w-full rounded-2xl px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all duration-200 hover:shadow-xl active:scale-95 ${form.btn}`}>
-              {form.cta} →
+          <form className="mt-5 grid gap-3" onSubmit={handleSubmit}>
+            {submitSuccess && (
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-medium text-emerald-700 sm:text-sm">
+                {submitSuccess}
+              </div>
+            )}
+            {submitError && (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-medium text-red-700 sm:text-sm">
+                {submitError}
+              </div>
+            )}
+
+            <input
+              className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 ${form.ring}`}
+              placeholder="Full Name"
+              value={values.fullName}
+              onChange={(e) => setField('fullName', e.target.value)}
+              required
+            />
+            <input
+              type="email"
+              className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 ${form.ring}`}
+              placeholder="Email Address"
+              value={values.email}
+              onChange={(e) => setField('email', e.target.value)}
+              required
+            />
+            <input
+              type="tel"
+              className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 ${form.ring}`}
+              placeholder="Phone Number"
+              value={values.phone}
+              onChange={(e) => setField('phone', e.target.value)}
+              required
+            />
+            <input
+              className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 ${form.ring}`}
+              placeholder="Organization / Startup"
+              value={values.organization}
+              onChange={(e) => setField('organization', e.target.value)}
+            />
+            <textarea
+              rows={3}
+              className={`w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 ${form.ring}`}
+              placeholder="Any specific requirement or message (optional)"
+              value={values.message}
+              onChange={(e) => setField('message', e.target.value)}
+            />
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className={`mt-1 w-full rounded-2xl px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all duration-200 hover:shadow-xl active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 ${form.btn}`}
+            >
+              {submitting ? 'Submitting...' : `${form.cta} →`}
             </button>
-          </div>
+          </form>
         </motion.div>
       </div>
     </motion.div>
@@ -1204,10 +1302,10 @@ const Home = () => {
 
           <motion.div className="mt-16 grid gap-6 sm:grid-cols-2 items-start" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {[
-              { title: 'Startup Application', cta: 'Apply Now', icon: '🚀', gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50', accent: 'text-blue-600', ring: 'focus:ring-blue-500/20 focus:border-blue-500', btn: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700', desc: 'Join the EDC India startup ecosystem.' },
-              { title: 'Investor Interest', cta: 'Join as Investor', icon: '💼', gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50', accent: 'text-emerald-600', ring: 'focus:ring-emerald-500/20 focus:border-emerald-500', btn: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700', desc: 'Connect with high-potential founders.' },
-              { title: 'College Partnership', cta: 'Partner With Us', icon: '🏛️', gradient: 'from-purple-500 to-pink-600', bg: 'bg-purple-50', accent: 'text-purple-600', ring: 'focus:ring-purple-500/20 focus:border-purple-500', btn: 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700', desc: 'Build an on-campus startup ecosystem.' },
-              { title: 'Newsletter', cta: 'Subscribe', icon: '📩', gradient: 'from-orange-500 to-rose-500', bg: 'bg-orange-50', accent: 'text-orange-600', ring: 'focus:ring-orange-500/20 focus:border-orange-500', btn: 'bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600', desc: 'Stay updated with funding & events.' },
+              { title: 'Startup Application', formType: 'startup_application', cta: 'Apply Now', icon: '🚀', gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50', accent: 'text-blue-600', ring: 'focus:ring-blue-500/20 focus:border-blue-500', btn: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700', desc: 'Join the EDC India startup ecosystem.', successMessage: 'Thank you for applying to Startup Application. Our team will process your request shortly and get back to you.' },
+              { title: 'Investor Interest', formType: 'investor_interest', cta: 'Join as Investor', icon: '💼', gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50', accent: 'text-emerald-600', ring: 'focus:ring-emerald-500/20 focus:border-emerald-500', btn: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700', desc: 'Connect with high-potential founders.', successMessage: 'Thank you for your investor interest. We will process your query shortly and connect with you.' },
+              { title: 'College Partnership', formType: 'college_partnership', cta: 'Partner With Us', icon: '🏛️', gradient: 'from-purple-500 to-pink-600', bg: 'bg-purple-50', accent: 'text-purple-600', ring: 'focus:ring-purple-500/20 focus:border-purple-500', btn: 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700', desc: 'Build an on-campus startup ecosystem.', successMessage: 'Thank you for your college partnership request. We will process your query shortly.' },
+              { title: 'Newsletter', formType: 'newsletter', cta: 'Subscribe', icon: '📩', gradient: 'from-orange-500 to-rose-500', bg: 'bg-orange-50', accent: 'text-orange-600', ring: 'focus:ring-orange-500/20 focus:border-orange-500', btn: 'bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600', desc: 'Stay updated with funding & events.', successMessage: 'Thank you for subscribing. We will process your request shortly and share updates with you.' },
             ].map((form) => (
               <ContactCard key={form.title} form={form} />
             ))}

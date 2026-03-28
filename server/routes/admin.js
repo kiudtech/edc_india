@@ -12,8 +12,16 @@ import Course from '../models/Course.js'
 import Plan from '../models/Plan.js'
 import CollegeRankingApplication from '../models/CollegeRankingApplication.js'
 import FellowshipApplication from '../models/FellowshipApplication.js'
+import ContactRequest from '../models/ContactRequest.js'
 
 const router = Router()
+
+const CONTACT_FORM_TITLES = {
+  startup_application: 'Startup Application',
+  investor_interest: 'Investor Interest',
+  college_partnership: 'College Partnership',
+  newsletter: 'Newsletter',
+}
 
 /* ============================================================
    ANALYTICS
@@ -466,6 +474,76 @@ router.put('/fellowship-applications/:id', protect, adminOnly, async (req, res) 
     )
     if (!application) return res.status(404).json({ message: 'Application not found' })
     res.json(application)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+/* ============================================================
+   CONTACT / PARTNERSHIP REQUESTS
+   ============================================================ */
+router.post('/contact-requests', async (req, res) => {
+  try {
+    const {
+      formType,
+      formTitle,
+      fullName,
+      email,
+      phone,
+      organization,
+      message,
+    } = req.body
+
+    if (!formType || !CONTACT_FORM_TITLES[formType]) {
+      return res.status(400).json({ message: 'Invalid form type.' })
+    }
+
+    if (!fullName || !email || !phone) {
+      return res.status(400).json({ message: 'Full name, email, and phone are required.' })
+    }
+
+    const request = await ContactRequest.create({
+      formType,
+      formTitle: (formTitle || CONTACT_FORM_TITLES[formType]).trim(),
+      fullName,
+      email,
+      phone,
+      organization,
+      message,
+    })
+
+    res.status(201).json({
+      message: `Thanks for your ${CONTACT_FORM_TITLES[formType].toLowerCase()} request. We will process your request shortly.`,
+      request,
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+router.get('/contact-requests', protect, adminOnly, async (req, res) => {
+  try {
+    const filter = {}
+    if (req.query.formType) filter.formType = req.query.formType
+    if (req.query.status) filter.status = req.query.status
+
+    const requests = await ContactRequest.find(filter).sort({ createdAt: -1 })
+    res.json(requests)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+router.put('/contact-requests/:id', protect, adminOnly, async (req, res) => {
+  try {
+    const { status, adminNotes } = req.body
+    const update = {}
+    if (status) update.status = status
+    if (adminNotes !== undefined) update.adminNotes = adminNotes
+
+    const request = await ContactRequest.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true })
+    if (!request) return res.status(404).json({ message: 'Request not found' })
+    res.json(request)
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
