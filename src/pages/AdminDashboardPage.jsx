@@ -7,15 +7,14 @@ import { API_BASE } from '../config'
 const sections = [
   { id: 'analytics', label: 'Analytics', icon: '📊' },
   { id: 'users', label: 'Users', icon: '👥' },
+  { id: 'memberships', label: 'Memberships', icon: '🧩' },
   { id: 'payments', label: 'Payments', icon: '💳' },
   { id: 'tickets', label: 'Tickets', icon: '🎟️' },
   { id: 'events', label: 'Events', icon: '📅' },
   { id: 'grants', label: 'Grants & Funding', icon: '💰' },
   { id: 'plans', label: 'Plans', icon: '🧾' },
-  { id: 'validations', label: 'Idea Validation', icon: '🏆' },
   { id: 'colleges', label: 'College Ranking', icon: '🏫' },
   { id: 'college-ranking', label: 'Ranking Applications', icon: '🎓' },
-  { id: 'fellowship-applications', label: 'Fellowship Applications', icon: '🧑‍🎓' },
   { id: 'courses', label: 'Courses', icon: '📚' },
   { id: 'notifications', label: 'Notifications', icon: '🔔' },
 ]
@@ -244,10 +243,9 @@ export default function AdminDashboardPage() {
           {active === 'events' && <EventsSection />}
           {active === 'grants' && <GrantsSection />}
           {active === 'plans' && <PlansSection />}
-          {active === 'validations' && <ValidationsSection />}
+          {active === 'memberships' && <MembershipsSection />}
           {active === 'colleges' && <CollegesSection />}
           {active === 'college-ranking' && <CollegeRankingSection />}
-          {active === 'fellowship-applications' && <FellowshipApplicationsSection />}
           {active === 'courses' && <CoursesSection />}
           {active === 'notifications' && <NotificationsSection />}
         </main>
@@ -1138,7 +1136,367 @@ function PlansSection() {
 }
 
 /* ===============================================================
-   8. IDEA VALIDATION MANAGEMENT
+   8. MEMBERSHIP MANAGEMENT (PLAN-WISE)
+   =============================================================== */
+function MembershipsSection() {
+  const api = useApi()
+  const [plans, setPlans] = useState([])
+  const [users, setUsers] = useState([])
+  const [validations, setValidations] = useState([])
+  const [fellowshipApps, setFellowshipApps] = useState([])
+  const [selectedPlanSlug, setSelectedPlanSlug] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const [selectedUser, setSelectedUser] = useState(null)
+
+  const [selectedValidation, setSelectedValidation] = useState(null)
+  const [validationEditForm, setValidationEditForm] = useState({ status: '', adminNotes: '', certificateIssued: false, rejectionReason: '' })
+
+  const [selectedFellowship, setSelectedFellowship] = useState(null)
+  const [fellowshipEditStatus, setFellowshipEditStatus] = useState('new')
+
+  const fallbackPlans = [
+    { _id: 'plan-startup-membership', name: 'Startup Membership', slug: 'startup-membership', ctaRoute: '/startup-application', isActive: true },
+    { _id: 'plan-idea-validation', name: 'Idea Validation', slug: 'idea-validation', ctaRoute: '/join-validation', isActive: true },
+    { _id: 'plan-fellowship-program', name: 'Fellowship Program', slug: 'fellowship-program', ctaRoute: '/fellowship-application', isActive: true },
+  ]
+
+  const classifyPlan = (plan) => {
+    const slug = String(plan?.slug || '').toLowerCase()
+    const route = String(plan?.ctaRoute || '').toLowerCase()
+
+    if (slug.includes('validation') || route.includes('join-validation')) return 'validation'
+    if (slug.includes('fellowship') || route.includes('fellowship')) return 'fellowship'
+    return 'startup'
+  }
+
+  const fetch_ = async () => {
+    setLoading(true)
+    setError('')
+
+    try {
+      const [planItems, userItems, validationItems, fellowshipItems] = await Promise.all([
+        api.get('/api/admin/plans'),
+        api.get('/api/admin/users'),
+        api.get('/api/admin/validations'),
+        api.get('/api/admin/fellowship-applications'),
+      ])
+
+      const activePlans = (planItems || [])
+        .filter((p) => p.isActive !== false)
+        .sort((a, b) => (a.sortOrder || 999) - (b.sortOrder || 999))
+
+      const nextPlans = activePlans.length ? activePlans : fallbackPlans
+
+      setPlans(nextPlans)
+      setUsers(userItems || [])
+      setValidations(validationItems || [])
+      setFellowshipApps(fellowshipItems || [])
+
+      setSelectedPlanSlug((prev) => {
+        if (prev && nextPlans.some((p) => p.slug === prev)) return prev
+        return nextPlans[0]?.slug || ''
+      })
+    } catch (err) {
+      setError(err.message || 'Failed to load membership data')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { fetch_() }, [])
+
+  const planOptions = plans.length ? plans : fallbackPlans
+  const selectedPlan = planOptions.find((p) => p.slug === selectedPlanSlug) || planOptions[0] || null
+  const selectedKind = classifyPlan(selectedPlan)
+
+  const startupMembers = users.filter((u) => u.membershipType === 'startup')
+  const validationMembers = validations
+  const fellowshipMembers = fellowshipApps
+
+  const countForPlan = (plan) => {
+    const kind = classifyPlan(plan)
+    if (kind === 'validation') return validationMembers.length
+    if (kind === 'fellowship') return fellowshipMembers.length
+    return startupMembers.length
+  }
+
+  const openValidation = (item) => {
+    setSelectedValidation(item)
+    setValidationEditForm({
+      status: item.status,
+      adminNotes: item.adminNotes || '',
+      certificateIssued: item.certificateIssued || false,
+      rejectionReason: item.rejectionReason || '',
+    })
+  }
+
+  const saveValidation = async () => {
+    await api.put(`/api/admin/validations/${selectedValidation._id}`, validationEditForm)
+    setSelectedValidation(null)
+    fetch_()
+  }
+
+  const openFellowship = (item) => {
+    setSelectedFellowship(item)
+    setFellowshipEditStatus(item.status || 'new')
+  }
+
+  const saveFellowship = async () => {
+    await api.put(`/api/admin/fellowship-applications/${selectedFellowship._id}`, { status: fellowshipEditStatus })
+    setSelectedFellowship(null)
+    fetch_()
+  }
+
+  if (loading) return <Spinner />
+
+  return (
+    <div>
+      <div className="mb-4 rounded-xl border border-blue-100 bg-blue-50/60 p-3 text-sm text-blue-700">
+        Membership management is now organized plan-wise. Select a plan to view and manage related members/applications.
+      </div>
+
+      {error && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+          {error}
+        </div>
+      )}
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {planOptions.map((plan) => {
+          const kind = classifyPlan(plan)
+          const isActive = plan.slug === selectedPlan?.slug
+          const tone = kind === 'validation' ? 'from-purple-500 to-pink-600' : kind === 'fellowship' ? 'from-cyan-500 to-blue-600' : 'from-blue-600 to-indigo-600'
+
+          return (
+            <button
+              key={plan._id || plan.slug}
+              onClick={() => setSelectedPlanSlug(plan.slug)}
+              className={`relative overflow-hidden rounded-2xl border p-4 text-left transition ${isActive ? 'border-transparent shadow-lg' : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'}`}
+            >
+              {isActive && <div className={`absolute inset-0 bg-gradient-to-br ${tone} opacity-95`} />}
+              <div className="relative z-10">
+                <div className={`text-xs font-semibold uppercase tracking-wider ${isActive ? 'text-white/70' : 'text-slate-400'}`}>
+                  {kind === 'startup' ? 'Startup Membership' : kind === 'validation' ? 'Idea Validation' : 'Fellowship Program'}
+                </div>
+                <div className={`mt-1 text-base font-bold ${isActive ? 'text-white' : 'text-slate-800'}`}>{plan.name}</div>
+                <div className={`mt-3 text-2xl font-extrabold ${isActive ? 'text-white' : 'text-slate-900'}`}>{countForPlan(plan)}</div>
+                <div className={`text-xs ${isActive ? 'text-white/80' : 'text-slate-500'}`}>member/application record(s)</div>
+              </div>
+            </button>
+          )
+        })}
+      </div>
+
+      {selectedPlan && (
+        <div className="mt-6 rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-4 py-3">
+            <h3 className="text-sm font-bold text-slate-800">{selectedPlan.name} Details</h3>
+            <span className="text-xs text-slate-400">{countForPlan(selectedPlan)} record(s)</span>
+          </div>
+
+          {selectedKind === 'startup' && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 text-left text-xs font-medium uppercase text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3">Member</th>
+                    <th className="px-4 py-3">Founder ID</th>
+                    <th className="px-4 py-3">Startup</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Joined</th>
+                    <th className="px-4 py-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {startupMembers.map((u) => (
+                    <tr key={u._id} className="border-t hover:bg-slate-50">
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-slate-800">{u.name}</div>
+                        <div className="text-xs text-slate-400">{u.email}</div>
+                        <div className="text-xs text-slate-400">{u.phone || '—'}</div>
+                      </td>
+                      <td className="px-4 py-3 text-xs font-medium">{u.founderId || '—'}</td>
+                      <td className="px-4 py-3 text-xs">{u.startupName || '—'} <span className="text-slate-400">· {u.startupStage || '—'}</span></td>
+                      <td className="px-4 py-3">{statusBadge(u.membershipStatus)}</td>
+                      <td className="px-4 py-3 text-xs">{fmtDate(u.createdAt)}</td>
+                      <td className="px-4 py-3">
+                        <button onClick={() => setSelectedUser(u)} className="rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-100">View</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {startupMembers.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-8 text-center text-slate-400">No startup membership records</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {selectedKind === 'validation' && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 text-left text-xs font-medium uppercase text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3">Founder</th>
+                    <th className="px-4 py-3">Startup</th>
+                    <th className="px-4 py-3">Payment</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Submitted</th>
+                    <th className="px-4 py-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {validationMembers.map((v) => (
+                    <tr key={v._id} className="border-t hover:bg-slate-50">
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-slate-800">{v.founderName}</div>
+                        <div className="text-xs text-slate-400">{v.founderEmail}</div>
+                        <div className="text-xs text-slate-400">{v.founderPhone}</div>
+                      </td>
+                      <td className="px-4 py-3 text-xs">{v.startupName}</td>
+                      <td className="px-4 py-3">{statusBadge(v.paymentStatus)}</td>
+                      <td className="px-4 py-3">{statusBadge(v.status)}</td>
+                      <td className="px-4 py-3 text-xs">{fmtDate(v.createdAt)}</td>
+                      <td className="px-4 py-3">
+                        <button onClick={() => openValidation(v)} className="rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-100">Manage</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {validationMembers.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-8 text-center text-slate-400">No idea validation records</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {selectedKind === 'fellowship' && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 text-left text-xs font-medium uppercase text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3">Applicant</th>
+                    <th className="px-4 py-3">Contact</th>
+                    <th className="px-4 py-3">Education / City</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Applied</th>
+                    <th className="px-4 py-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {fellowshipMembers.map((app) => (
+                    <tr key={app._id} className="border-t hover:bg-slate-50">
+                      <td className="px-4 py-3 font-medium text-slate-800">{app.fullName}</td>
+                      <td className="px-4 py-3 text-xs"><div>{app.email}</div><div className="text-slate-400">{app.phone}</div></td>
+                      <td className="px-4 py-3 text-xs">{app.education || '—'} · {app.city || '—'}</td>
+                      <td className="px-4 py-3">{statusBadge(app.status)}</td>
+                      <td className="px-4 py-3 text-xs">{fmtDate(app.createdAt)}</td>
+                      <td className="px-4 py-3">
+                        <button onClick={() => openFellowship(app)} className="rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-100">Manage</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {fellowshipMembers.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-8 text-center text-slate-400">No fellowship records</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      <Modal open={!!selectedUser} onClose={() => setSelectedUser(null)} title={`Member: ${selectedUser?.name || ''}`}>
+        {selectedUser && (
+          <div className="grid grid-cols-2 gap-3">
+            <Info label="Name" value={selectedUser.name} />
+            <Info label="Founder ID" value={selectedUser.founderId} />
+            <Info label="Email" value={selectedUser.email} />
+            <Info label="Phone" value={selectedUser.phone} />
+            <Info label="Startup" value={selectedUser.startupName} />
+            <Info label="Stage" value={selectedUser.startupStage} />
+            <Info label="Industry" value={selectedUser.industry} />
+            <Info label="Membership" value={selectedUser.membershipStatus} />
+          </div>
+        )}
+      </Modal>
+
+      <Modal open={!!selectedValidation} onClose={() => setSelectedValidation(null)} title={`Validation: ${selectedValidation?.startupName || ''}`}>
+        {selectedValidation && (
+          <div className="space-y-4">
+            <div className="rounded-lg bg-slate-50 p-3 text-sm space-y-1">
+              <p><strong>Founder:</strong> {selectedValidation.founderName} · {selectedValidation.founderEmail} · {selectedValidation.founderPhone}</p>
+              <p><strong>Startup:</strong> {selectedValidation.startupName}</p>
+              <p><strong>Industry:</strong> {selectedValidation.industry} · <strong>Stage:</strong> {selectedValidation.stage}</p>
+              <p><strong>Idea:</strong> {selectedValidation.idea}</p>
+              {selectedValidation.innovationDescription && <p><strong>Innovation:</strong> {selectedValidation.innovationDescription}</p>}
+              <p><strong>Payment:</strong> {statusBadge(selectedValidation.paymentStatus)} {selectedValidation.transactionId && `· ${selectedValidation.transactionId}`}</p>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-slate-500">Status</label>
+              <select value={validationEditForm.status} onChange={e => setValidationEditForm(f => ({ ...f, status: e.target.value }))} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
+                <option value="pending">Pending</option>
+                <option value="under-review">Under Review</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-slate-500">Admin Notes</label>
+              <textarea value={validationEditForm.adminNotes} onChange={e => setValidationEditForm(f => ({ ...f, adminNotes: e.target.value }))} rows={3} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+            </div>
+            {validationEditForm.status === 'rejected' && (
+              <div>
+                <label className="text-xs font-semibold text-slate-500">Rejection Reason</label>
+                <textarea value={validationEditForm.rejectionReason} onChange={e => setValidationEditForm(f => ({ ...f, rejectionReason: e.target.value }))} rows={2} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
+              </div>
+            )}
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={validationEditForm.certificateIssued} onChange={e => setValidationEditForm(f => ({ ...f, certificateIssued: e.target.checked }))} className="rounded" />
+              <span className="text-sm">Issue Validation Certificate</span>
+            </label>
+            <button onClick={saveValidation} className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Save Changes</button>
+          </div>
+        )}
+      </Modal>
+
+      <Modal open={!!selectedFellowship} onClose={() => setSelectedFellowship(null)} title={`Fellowship Application: ${selectedFellowship?.fullName || ''}`}>
+        {selectedFellowship && (
+          <div className="space-y-4">
+            <div className="rounded-lg bg-slate-50 p-3 text-sm space-y-1">
+              <p><strong>Contact:</strong> {selectedFellowship.email} · {selectedFellowship.phone}</p>
+              <p><strong>Education:</strong> {selectedFellowship.education || '—'}</p>
+              <p><strong>City:</strong> {selectedFellowship.city || '—'}</p>
+              <p><strong>Startup Idea:</strong> {selectedFellowship.startupIdea || '—'}</p>
+              <p><strong>Message:</strong> {selectedFellowship.message || '—'}</p>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-slate-500">Status</label>
+              <select value={fellowshipEditStatus} onChange={e => setFellowshipEditStatus(e.target.value)} className="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="shortlisted">Shortlisted</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <button onClick={saveFellowship} className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Save Changes</button>
+          </div>
+        )}
+      </Modal>
+    </div>
+  )
+}
+
+/* ===============================================================
+   9. IDEA VALIDATION MANAGEMENT
    =============================================================== */
 function ValidationsSection() {
   const api = useApi()

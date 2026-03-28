@@ -27,7 +27,10 @@ const perks = [
 export default function StartupApplicationPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  ;
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, []);
 
   const params = new URLSearchParams(location.search);
   const selectedPlan = location.state?.selectedPlan || {};
@@ -39,10 +42,24 @@ export default function StartupApplicationPage() {
   const [view, setView] = useState('auth');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [googleButtonWidth, setGoogleButtonWidth] = useState(320);
   const [form, setForm] = useState({
     name: '', email: '', phone: '', startupName: '',
     startupStage: '', industry: '', ideaSummary: '', termsAccepted: false,
   });
+
+  useEffect(() => {
+    const updateGoogleButtonWidth = () => {
+      const viewport = typeof window !== 'undefined' ? window.innerWidth : 360;
+      const sideGutter = viewport < 640 ? 56 : 96;
+      const targetWidth = viewport - sideGutter;
+      setGoogleButtonWidth(Math.max(220, Math.min(360, targetWidth)));
+    };
+
+    updateGoogleButtonWidth();
+    window.addEventListener('resize', updateGoogleButtonWidth);
+    return () => window.removeEventListener('resize', updateGoogleButtonWidth);
+  }, []);
 
   const readJsonSafely = async (response) => {
     const text = await response.text();
@@ -130,7 +147,7 @@ export default function StartupApplicationPage() {
     <div className="min-h-screen flex flex-col lg:flex-row">
 
       {/* ── LEFT PANEL ── */}
-      <div className="relative flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0b1e4d] via-[#1a3a8f] to-[#0f2d6b] px-8 py-12 text-white lg:w-[45%] lg:min-h-screen lg:px-12 lg:py-16">
+      <div className="relative flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0b1e4d] via-[#1a3a8f] to-[#0f2d6b] px-5 py-8 text-white sm:px-8 sm:py-10 lg:w-[45%] lg:min-h-screen lg:px-12 lg:py-16">
         {/* blobs */}
         <div className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-blue-400/20 blur-[80px]" />
         <div className="absolute bottom-10 right-0 h-80 w-80 rounded-full bg-indigo-500/20 blur-[100px]" />
@@ -138,7 +155,7 @@ export default function StartupApplicationPage() {
 
         <div className="relative z-10">
           {/* Logo */}
-          <div className="flex items-center gap-3 mb-12">
+          <div className="mb-8 flex items-center gap-3 sm:mb-12">
             <img src="/logo.png" alt="EDC India" className="h-10 w-10 rounded-full bg-white object-contain p-0.5" />
             <span className="text-sm font-bold tracking-wide">EDC India</span>
           </div>
@@ -147,7 +164,7 @@ export default function StartupApplicationPage() {
             <motion.div variants={fadeUp} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest backdrop-blur-sm mb-6">
               🚀 {planName} — ₹{planAmount.toLocaleString('en-IN')}
             </motion.div>
-            <motion.h1 variants={fadeUp} className="text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl">
+            <motion.h1 variants={fadeUp} className="text-2xl font-extrabold leading-tight sm:text-4xl lg:text-5xl">
               Join India's<br />
               <span className="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">Startup Ecosystem</span>
             </motion.h1>
@@ -155,7 +172,7 @@ export default function StartupApplicationPage() {
               Get your Founder ID, access mentors, events, grants, and funding — all in one membership.
             </motion.p>
 
-            <motion.div variants={fadeUp} className="mt-10 space-y-3">
+            <motion.div variants={fadeUp} className="mt-8 space-y-2.5 sm:mt-10 sm:space-y-3">
               {perks.map((p, i) => (
                 <motion.div key={i} variants={fadeUp} className="flex items-center gap-3">
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-base">{p.icon}</div>
@@ -175,7 +192,7 @@ export default function StartupApplicationPage() {
       </div>
 
       {/* ── RIGHT PANEL ── */}
-      <div className="flex flex-1 items-center justify-center bg-slate-50 px-6 py-12 lg:px-12">
+      <div className="flex flex-1 items-center justify-center bg-slate-50 px-4 py-8 sm:px-6 sm:py-10 lg:px-12 lg:py-12">
         <div className="w-full max-w-md">
 
           {view === 'auth' && (
@@ -185,16 +202,16 @@ export default function StartupApplicationPage() {
                 <p className="mt-2 text-sm text-slate-500">Sign in with Google to get started — it only takes a second.</p>
               </motion.div>
 
-              <motion.div variants={fadeUp} className="mt-8 rounded-2xl border border-slate-200 bg-white p-8 shadow-lg">
+              <motion.div variants={fadeUp} className="mt-6 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-lg sm:mt-8 sm:p-8">
                 <div className="flex flex-col items-center gap-4">
                   <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-3xl">🚀</div>
                   <p className="text-center text-sm text-slate-500 max-w-xs">We use Google to securely verify your identity. No password needed.</p>
-                  <div className="w-full pt-2">
+                  <div className="flex w-full justify-center pt-2">
                     <GoogleLogin
                       onSuccess={handleGoogleSuccess}
                       onError={() => setError('Google sign-in failed. Please try again.')}
-                      shape="rectangular"
-                      width={360}
+                      shape="pill"
+                      width={googleButtonWidth}
                       text="continue_with"
                     />
                   </div>
@@ -220,7 +237,7 @@ export default function StartupApplicationPage() {
                 <p className="mt-2 text-sm text-slate-500">Just a few details and you're in.</p>
               </motion.div>
 
-              <motion.form onSubmit={handleSubmit} variants={fadeUp} className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
+              <motion.form onSubmit={handleSubmit} variants={fadeUp} className="mt-6 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-lg sm:mt-8 sm:p-8">
                 {error && (
                   <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
                 )}
@@ -269,7 +286,7 @@ export default function StartupApplicationPage() {
                     </label>
                   </div>
                 </div>
-                <button type="submit" disabled={submitting} className="mt-6 w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 active:scale-95">
+                <button type="submit" disabled={submitting} className="mt-6 w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 active:scale-95">
                   {submitting ? 'Processing...' : `Proceed to Payment — ₹${planAmount.toLocaleString('en-IN')} →`}
                 </button>
               </motion.form>
