@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { BrowserRouter, Route, Routes, Link, useNavigate, useLocation } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
@@ -394,6 +394,45 @@ const ContactCard = ({ form }) => {
   )
 }
 
+const homeMobileMenuVariants = {
+  closed: {
+    opacity: 0,
+    y: -10,
+    height: 0,
+    transition: {
+      duration: 0.2,
+      ease: [0.4, 0, 0.2, 1],
+      when: 'afterChildren',
+      staggerChildren: 0.03,
+      staggerDirection: -1,
+    },
+  },
+  open: {
+    opacity: 1,
+    y: 0,
+    height: 'auto',
+    transition: {
+      duration: 0.3,
+      ease: [0.22, 1, 0.36, 1],
+      when: 'beforeChildren',
+      delayChildren: 0.03,
+      staggerChildren: 0.05,
+    },
+  },
+}
+
+const homeMobileItemVariants = {
+  closed: { opacity: 0, y: -8 },
+  open: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.22,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+}
+
 const Home = () => {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState(courseTabs[0])
@@ -402,6 +441,17 @@ const Home = () => {
   const [plans, setPlans] = useState(defaultPlans)
   const [plansError, setPlansError] = useState('')
   const heroHeadlineWords = 'Entrepreneurship is not just about starting a company — it’s about building a mindset.'.split(' ')
+  const homeNavItems = [
+    { label: 'Home', type: 'anchor', target: 'home' },
+    { label: 'About', type: 'route', to: '/about' },
+    { label: 'Programs', type: 'anchor', target: 'programs' },
+    { label: 'Fellowship', type: 'route', to: '/fellowship' },
+    { label: 'Membership', type: 'route', to: '/startup-membership' },
+    { label: 'Validation', type: 'route', to: '/membership-validation' },
+    { label: 'Ranking', type: 'route', to: '/ranking' },
+    { label: 'Partners', type: 'anchor', target: 'partners' },
+    { label: 'Contact', type: 'anchor', target: 'contact' },
+  ]
 
   const handleRouteNavTop = () => {
     setMobileMenuOpen(false)
@@ -414,6 +464,17 @@ const Home = () => {
     document.documentElement.scrollTop = 0
     document.body.scrollTop = 0
   }
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return undefined
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') setMobileMenuOpen(false)
+    }
+
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [mobileMenuOpen])
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -473,47 +534,136 @@ const Home = () => {
       <nav className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="EDC India" className="h-11 w-11 rounded-full object-contain bg-white" />
+            <img src="/logo.png" alt="EDC India" className="h-11 w-11 rounded-full bg-white object-contain" />
             <div className="text-sm font-semibold text-slate-800">EDC India</div>
           </div>
+
           <div className="hidden items-center gap-6 text-xs font-semibold text-slate-600 md:flex lg:gap-8 lg:text-sm">
-            {['Home', 'About', 'Programs', 'Fellowship', 'Membership', 'Validation', 'Ranking', 'Partners', 'Contact'].map((label) => (
-              label === 'Home' ? (
-                <a key={label} href={`#${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</a>
-              ) : label === 'Fellowship' || label === 'Membership' || label === 'Ranking' || label === 'About' || label === 'Validation' ? (
-                <Link key={label} to={label === 'Membership' ? '/startup-membership' : label === 'Validation' ? '/membership-validation' : `/${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900" onClick={handleRouteNavTop}>{label}</Link>
+            {homeNavItems.map((item) => (
+              item.type === 'route' ? (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className="nav-link transition hover:text-slate-900"
+                  onClick={handleRouteNavTop}
+                >
+                  {item.label}
+                </Link>
               ) : (
-                <a key={label} href={`#${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</a>
+                <a
+                  key={item.label}
+                  href={`#${item.target}`}
+                  className="nav-link transition hover:text-slate-900"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </a>
               )
             ))}
           </div>
+
           <div className="flex items-center gap-3">
+            <Link
+              to="/login"
+              className="inline-flex h-9 items-center rounded-full border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 sm:hidden"
+              onClick={handleRouteNavTop}
+            >
+              Login
+            </Link>
             <Link to="/login" className="hidden text-xs font-semibold text-slate-600 transition hover:text-slate-900 sm:inline-flex lg:text-sm" onClick={handleRouteNavTop}>Login</Link>
             <Link to="/join" className="hidden rounded-full bg-secondary px-5 py-2 text-xs font-semibold text-white shadow-glow sm:inline-flex lg:px-6 lg:py-2.5 lg:text-sm" onClick={handleRouteNavTop}>Join Now</Link>
-            <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
-              <svg className="h-5 w-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <button
+              type="button"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 md:hidden"
+              onClick={() => setMobileMenuOpen((open) => !open)}
+              aria-label="Toggle menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="home-mobile-navigation-menu"
+            >
+              <motion.svg
+                className="h-5 w-5 text-slate-700"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                animate={{ rotate: mobileMenuOpen ? 90 : 0, scale: mobileMenuOpen ? 1.05 : 1 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
                 {mobileMenuOpen ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /> : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
-              </svg>
+              </motion.svg>
             </button>
           </div>
         </div>
-        {mobileMenuOpen && (
-          <div className="border-t border-slate-100 bg-white px-4 pb-4 pt-2 md:hidden">
-            <div className="flex flex-col gap-3 text-sm font-semibold text-slate-600">
-              {['Home', 'About', 'Programs', 'Fellowship', 'Membership', 'Validation', 'Ranking', 'Partners', 'Contact'].map((label) => (
-                label === 'Home' ? (
-                  <a key={label} href={`#${label.toLowerCase()}`} className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={() => setMobileMenuOpen(false)}>{label}</a>
-                ) : label === 'Fellowship' || label === 'Membership' || label === 'Ranking' || label === 'About' || label === 'Validation' ? (
-                  <Link key={label} to={label === 'Membership' ? '/startup-membership' : label === 'Validation' ? '/membership-validation' : `/${label.toLowerCase()}`} className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={handleRouteNavTop}>{label}</Link>
-                ) : (
-                  <a key={label} href={`#${label.toLowerCase()}`} className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={() => setMobileMenuOpen(false)}>{label}</a>
-                )
-              ))}
-              <Link to="/login" className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={handleRouteNavTop}>Login</Link>
-              <Link to="/join" onClick={handleRouteNavTop} className="mt-2 block w-full rounded-full bg-secondary px-5 py-2.5 text-center text-xs font-semibold text-white shadow-glow">Join Now</Link>
-            </div>
-          </div>
-        )}
+
+        <AnimatePresence initial={false}>
+          {mobileMenuOpen && (
+            <motion.div
+              id="home-mobile-navigation-menu"
+              className="origin-top overflow-hidden border-t border-slate-100 bg-white/95 md:hidden"
+              variants={homeMobileMenuVariants}
+              initial="closed"
+              animate="open"
+              exit="closed"
+            >
+              <div className="mx-auto max-w-7xl px-4 pb-4 pt-2 sm:px-6">
+                <div className="overflow-hidden rounded-b-[1.5rem] border border-slate-200/80 border-t-0 bg-white p-3 shadow-[0_20px_40px_-30px_rgba(15,23,42,0.58)] backdrop-blur-xl">
+                  <div className="flex flex-col gap-1 text-sm font-semibold text-slate-700">
+                    {homeNavItems.map((item) => (
+                      <motion.div key={item.label} variants={homeMobileItemVariants}>
+                        {item.type === 'route' ? (
+                          <Link
+                            to={item.to}
+                            className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                            onClick={handleRouteNavTop}
+                          >
+                            <span className="flex items-center gap-3">
+                              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700">{item.label.charAt(0)}</span>
+                              <span>{item.label}</span>
+                            </span>
+                            <svg className="h-4 w-4 text-slate-400 transition group-hover:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </Link>
+                        ) : (
+                          <a
+                            href={`#${item.target}`}
+                            className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            <span className="flex items-center gap-3">
+                              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700">{item.label.charAt(0)}</span>
+                              <span>{item.label}</span>
+                            </span>
+                            <svg className="h-4 w-4 text-slate-400 transition group-hover:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </a>
+                        )}
+                      </motion.div>
+                    ))}
+
+                    <motion.div variants={homeMobileItemVariants} className="mt-0.5 grid grid-cols-2 gap-1">
+                      <Link
+                        to="/login"
+                        onClick={handleRouteNavTop}
+                        className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        to="/join"
+                        onClick={handleRouteNavTop}
+                        className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-secondary via-secondary to-primary px-4 py-3 text-center text-sm font-semibold text-white shadow-[0_16px_28px_-18px_rgba(11,61,145,0.9)] transition hover:brightness-105"
+                      >
+                        Join Now
+                      </Link>
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* ═══════════════ HERO ═══════════════ */}
