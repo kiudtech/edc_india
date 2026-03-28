@@ -403,6 +403,18 @@ const Home = () => {
   const [plansError, setPlansError] = useState('')
   const heroHeadlineWords = 'Entrepreneurship is not just about starting a company — it’s about building a mindset.'.split(' ')
 
+  const handleRouteNavTop = () => {
+    setMobileMenuOpen(false)
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    const scrollingElement = document.scrollingElement || document.documentElement || document.body
+    if (scrollingElement) {
+      scrollingElement.scrollTop = 0
+      scrollingElement.scrollLeft = 0
+    }
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+  }
+
   useEffect(() => {
     const fetchPlans = async () => {
       setPlansError('')
@@ -469,15 +481,15 @@ const Home = () => {
               label === 'Home' ? (
                 <a key={label} href={`#${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</a>
               ) : label === 'Fellowship' || label === 'Membership' || label === 'Ranking' || label === 'About' || label === 'Validation' ? (
-                <Link key={label} to={label === 'Membership' ? '/startup-membership' : label === 'Validation' ? '/membership-validation' : `/${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</Link>
+                <Link key={label} to={label === 'Membership' ? '/startup-membership' : label === 'Validation' ? '/membership-validation' : `/${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900" onClick={handleRouteNavTop}>{label}</Link>
               ) : (
                 <a key={label} href={`#${label.toLowerCase()}`} className="nav-link transition hover:text-slate-900">{label}</a>
               )
             ))}
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/login" className="hidden text-xs font-semibold text-slate-600 transition hover:text-slate-900 sm:inline-flex lg:text-sm">Login</Link>
-            <Link to="/join" className="hidden rounded-full bg-secondary px-5 py-2 text-xs font-semibold text-white shadow-glow sm:inline-flex lg:px-6 lg:py-2.5 lg:text-sm">Join Now</Link>
+            <Link to="/login" className="hidden text-xs font-semibold text-slate-600 transition hover:text-slate-900 sm:inline-flex lg:text-sm" onClick={handleRouteNavTop}>Login</Link>
+            <Link to="/join" className="hidden rounded-full bg-secondary px-5 py-2 text-xs font-semibold text-white shadow-glow sm:inline-flex lg:px-6 lg:py-2.5 lg:text-sm" onClick={handleRouteNavTop}>Join Now</Link>
             <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
               <svg className="h-5 w-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 {mobileMenuOpen ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /> : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
@@ -488,11 +500,17 @@ const Home = () => {
         {mobileMenuOpen && (
           <div className="border-t border-slate-100 bg-white px-4 pb-4 pt-2 md:hidden">
             <div className="flex flex-col gap-3 text-sm font-semibold text-slate-600">
-              {['Home', 'About', 'Programs', 'Courses', 'Plans', 'Partners', 'Impact', 'Contact'].map((label) => (
-                <a key={label} href={`#${label.toLowerCase()}`} className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={() => setMobileMenuOpen(false)}>{label}</a>
+              {['Home', 'About', 'Programs', 'Fellowship', 'Membership', 'Validation', 'Ranking', 'Partners', 'Contact'].map((label) => (
+                label === 'Home' ? (
+                  <a key={label} href={`#${label.toLowerCase()}`} className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={() => setMobileMenuOpen(false)}>{label}</a>
+                ) : label === 'Fellowship' || label === 'Membership' || label === 'Ranking' || label === 'About' || label === 'Validation' ? (
+                  <Link key={label} to={label === 'Membership' ? '/startup-membership' : label === 'Validation' ? '/membership-validation' : `/${label.toLowerCase()}`} className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={handleRouteNavTop}>{label}</Link>
+                ) : (
+                  <a key={label} href={`#${label.toLowerCase()}`} className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={() => setMobileMenuOpen(false)}>{label}</a>
+                )
               ))}
-              <Link to="/login" className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={() => setMobileMenuOpen(false)}>Login</Link>
-              <Link to="/join" onClick={() => setMobileMenuOpen(false)} className="mt-2 block w-full rounded-full bg-secondary px-5 py-2.5 text-center text-xs font-semibold text-white shadow-glow">Join Now</Link>
+              <Link to="/login" className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={handleRouteNavTop}>Login</Link>
+              <Link to="/join" onClick={handleRouteNavTop} className="mt-2 block w-full rounded-full bg-secondary px-5 py-2.5 text-center text-xs font-semibold text-white shadow-glow">Join Now</Link>
             </div>
           </div>
         )}
@@ -536,7 +554,7 @@ const Home = () => {
               Courses, Funding, Global Exposure &amp; Startup Growth Ecosystem
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <Link to="/join" className="cta-pulse group rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-blue-700 shadow-2xl transition hover:bg-blue-50 lg:px-8 lg:py-4 lg:text-base">
+              <Link to="/join" className="cta-pulse group rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-blue-700 shadow-2xl transition hover:bg-blue-50 lg:px-8 lg:py-4 lg:text-base" onClick={handleRouteNavTop}>
                 Join Now <span className="ml-1 inline-block transition group-hover:translate-x-1">→</span>
               </Link>
               <a href="#programs" className="rounded-full border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 lg:px-8 lg:py-4 lg:text-base">

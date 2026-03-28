@@ -13,27 +13,39 @@ const navItems = [
 export default function SiteNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
+  const handleRouteNav = () => {
+    setMobileOpen(false)
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    const scrollingElement = document.scrollingElement || document.documentElement || document.body
+    if (scrollingElement) {
+      scrollingElement.scrollTop = 0
+      scrollingElement.scrollLeft = 0
+    }
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+  }
+
   return (
     <nav className="sticky top-0 z-40 border-b border-slate-100 bg-white/90 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
-        <Link to="/" className="flex items-center gap-3" onClick={() => setMobileOpen(false)}>
+        <Link to="/" className="flex items-center gap-3" onClick={handleRouteNav}>
           <img src="/logo.png" alt="EDC India" className="h-11 w-11 rounded-full bg-white object-contain" />
           <div className="text-sm font-semibold text-slate-800">EDC India</div>
         </Link>
 
         <div className="hidden items-center gap-6 text-xs font-semibold text-slate-600 md:flex lg:gap-8 lg:text-sm">
           {navItems.map((item) => (
-            <Link key={item.label} to={item.to} className="nav-link transition hover:text-slate-900">
+            <Link key={item.label} to={item.to} className="nav-link transition hover:text-slate-900" onClick={handleRouteNav}>
               {item.label}
             </Link>
           ))}
         </div>
 
         <div className="flex items-center gap-3">
-          <Link to="/login" className="hidden text-xs font-semibold text-slate-600 transition hover:text-slate-900 sm:inline-flex lg:text-sm">
+          <Link to="/login" className="hidden text-xs font-semibold text-slate-600 transition hover:text-slate-900 sm:inline-flex lg:text-sm" onClick={handleRouteNav}>
             Login
           </Link>
-          <Link to="/join" className="hidden rounded-full bg-secondary px-5 py-2 text-xs font-semibold text-white shadow-glow sm:inline-flex lg:px-6 lg:py-2.5 lg:text-sm">
+          <Link to="/join" className="hidden rounded-full bg-secondary px-5 py-2 text-xs font-semibold text-white shadow-glow sm:inline-flex lg:px-6 lg:py-2.5 lg:text-sm" onClick={handleRouteNav}>
             Join Now
           </Link>
           <button
@@ -56,15 +68,15 @@ export default function SiteNavbar() {
                 key={item.label}
                 to={item.to}
                 className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900"
-                onClick={() => setMobileOpen(false)}
+                onClick={handleRouteNav}
               >
                 {item.label}
               </Link>
             ))}
-            <Link to="/login" className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={() => setMobileOpen(false)}>
+            <Link to="/login" className="rounded-xl px-3 py-2 transition hover:bg-slate-50 hover:text-slate-900" onClick={handleRouteNav}>
               Login
             </Link>
-            <Link to="/join" onClick={() => setMobileOpen(false)} className="mt-2 block w-full rounded-full bg-secondary px-5 py-2.5 text-center text-xs font-semibold text-white shadow-glow">
+            <Link to="/join" onClick={handleRouteNav} className="mt-2 block w-full rounded-full bg-secondary px-5 py-2.5 text-center text-xs font-semibold text-white shadow-glow">
               Join Now
             </Link>
           </div>
