@@ -8,15 +8,26 @@ export default function PaymentPage() {
   const {
     userId,
     founderId,
-    amount: stateAmount,
     type: stateType,
+    planSlug: statePlanSlug,
     planName: statePlanName,
     successSubtitle,
   } = location.state || {}
-  const amount = Number(stateAmount) || 2500
-  const paymentType = stateType || 'membership'
-  const planName = statePlanName || 'Startup Membership'
-  const successText = successSubtitle || 'Your startup membership is now active.'
+  const paymentType = stateType === 'fellowship' ? 'fellowship' : 'membership'
+  const fallbackPlan = paymentType === 'fellowship'
+    ? { slug: 'fellowship-program', name: 'Fellowship Program', price: 5000 }
+    : { slug: 'startup-membership', name: 'Startup Membership', price: 2500 }
+  const [resolvedPlan, setResolvedPlan] = useState({
+    slug: statePlanSlug || fallbackPlan.slug,
+    name: statePlanName || fallbackPlan.name,
+    price: fallbackPlan.price,
+  })
+  const amount = Number(resolvedPlan.price) > 0 ? Number(resolvedPlan.price) : fallbackPlan.price
+  const planName = resolvedPlan.name || fallbackPlan.name
+  const planSlug = resolvedPlan.slug || fallbackPlan.slug
+  const successText = successSubtitle || (paymentType === 'fellowship'
+    ? 'Your fellowship access is now active.'
+    : 'Your startup membership is now active.')
   const [processing, setProcessing] = useState(false)
   const [success, setSuccess] = useState(false)
   const [txnData, setTxnData] = useState(null)
@@ -47,10 +58,20 @@ export default function PaymentPage() {
       const createOrderRes = await fetch(`${API_BASE}/api/payment/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, amount, type: paymentType, planName }),
+        body: JSON.stringify({ userId, type: paymentType, planSlug }),
       })
       const orderData = await createOrderRes.json()
       if (!createOrderRes.ok) throw new Error(orderData.message || 'Failed to create payment order.')
+
+      const serverPlan = orderData.plan || {}
+      const serverPlanPrice = Number(serverPlan.price)
+      const orderAmountAsRupees = Number(orderData.amount) > 0 ? Number(orderData.amount) / 100 : fallbackPlan.price
+
+      setResolvedPlan({
+        slug: String(serverPlan.slug || planSlug).trim().toLowerCase() || fallbackPlan.slug,
+        name: String(serverPlan.name || planName).trim() || fallbackPlan.name,
+        price: Number.isFinite(serverPlanPrice) && serverPlanPrice > 0 ? serverPlanPrice : orderAmountAsRupees,
+      })
 
       if (!window.Razorpay) {
         throw new Error('Razorpay SDK is not ready. Please refresh and try again.')
@@ -61,7 +82,7 @@ export default function PaymentPage() {
         amount: orderData.amount,
         currency: orderData.currency,
         name: 'EDC India',
-        description: planName,
+        description: serverPlan.name || planName,
         order_id: orderData.orderId,
         prefill: {
           name: orderData.user?.name || '',
@@ -72,6 +93,7 @@ export default function PaymentPage() {
           founderId: founderId || '',
           userId,
           paymentType,
+          planSlug: String(serverPlan.slug || planSlug || ''),
         },
         theme: {
           color: '#0f4c81',
@@ -83,8 +105,6 @@ export default function PaymentPage() {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 userId,
-                amount,
-                type: paymentType,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,

@@ -3,8 +3,25 @@ import crypto from 'crypto'
 import Razorpay from 'razorpay'
 import User from '../models/User.js'
 import Payment from '../models/Payment.js'
+import Plan from '../models/Plan.js'
 
 const router = Router()
+const SUPPORTED_PAYMENT_TYPES = new Set(['membership', 'fellowship'])
+
+const PAYMENT_PLAN_MAP = {
+  membership: {
+    slug: 'startup-membership',
+    name: 'Startup Membership',
+    ctaRoute: '/startup-application',
+    defaultPrice: 2500,
+  },
+  fellowship: {
+    slug: 'fellowship-program',
+    name: 'Fellowship Program',
+    ctaRoute: '/fellowship-application',
+    defaultPrice: 5000,
+  },
+}
 
 const getRazorpayClient = () => {
   const keyId = process.env.RAZORPAY_KEY_ID?.trim()
@@ -20,6 +37,40 @@ const getRazorpayClient = () => {
   })
 }
 
+const normalizePaymentType = (type) => {
+  const normalizedType = String(type || 'membership').trim().toLowerCase()
+  return SUPPORTED_PAYMENT_TYPES.has(normalizedType) ? normalizedType : null
+}
+
+const resolvePlanForPayment = async (paymentType) => {
+  const planConfig = PAYMENT_PLAN_MAP[paymentType]
+
+  if (!planConfig) {
+    return null
+  }
+
+  let plan = await Plan.findOne({ slug: planConfig.slug, isActive: true })
+
+  if (!plan) {
+    plan = await Plan.findOne({ ctaRoute: planConfig.ctaRoute, isActive: true }).sort({ sortOrder: 1, createdAt: 1 })
+  }
+
+  if (plan) {
+    const normalizedPrice = Number(plan.price)
+    return {
+      planSlug: plan.slug,
+      planName: plan.name || planConfig.name,
+      planPrice: Number.isFinite(normalizedPrice) && normalizedPrice > 0 ? normalizedPrice : planConfig.defaultPrice,
+    }
+  }
+
+  return {
+    planSlug: planConfig.slug,
+    planName: planConfig.name,
+    planPrice: planConfig.defaultPrice,
+  }
+}
+
 router.post('/create-order', async (req, res) => {
   try {
     const razorpay = getRazorpayClient()
@@ -28,31 +79,43 @@ router.post('/create-order', async (req, res) => {
       return res.status(500).json({ message: 'Razorpay is not configured on the server.' })
     }
 
-    const { userId, amount, type, planName } = req.body
-    const normalizedAmount = Number(amount)
+    const { userId, type } = req.body
 
-    if (!userId || !normalizedAmount || normalizedAmount <= 0) {
-      return res.status(400).json({ message: 'Valid userId and amount are required.' })
+    if (!userId) {
+      return res.status(400).json({ message: 'Valid userId is required.' })
+    }
+
+    const paymentType = normalizePaymentType(type)
+
+    if (!paymentType) {
+      return res.status(400).json({ message: 'Unsupported payment type.' })
     }
 
     const user = await User.findById(userId)
     if (!user) return res.status(404).json({ message: 'User not found.' })
 
+    const resolvedPlan = await resolvePlanForPayment(paymentType)
+
+    if (!resolvedPlan || !resolvedPlan.planPrice || resolvedPlan.planPrice <= 0) {
+      return res.status(500).json({ message: 'Plan pricing is not configured correctly.' })
+    }
+
     const order = await razorpay.orders.create({
-      amount: Math.round(normalizedAmount * 100),
+      amount: Math.round(resolvedPlan.planPrice * 100),
       currency: 'INR',
       receipt: `edc_${Date.now()}`,
       notes: {
         userId: String(userId),
-        planType: type || 'membership',
-        planName: planName || '',
+        planType: paymentType,
+        planSlug: resolvedPlan.planSlug,
+        planName: resolvedPlan.planName,
       },
     })
 
     await Payment.create({
       userId,
-      amount: normalizedAmount,
-      type: type || 'membership',
+      amount: resolvedPlan.planPrice,
+      type: paymentType,
       status: 'pending',
       transactionId: order.id,
       gateway: 'razorpay',
@@ -69,6 +132,12 @@ router.post('/create-order', async (req, res) => {
         email: user.email,
         phone: user.phone,
       },
+      paymentType,
+      plan: {
+        slug: resolvedPlan.planSlug,
+        name: resolvedPlan.planName,
+        price: resolvedPlan.planPrice,
+      },
       founderId: user.founderId,
     })
   } catch (err) {
@@ -80,8 +149,6 @@ router.post('/verify', async (req, res) => {
   try {
     const {
       userId,
-      amount,
-      type,
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
@@ -103,26 +170,16 @@ router.post('/verify', async (req, res) => {
       .digest('hex')
 
     const isValidSignature = generatedSignature === razorpay_signature
-    const normalizedAmount = Number(amount)
 
     const user = await User.findById(userId)
     if (!user) return res.status(404).json({ message: 'User not found.' })
 
-    let payment = await Payment.findOne({ userId, razorpayOrderId: razorpay_order_id })
+    const payment = await Payment.findOne({ userId, razorpayOrderId: razorpay_order_id })
+
     if (!payment) {
-      payment = await Payment.create({
-        userId,
-        amount: normalizedAmount || 0,
-        type: type || 'membership',
-        status: 'pending',
-        transactionId: razorpay_order_id,
-        gateway: 'razorpay',
-        razorpayOrderId: razorpay_order_id,
-      })
+      return res.status(404).json({ message: 'Payment order not found for this user.' })
     }
 
-    payment.amount = normalizedAmount || payment.amount
-    payment.type = type || payment.type
     payment.razorpayPaymentId = razorpay_payment_id
     payment.razorpaySignature = razorpay_signature
 
@@ -137,7 +194,7 @@ router.post('/verify', async (req, res) => {
     await payment.save()
 
     // Activate membership only for membership-related payment flows
-    if ((type || 'membership') === 'membership' || (type || 'membership') === 'validation') {
+    if (['membership', 'validation', 'fellowship'].includes(payment.type)) {
       user.membershipStatus = 'active'
       await user.save()
     }
@@ -147,6 +204,7 @@ router.post('/verify', async (req, res) => {
       payment: {
         transactionId: payment.transactionId,
         amount: payment.amount,
+        type: payment.type,
         status: payment.status,
         orderId: payment.razorpayOrderId,
         paymentId: payment.razorpayPaymentId,

@@ -27,10 +27,20 @@ export default function FellowshipApplicationPage() {
 
   const params = new URLSearchParams(location.search);
   const selectedPlan = location.state?.selectedPlan || {};
-  const queryPlanPrice = Number(params.get('planPrice'));
-  const queryPlanName = params.get('planName') || '';
-  const planAmount = Number(selectedPlan.price) > 0 ? Number(selectedPlan.price) : (Number.isFinite(queryPlanPrice) && queryPlanPrice > 0 ? queryPlanPrice : 10000);
-  const planName = selectedPlan.name || queryPlanName || 'Fellowship Program';
+  const requestedPlanSlug = String(selectedPlan.slug || params.get('planSlug') || 'fellowship-program').trim().toLowerCase();
+
+  const [resolvedPlan, setResolvedPlan] = useState(() => {
+    const selectedPrice = Number(selectedPlan.price);
+    return {
+      slug: requestedPlanSlug || 'fellowship-program',
+      name: selectedPlan.name || 'Fellowship Program',
+      price: Number.isFinite(selectedPrice) && selectedPrice > 0 ? selectedPrice : 5000,
+    };
+  });
+
+  const planAmount = resolvedPlan.price;
+  const planName = resolvedPlan.name;
+  const planSlug = resolvedPlan.slug;
 
   const [view, setView] = useState(authUserId ? 'form' : 'auth');
   const [error, setError] = useState('');
@@ -41,6 +51,69 @@ export default function FellowshipApplicationPage() {
     fullName: user?.name || '', email: user?.email || '',
     phone: '', education: '', city: '', startupIdea: '', message: '',
   });
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCanonicalPlan = async () => {
+      const fallbackPlan = {
+        slug: 'fellowship-program',
+        name: 'Fellowship Program',
+        price: 5000,
+      };
+
+      const targetSlug = requestedPlanSlug || fallbackPlan.slug;
+      const isLocalhost = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
+      const apiFromEnv = (API_BASE || '').trim();
+      const baseCandidates = Array.from(new Set([
+        apiFromEnv,
+        '',
+        ...(apiFromEnv ? [] : ['http://localhost:5000']),
+        ...(isLocalhost ? ['http://127.0.0.1:5000'] : []),
+      ]));
+
+      for (const base of baseCandidates) {
+        try {
+          const res = await fetch(`${base}/api/plans`, { cache: 'no-store' });
+          if (!res.ok) continue;
+
+          const contentType = res.headers.get('content-type') || '';
+          if (!contentType.includes('application/json')) continue;
+
+          const data = await res.json();
+          if (!Array.isArray(data)) continue;
+
+          const matchedPlan = data.find((plan) => String(plan.slug || '').trim().toLowerCase() === targetSlug)
+            || data.find((plan) => String(plan.ctaRoute || '').trim() === '/fellowship-application');
+
+          if (!matchedPlan) continue;
+
+          const matchedPrice = Number(matchedPlan.price);
+          if (isMounted) {
+            setResolvedPlan({
+              slug: String(matchedPlan.slug || targetSlug).trim().toLowerCase() || fallbackPlan.slug,
+              name: String(matchedPlan.name || fallbackPlan.name).trim() || fallbackPlan.name,
+              price: Number.isFinite(matchedPrice) && matchedPrice > 0 ? matchedPrice : fallbackPlan.price,
+            });
+          }
+          return;
+        } catch {
+          // Continue to next candidate base URL.
+        }
+      }
+
+      if (isMounted) {
+        setResolvedPlan((prev) => ({
+          slug: prev.slug || targetSlug || fallbackPlan.slug,
+          name: prev.name || fallbackPlan.name,
+          price: Number(prev.price) > 0 ? Number(prev.price) : fallbackPlan.price,
+        }));
+      }
+    };
+
+    fetchCanonicalPlan();
+    return () => { isMounted = false; };
+  }, [requestedPlanSlug]);
 
 
   const readJsonSafely = async (response) => {
@@ -114,7 +187,7 @@ export default function FellowshipApplicationPage() {
     if (!authUserId) { setStatus('Please login first.'); setView('auth'); return; }
     if (!termsAccepted) { setError('Please accept the Terms & Conditions.'); return; }
     navigate('/payment', {
-      state: { userId: authUserId, founderId: user.founderId, amount: planAmount, type: 'fellowship', planName, successSubtitle: 'Your fellowship payment has been received successfully.' },
+      state: { userId: authUserId, founderId: user.founderId, type: 'fellowship', planSlug, planName, successSubtitle: 'Your fellowship payment has been received successfully.' },
     });
   };
 

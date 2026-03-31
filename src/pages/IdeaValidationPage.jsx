@@ -31,12 +31,18 @@ export default function IdeaValidationPage() {
   const location = useLocation()
   const params = new URLSearchParams(location.search)
   const selectedPlan = location.state?.selectedPlan || {}
-  const queryPlanPrice = Number(params.get('planPrice'))
-  const planPrice = Number(selectedPlan.price) > 0
-    ? Number(selectedPlan.price)
-    : (Number.isFinite(queryPlanPrice) && queryPlanPrice > 0 ? queryPlanPrice : 5000)
-  const planName = (selectedPlan.name || params.get('planName') || 'Idea Validation').trim()
-  const planSlug = String(selectedPlan.slug || params.get('planSlug') || 'idea-validation').trim().toLowerCase()
+  const requestedPlanSlug = String(selectedPlan.slug || params.get('planSlug') || 'idea-validation').trim().toLowerCase()
+  const [resolvedPlan, setResolvedPlan] = useState(() => {
+    const selectedPrice = Number(selectedPlan.price)
+    return {
+      slug: requestedPlanSlug || 'idea-validation',
+      name: (selectedPlan.name || 'Idea Validation').trim() || 'Idea Validation',
+      price: Number.isFinite(selectedPrice) && selectedPrice > 0 ? selectedPrice : 5000,
+    }
+  })
+  const planPrice = resolvedPlan.price
+  const planName = resolvedPlan.name
+  const planSlug = resolvedPlan.slug
   const formattedPlanPrice = `₹${planPrice.toLocaleString('en-IN')}`
 
   const [step, setStep] = useState(0)
@@ -63,6 +69,69 @@ export default function IdeaValidationPage() {
     script.onerror = () => setError('Failed to load Razorpay SDK. Please refresh and try again.')
     document.body.appendChild(script)
   }, [])
+
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchCanonicalPlan = async () => {
+      const fallbackPlan = {
+        slug: 'idea-validation',
+        name: 'Idea Validation',
+        price: 5000,
+      }
+
+      const targetSlug = requestedPlanSlug || fallbackPlan.slug
+      const isLocalhost = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname)
+      const apiFromEnv = (API_BASE || '').trim()
+      const baseCandidates = Array.from(new Set([
+        apiFromEnv,
+        '',
+        ...(apiFromEnv ? [] : ['http://localhost:5000']),
+        ...(isLocalhost ? ['http://127.0.0.1:5000'] : []),
+      ]))
+
+      for (const base of baseCandidates) {
+        try {
+          const res = await fetch(`${base}/api/plans`, { cache: 'no-store' })
+          if (!res.ok) continue
+
+          const contentType = res.headers.get('content-type') || ''
+          if (!contentType.includes('application/json')) continue
+
+          const data = await res.json()
+          if (!Array.isArray(data)) continue
+
+          const matchedPlan = data.find((plan) => String(plan.slug || '').trim().toLowerCase() === targetSlug)
+            || data.find((plan) => String(plan.ctaRoute || '').trim() === '/join-validation')
+
+          if (!matchedPlan) continue
+
+          const matchedPrice = Number(matchedPlan.price)
+          if (isMounted) {
+            setResolvedPlan({
+              slug: String(matchedPlan.slug || targetSlug).trim().toLowerCase() || fallbackPlan.slug,
+              name: String(matchedPlan.name || fallbackPlan.name).trim() || fallbackPlan.name,
+              price: Number.isFinite(matchedPrice) && matchedPrice > 0 ? matchedPrice : fallbackPlan.price,
+            })
+          }
+          return
+        } catch {
+          // Continue to next candidate base URL.
+        }
+      }
+
+      if (isMounted) {
+        setResolvedPlan((prev) => ({
+          slug: prev.slug || targetSlug || fallbackPlan.slug,
+          name: prev.name || fallbackPlan.name,
+          price: Number(prev.price) > 0 ? Number(prev.price) : fallbackPlan.price,
+        }))
+      }
+    }
+
+    fetchCanonicalPlan()
+    return () => { isMounted = false }
+  }, [requestedPlanSlug])
 
   const parseApiResponse = async (res, fallbackMessage) => {
     const contentType = res.headers.get('content-type') || ''
@@ -102,8 +171,6 @@ export default function IdeaValidationPage() {
         body: JSON.stringify({
           ...form,
           planSlug,
-          planName,
-          planPrice,
         }),
       })
       const data = await parseApiResponse(res, 'Submission failed')

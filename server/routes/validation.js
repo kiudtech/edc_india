@@ -26,7 +26,7 @@ const getRazorpayClient = () => {
   })
 }
 
-const resolveValidationPlan = async ({ slug, name, price }) => {
+const resolveValidationPlan = async ({ slug }) => {
   const normalizedSlug = String(slug || DEFAULT_VALIDATION_PLAN_SLUG)
     .trim()
     .toLowerCase()
@@ -45,11 +45,10 @@ const resolveValidationPlan = async ({ slug, name, price }) => {
     }
   }
 
-  const fallbackPrice = Number(price)
   return {
     planSlug: normalizedSlug || DEFAULT_VALIDATION_PLAN_SLUG,
-    planName: String(name || DEFAULT_VALIDATION_PLAN_NAME).trim() || DEFAULT_VALIDATION_PLAN_NAME,
-    planPrice: Number.isFinite(fallbackPrice) && fallbackPrice > 0 ? fallbackPrice : DEFAULT_VALIDATION_AMOUNT,
+    planName: DEFAULT_VALIDATION_PLAN_NAME,
+    planPrice: DEFAULT_VALIDATION_AMOUNT,
   }
 }
 
@@ -59,10 +58,10 @@ router.post('/submit', async (req, res) => {
     const {
       founderName, founderEmail, founderPhone, password,
       startupName, idea, innovationDescription, industry, stage,
-      planSlug, planName, planPrice,
+      planSlug,
     } = req.body
 
-    const resolvedPlan = await resolveValidationPlan({ slug: planSlug, name: planName, price: planPrice })
+    const resolvedPlan = await resolveValidationPlan({ slug: planSlug })
 
     const validation = await IdeaValidation.create({
       founderName, founderEmail, founderPhone,
@@ -142,8 +141,6 @@ router.post('/create-order', async (req, res) => {
 
     const resolvedPlan = await resolveValidationPlan({
       slug: planSlug || validation.planSlug,
-      name: validation.planName,
-      price: validation.planPrice,
     })
 
     validation.planSlug = resolvedPlan.planSlug

@@ -1,23 +1,24 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import { ArrowRight, BadgeCheck, Check, ShieldCheck, Sparkles, WalletCards } from 'lucide-react'
 import { API_BASE } from '../config'
 import SiteFooter from '../components/SiteFooter'
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
-};
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: 'easeOut' } },
+}
 
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2,
+      staggerChildren: 0.1,
     },
   },
-};
+}
 
 const defaultPlans = [
   {
@@ -78,6 +79,39 @@ const defaultPlans = [
   },
 ]
 
+const trustPoints = [
+  {
+    title: 'Secure Payments',
+    text: 'Razorpay encrypted checkout with trusted payment methods.',
+    icon: ShieldCheck,
+  },
+  {
+    title: 'Verified Benefits',
+    text: 'Transparent plan inclusions with clear one-time pricing.',
+    icon: BadgeCheck,
+  },
+  {
+    title: 'Instant Access',
+    text: 'Quick onboarding into the EDC founder ecosystem.',
+    icon: WalletCards,
+  },
+]
+
+const assurancePoints = [
+  {
+    title: 'Clear One-Time Pricing',
+    text: 'No hidden fees. Every plan displays complete pricing transparently.',
+  },
+  {
+    title: 'Professional Support',
+    text: 'Application and onboarding guidance from the EDC team.',
+  },
+  {
+    title: 'Trusted Ecosystem Access',
+    text: 'Join a credible network of founders, mentors, and institutions.',
+  },
+]
+
 export default function JoinPage() {
   const navigate = useNavigate()
   const [plans, setPlans] = useState(defaultPlans)
@@ -132,97 +166,182 @@ export default function JoinPage() {
 
   const cardClassByIndex = (index, isPopular) => {
     if (isPopular || index === 0) {
-      return 'relative flex flex-col rounded-[2.5rem] border-2 border-primary bg-white p-8 sm:p-10 shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_0_1px_rgba(255,107,0,0.5),_0_12px_40px_rgba(11,61,145,0.25)] lg:-mt-6 lg:mb-6'
+      return 'group relative flex h-full flex-col overflow-hidden rounded-[2rem] border border-primary/30 bg-gradient-to-b from-white via-white to-blue-50/40 p-6 shadow-[0_20px_55px_-22px_rgba(11,61,145,0.42)] transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_-30px_rgba(11,61,145,0.5)] sm:p-8'
     }
 
-    return 'relative flex flex-col rounded-[2.5rem] border border-slate-200/80 bg-white p-8 sm:p-10 shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-primary/30'
+    return 'group relative flex h-full flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_-28px_rgba(15,23,42,0.38)] transition duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:shadow-[0_30px_70px_-30px_rgba(11,61,145,0.35)] sm:p-8'
+  }
+
+  const formatPrice = (price) => Number(price || 0).toLocaleString('en-IN')
+
+  const handleNavigateToPlan = (plan) => {
+    const route = (plan.ctaRoute || '/join').trim()
+    const normalizedRoute = route.startsWith('/') ? route : `/${route}`
+    const planPrice = Number(plan.price || 0)
+    const planSlug = encodeURIComponent(plan.slug || '')
+    const qs = planSlug ? `planSlug=${planSlug}` : ''
+    const separator = normalizedRoute.includes('?') ? '&' : '?'
+    const targetRoute = qs ? `${normalizedRoute}${separator}${qs}` : normalizedRoute
+
+    navigate(targetRoute, {
+      state: {
+        selectedPlan: {
+          slug: plan.slug || '',
+          name: plan.name || '',
+          price: planPrice,
+        },
+      },
+    })
   }
 
   return (
     <>
-    <div className="bg-accent min-h-screen text-ink pb-24 font-sans selection:bg-primary/20 selection:text-primary">
-      {/* Hero Section */}
-      <header className="relative overflow-hidden py-24 text-center sm:py-32">
-        {/* Subtle Background Elements */}
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-accent to-accent"></div>
-        <div className="absolute top-1/2 left-1/2 -z-10 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl"></div>
-        
-        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold text-primary uppercase tracking-widest shadow-sm">
-            Spark Your Journey
-          </div>
-          <h1 className="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-            Choose Your <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Pathway</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600 leading-relaxed font-medium">
-            Whether you are just validating an idea or ready to accelerate a funded startup, we have a membership tier designed specifically for your growth.
-          </p>
-        </motion.div>
-      </header>
+      <div className="min-h-screen bg-accent text-ink selection:bg-primary/20 selection:text-primary">
+        <header className="relative overflow-hidden bg-gradient-to-br from-[#0b1e4d] via-[#1a3a8f] to-[#0f2d6b] pb-20 pt-16 text-white sm:pb-24 sm:pt-20">
+          <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '56px 56px' }} />
+          <div className="blob-float absolute -left-28 top-8 h-[380px] w-[380px] rounded-full bg-cyan-300/15 blur-[90px]" />
+          <div className="blob-float-reverse absolute -right-24 bottom-0 h-[360px] w-[360px] rounded-full bg-blue-300/15 blur-[90px]" />
 
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-12 relative z-20">
-        {plansError && (
-          <div className="mx-auto mb-5 max-w-6xl rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-            {plansError}
-          </div>
-        )}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="grid gap-8 sm:gap-6 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3 items-stretch max-w-6xl mx-auto"
-        >
-          {plans.map((plan, index) => (
-            <motion.div key={plan.slug || `${plan.name}-${index}`} variants={fadeUp} className={cardClassByIndex(index, plan.isPopular)}>
-              {plan.badge && (
-                <div className={`mb-4 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest w-fit ${plan.isPopular || index === 0 ? 'absolute -top-5 left-1/2 -translate-x-1/2 w-max border-primary bg-gradient-to-r from-primary to-secondary text-white shadow-lg' : 'border-slate-200 bg-slate-50/50 text-slate-600'}`}>
-                  {plan.badge}
-                </div>
-              )}
-              <h3 className={`text-2xl font-bold mt-2 ${plan.isPopular || index === 0 ? 'text-primary' : 'text-ink'}`}>{plan.name}</h3>
-              <p className="mt-3 text-sm text-slate-500 min-h-[64px] leading-relaxed font-medium">
-                {plan.description}
-              </p>
-              <div className="my-8 flex items-baseline gap-2">
-                <span className="text-5xl font-extrabold tracking-tight text-ink">₹{Number(plan.price || 0).toLocaleString('en-IN')}</span>
-                <span className="text-sm font-semibold text-slate-500">{plan.billingText || '/ one-time'}</span>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="relative mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10 lg:px-8"
+          >
+            <motion.div variants={fadeUp}>
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/80 backdrop-blur-sm">
+                <Sparkles className="h-3.5 w-3.5" />
+                Membership Plans 2026
               </div>
-              <ul className="mb-10 flex-1 space-y-5 text-sm font-semibold text-slate-600">
-                {(plan.features || []).map((item, i) => (
-                  <li key={`${plan.slug || plan.name}-feature-${i}`} className="flex items-start gap-4">
-                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs">✓</div>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => {
-                  const route = (plan.ctaRoute || '/join').trim()
-                  const normalizedRoute = route.startsWith('/') ? route : `/${route}`
-                  const planPrice = Number(plan.price || 0)
-                  const qs = `planSlug=${encodeURIComponent(plan.slug || '')}&planName=${encodeURIComponent(plan.name || '')}&planPrice=${encodeURIComponent(String(planPrice))}`
-                  const separator = normalizedRoute.includes('?') ? '&' : '?'
+              <h1 className="mt-6 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+                Choose The Right Program For Your Startup Growth
+              </h1>
+              <p className="mt-5 max-w-2xl text-sm font-medium leading-relaxed text-white/70 sm:text-base">
+                Compare plans, understand benefits, and join the EDC India ecosystem with a clear one-time fee. Every plan is designed to move founders from idea to execution.
+              </p>
 
-                  navigate(`${normalizedRoute}${separator}${qs}`, {
-                    state: {
-                      selectedPlan: {
-                        slug: plan.slug || '',
-                        name: plan.name || '',
-                        price: planPrice,
-                      },
-                    },
-                  })
-                }}
-                className={`mt-auto w-full rounded-2xl px-6 py-4 text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-95 shadow-md hover:shadow-xl ${(plan.isPopular || index === 0) ? 'bg-primary hover:bg-blue-800 hover:shadow-lg' : 'bg-ink hover:bg-slate-800'}`}
-              >
-                {(plan.ctaText || 'Join Now')} — ₹{Number(plan.price || 0).toLocaleString('en-IN')}
-              </button>
+              <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                {[
+                  ['3000+', 'Members'],
+                  ['500+', 'Startups Supported'],
+                  ['100+', 'Ecosystem Partners'],
+                ].map(([value, label]) => (
+                  <div key={label} className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-sm">
+                    <div className="text-xl font-extrabold text-white sm:text-2xl">{value}</div>
+                    <div className="mt-0.5 text-xs font-semibold uppercase tracking-widest text-white/55">{label}</div>
+                  </div>
+                ))}
+              </div>
             </motion.div>
-          ))}
-        </motion.div>
-      </main>
-    </div>
-    <SiteFooter />
+
+            <motion.aside variants={fadeUp} className="rounded-[1.8rem] border border-white/20 bg-white/10 p-6 backdrop-blur-md sm:p-7">
+              <h2 className="text-lg font-bold tracking-tight">Why Founders Join EDC</h2>
+              <p className="mt-2 text-sm leading-relaxed text-white/70">
+                Built for serious founders who want mentorship, visibility, and structured growth support.
+              </p>
+
+              <div className="mt-6 space-y-3">
+                {trustPoints.map((point) => {
+                  const Icon = point.icon
+                  return (
+                    <div key={point.title} className="rounded-2xl border border-white/15 bg-white/10 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15">
+                          <Icon className="h-4 w-4 text-cyan-200" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-semibold text-white">{point.title}</div>
+                          <div className="mt-0.5 text-xs leading-relaxed text-white/65">{point.text}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </motion.aside>
+          </motion.div>
+        </header>
+
+        <main className="relative -mt-10 pb-16 sm:-mt-14 sm:pb-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {plansError && (
+              <div className="mx-auto mb-6 max-w-6xl rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+                {plansError}
+              </div>
+            )}
+
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={staggerContainer}
+              className="mx-auto grid max-w-6xl items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {plans.map((plan, index) => (
+                <motion.article key={plan.slug || `${plan.name}-${index}`} variants={fadeUp} className={cardClassByIndex(index, plan.isPopular)}>
+                  <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-primary/10 blur-2xl transition duration-300 group-hover:bg-primary/20" />
+
+                  {plan.badge && (
+                    <div className={`mb-4 inline-flex w-fit items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-widest ${plan.isPopular || index === 0 ? 'border-primary/30 bg-primary/10 text-primary' : 'border-slate-200 bg-slate-100 text-slate-600'}`}>
+                      {plan.badge}
+                    </div>
+                  )}
+
+                  <h3 className={`mt-2 text-2xl font-extrabold tracking-tight ${plan.isPopular || index === 0 ? 'text-primary' : 'text-ink'}`}>
+                    {plan.name}
+                  </h3>
+
+                  <p className="mt-3 min-h-[70px] text-sm font-medium leading-relaxed text-slate-500">
+                    {plan.description}
+                  </p>
+
+                  <div className="mt-7 rounded-2xl border border-slate-200/80 bg-slate-50 px-4 py-4">
+                    <div className="flex items-end gap-2">
+                      <span className="text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">₹{formatPrice(plan.price)}</span>
+                      <span className="pb-1 text-xs font-semibold uppercase tracking-widest text-slate-500">{plan.billingText || '/ one-time'}</span>
+                    </div>
+                  </div>
+
+                  <ul className="mb-8 mt-6 flex-1 space-y-3.5 text-sm font-semibold text-slate-600">
+                    {(plan.features || []).map((item, i) => (
+                      <li key={`${plan.slug || plan.name}-feature-${i}`} className="flex items-start gap-3">
+                        <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                          <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                        </div>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={() => handleNavigateToPlan(plan)}
+                    className={`mt-auto inline-flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-bold text-white transition duration-300 active:scale-[0.99] ${(plan.isPopular || index === 0) ? 'bg-gradient-to-r from-primary to-secondary shadow-[0_16px_32px_-18px_rgba(11,61,145,0.72)] hover:brightness-105' : 'bg-ink shadow-[0_16px_32px_-18px_rgba(15,23,42,0.55)] hover:bg-slate-800'}`}
+                  >
+                    <span>{plan.ctaText || 'Join Now'}</span>
+                    <span className="opacity-85">₹{formatPrice(plan.price)}</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </motion.article>
+              ))}
+            </motion.div>
+
+            <motion.section
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={staggerContainer}
+              className="mx-auto mt-10 grid max-w-6xl gap-4 sm:grid-cols-3"
+            >
+              {assurancePoints.map((item) => (
+                <motion.div key={item.title} variants={fadeUp} className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-[0_14px_35px_-30px_rgba(15,23,42,0.55)]">
+                  <div className="text-sm font-bold text-slate-800">{item.title}</div>
+                  <div className="mt-1.5 text-sm leading-relaxed text-slate-500">{item.text}</div>
+                </motion.div>
+              ))}
+            </motion.section>
+          </div>
+        </main>
+      </div>
+      <SiteFooter />
     </>
   )
 }
