@@ -963,7 +963,7 @@ function AppContent() {
         <Route path="/college-apply" element={<CollegeApplicationPage />} />
         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
-        <Route path="/about" element={<AboutPage />} />
+        <Route path="/about-us" element={<AboutPage />} />
         <Route path="/fellowship" element={<FellowshipPage />} />
         <Route path="/fellowship-application" element={<FellowshipApplicationPage />} />
         <Route path="/membership-validation" element={<MembershipValidationPage />} />

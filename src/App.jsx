@@ -541,7 +541,7 @@ const Home = () => {
   const heroHeadlineWords = 'Entrepreneurship is not just about starting a company — it’s about building a mindset.'.split(' ')
   const homeNavItems = [
     { label: 'Home', type: 'anchor', target: 'home' },
-    { label: 'About', type: 'route', to: '/about' },
+    { label: 'About', type: 'route', to: '/about-us' },
     { label: 'Programs', type: 'anchor', target: 'programs' },
     { label: 'Fellowship', type: 'route', to: '/fellowship' },
     { label: 'Membership', type: 'route', to: '/startup-membership' },
@@ -1340,7 +1340,7 @@ function AppContent() {
         <Route path="/college-apply" element={<CollegeApplicationPage />} />
         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
-        <Route path="/about" element={<AboutPage />} />
+        <Route path="/about-us" element={<AboutPage />} />
         <Route path="/fellowship" element={<FellowshipPage />} />
         <Route path="/fellowship-application" element={<FellowshipApplicationPage />} />
         <Route path="/membership-validation" element={<MembershipValidationPage />} />
