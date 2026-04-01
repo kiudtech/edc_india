@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { BrowserRouter, Route, Routes, Link, useNavigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, Link, useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
@@ -965,6 +965,8 @@ function AppContent() {
         <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
         <Route path="/about-us" element={<AboutPage />} />
         <Route path="/fellowship" element={<FellowshipPage />} />
+        <Route path="/cohort" element={<Navigate to="/fellowship" replace />} />
+        <Route path="/coeip" element={<Navigate to="/" replace />} />
         <Route path="/fellowship-application" element={<FellowshipApplicationPage />} />
         <Route path="/membership-validation" element={<MembershipValidationPage />} />
         <Route path="/startup-membership" element={<StartupMembershipPage />} />

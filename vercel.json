@@ -1,4 +1,8 @@
 {
+  "redirects": [
+    { "source": "/cohort", "destination": "/fellowship", "permanent": true },
+    { "source": "/coeip", "destination": "/", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
