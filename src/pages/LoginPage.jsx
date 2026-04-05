@@ -9,6 +9,7 @@ import SiteFooter from '../components/SiteFooter'
 export default function LoginPage() {
   const navigate = useNavigate()
   const { login } = useAuth()
+  const googleClientIdConfigured = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim())
   const [error, setError] = useState('')
   const [googleSubmitting, setGoogleSubmitting] = useState(false)
   const [googleButtonWidth, setGoogleButtonWidth] = useState(280)
@@ -189,7 +190,11 @@ export default function LoginPage() {
                 </div>
 
                 <div ref={googleAuthSlotRef} className="mt-6 flex w-full justify-center">
-                  {googleSubmitting ? (
+                  {!googleClientIdConfigured ? (
+                    <div className="w-full max-w-[360px] rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+                      Google login is currently unavailable because VITE_GOOGLE_CLIENT_ID is not configured.
+                    </div>
+                  ) : googleSubmitting ? (
                     <div className="flex w-full max-w-[360px] items-center justify-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-3.5 shadow-sm sm:px-8">
                       <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                       <span className="text-sm font-semibold text-slate-600">Authenticating...</span>

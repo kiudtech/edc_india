@@ -7,7 +7,8 @@ import App from './App.jsx'
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim()
 
 if (!clientId) {
-  throw new Error('Missing VITE_GOOGLE_CLIENT_ID. Set it in the frontend .env file.')
+  // Allow app boot without Google auth to avoid a blank screen in local/dev misconfiguration.
+  console.warn('Missing VITE_GOOGLE_CLIENT_ID. Google login is disabled until this variable is configured.')
 }
 
 // Disable browser scroll restoration so our ScrollToTop component controls it
@@ -17,8 +18,12 @@ if ('scrollRestoration' in history) {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <GoogleOAuthProvider clientId={clientId}>
+    {clientId ? (
+      <GoogleOAuthProvider clientId={clientId}>
+        <App />
+      </GoogleOAuthProvider>
+    ) : (
       <App />
-    </GoogleOAuthProvider>
+    )}
   </StrictMode>,
 )

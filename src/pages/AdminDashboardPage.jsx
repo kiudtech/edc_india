@@ -15,6 +15,7 @@ const sections = [
   { id: 'grants', label: 'Grants & Funding', icon: '💰' },
   { id: 'plans', label: 'Plans', icon: '🧾' },
   { id: 'colleges', label: 'College Ranking', icon: '🏫' },
+  { id: 'college-ratings', label: 'College Ratings', icon: '⭐' },
   { id: 'college-ranking', label: 'Ranking Applications', icon: '🎓' },
   { id: 'courses', label: 'Courses', icon: '📚' },
   { id: 'notifications', label: 'Notifications', icon: '🔔' },
@@ -410,6 +411,7 @@ export default function AdminDashboardPage() {
           {active === 'plans' && <PlansSection />}
           {active === 'memberships' && <MembershipsSection />}
           {active === 'colleges' && <CollegesSection />}
+          {active === 'college-ratings' && <CollegeRatingsSection />}
           {active === 'college-ranking' && <CollegeRankingSection />}
           {active === 'courses' && <CoursesSection />}
           {active === 'notifications' && <NotificationsSection />}
@@ -1977,6 +1979,317 @@ function CollegeRankingSection() {
           </div>
         )}
       </Modal>
+    </div>
+  )
+}
+
+/* ===============================================================
+   10. COLLEGE RATINGS
+   =============================================================== */
+function CollegeRatingsSection() {
+  const { get, del, put } = useApi()
+  const [ratings, setRatings] = useState([])
+  const [rankings, setRankings] = useState([])
+  const [stats, setStats] = useState({ totalColleges: 0, totalRatings: 0, averageRating: 0, filteredItems: 0 })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [showLiveRankingSnapshot, setShowLiveRankingSnapshot] = useState(false)
+  const [settingsSaving, setSettingsSaving] = useState(false)
+  const [collegeFilter, setCollegeFilter] = useState('')
+  const [ratingFilter, setRatingFilter] = useState('')
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(false)
+  const [deletingId, setDeletingId] = useState('')
+
+  const fetch_ = useCallback(async () => {
+    setLoading(true)
+    setError('')
+
+    const listParams = new URLSearchParams({ limit: '50', page: String(page) })
+    const summaryParams = new URLSearchParams()
+
+    if (collegeFilter.trim()) {
+      listParams.set('college', collegeFilter.trim())
+      summaryParams.set('college', collegeFilter.trim())
+    }
+    if (ratingFilter) {
+      listParams.set('rating', ratingFilter)
+    }
+
+    const listQuery = listParams.toString()
+    const summaryQuery = summaryParams.toString()
+
+    try {
+      const [listData, summaryData, settingData] = await Promise.all([
+        get(`/api/admin/college-ratings${listQuery ? `?${listQuery}` : ''}`),
+        get(`/api/admin/college-ratings/summary${summaryQuery ? `?${summaryQuery}` : ''}`),
+        get('/api/admin/college-ratings/settings'),
+      ])
+
+      const items = Array.isArray(listData?.items) ? listData.items : []
+      const rankingRows = Array.isArray(summaryData?.rankings) ? summaryData.rankings : []
+
+      setRatings(items)
+      setRankings(rankingRows)
+      setShowLiveRankingSnapshot(Boolean(settingData?.showLiveRankingSnapshot))
+      setHasMore(Boolean(listData?.hasMore))
+      setStats({
+        totalColleges: Number(summaryData?.totalColleges || 0),
+        totalRatings: Number(summaryData?.totalRatings || 0),
+        averageRating: Number(summaryData?.averageRating || 0),
+        filteredItems: Number(listData?.total || items.length || 0),
+      })
+    } catch (err) {
+      setRatings([])
+      setRankings([])
+      setHasMore(false)
+      setStats({ totalColleges: 0, totalRatings: 0, averageRating: 0, filteredItems: 0 })
+      setError(err.message || 'Unable to load college ratings right now.')
+    } finally {
+      setLoading(false)
+    }
+  }, [get, collegeFilter, ratingFilter, page])
+
+  useEffect(() => { fetch_() }, [fetch_])
+
+  useEffect(() => {
+    setPage(1)
+  }, [collegeFilter, ratingFilter])
+
+  const remove = async (ratingId) => {
+    const shouldDelete = window.confirm('Delete this rating entry? This action cannot be undone.')
+    if (!shouldDelete) return
+
+    setDeletingId(ratingId)
+    try {
+      await del(`/api/admin/college-ratings/${ratingId}`)
+      await fetch_()
+    } catch (err) {
+      alert(err.message || 'Unable to delete rating right now.')
+    } finally {
+      setDeletingId('')
+    }
+  }
+
+  const toggleLiveRankingSnapshotVisibility = async () => {
+    const nextValue = !showLiveRankingSnapshot
+    const previousValue = showLiveRankingSnapshot
+
+    setShowLiveRankingSnapshot(nextValue)
+    setSettingsSaving(true)
+
+    try {
+      const updated = await put('/api/admin/college-ratings/settings', {
+        showLiveRankingSnapshot: nextValue,
+      })
+      setShowLiveRankingSnapshot(Boolean(updated?.showLiveRankingSnapshot))
+    } catch (err) {
+      setShowLiveRankingSnapshot(previousValue)
+      alert(err.message || 'Unable to update snapshot visibility right now.')
+    } finally {
+      setSettingsSaving(false)
+    }
+  }
+
+  const ratingColor = (value) => {
+    if (value >= 4) return 'green'
+    if (value >= 3) return 'blue'
+    if (value >= 2) return 'yellow'
+    return 'red'
+  }
+
+  return (
+    <div>
+      <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_180px_auto]">
+        <input
+          value={collegeFilter}
+          onChange={(e) => setCollegeFilter(e.target.value)}
+          placeholder="Filter by college name"
+          className="rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        />
+        <select
+          value={ratingFilter}
+          onChange={(e) => setRatingFilter(e.target.value)}
+          className="rounded-lg border px-3 py-2 text-sm"
+        >
+          <option value="">All Ratings</option>
+          <option value="5">5 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="3">3 Stars</option>
+          <option value="2">2 Stars</option>
+          <option value="1">1 Star</option>
+        </select>
+        <button
+          onClick={fetch_}
+          className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+        >
+          Refresh
+        </button>
+      </div>
+
+      <div className="mb-5 rounded-xl border bg-white px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-bold text-slate-800">Live Ranking Snapshot Visibility</h3>
+            <p className="mt-0.5 text-xs text-slate-500">Show or hide the Live Ranking Snapshot card on the public homepage.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-slate-500">
+              {settingsSaving ? 'Saving...' : showLiveRankingSnapshot ? 'Visible to Users' : 'Hidden from Users'}
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={showLiveRankingSnapshot}
+              aria-label="Toggle live ranking snapshot visibility"
+              onClick={toggleLiveRankingSnapshotVisibility}
+              disabled={settingsSaving}
+              className={`relative inline-flex h-7 w-12 items-center rounded-full border transition disabled:cursor-not-allowed disabled:opacity-70 ${showLiveRankingSnapshot ? 'border-emerald-400 bg-emerald-500/80' : 'border-slate-300 bg-slate-300'}`}
+            >
+              <span
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${showLiveRankingSnapshot ? 'translate-x-6' : 'translate-x-1'}`}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-xl border bg-white p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Total Ratings</p>
+          <p className="mt-1 text-xl font-bold text-slate-800">{stats.totalRatings}</p>
+        </div>
+        <div className="rounded-xl border bg-white p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Rated Colleges</p>
+          <p className="mt-1 text-xl font-bold text-slate-800">{stats.totalColleges}</p>
+        </div>
+        <div className="rounded-xl border bg-white p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Average Rating</p>
+          <p className="mt-1 text-xl font-bold text-slate-800">{Number(stats.averageRating || 0).toFixed(2)}/5</p>
+        </div>
+        <div className="rounded-xl border bg-white p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Filtered Entries</p>
+          <p className="mt-1 text-xl font-bold text-slate-800">{stats.filteredItems}</p>
+        </div>
+      </div>
+
+      {error && (
+        <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      <div className="mb-6 rounded-xl border bg-white">
+        <div className="border-b px-4 py-3">
+          <h3 className="text-sm font-bold text-slate-800">College Ranking (By Average Rating)</h3>
+          <p className="mt-0.5 text-xs text-slate-500">Automatically sorted highest to lowest.</p>
+        </div>
+
+        {loading ? <Spinner /> : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 text-left text-xs font-medium uppercase text-slate-500">
+                <tr>
+                  <th className="px-4 py-3">Rank</th>
+                  <th className="px-4 py-3">College</th>
+                  <th className="px-4 py-3">Average</th>
+                  <th className="px-4 py-3">Ratings</th>
+                  <th className="px-4 py-3">Last Rated</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rankings.map((item) => (
+                  <tr key={item.collegeName} className="border-t hover:bg-slate-50">
+                    <td className="px-4 py-3 font-bold text-slate-700">#{item.rank}</td>
+                    <td className="px-4 py-3 font-medium text-slate-800">{item.collegeName}</td>
+                    <td className="px-4 py-3">
+                      <Badge text={`${Number(item.averageRating || 0).toFixed(2)} / 5`} color={ratingColor(Number(item.averageRating || 0))} />
+                    </td>
+                    <td className="px-4 py-3">{item.totalRatings}</td>
+                    <td className="px-4 py-3 text-xs">{fmtDateTime(item.lastRatedAt)}</td>
+                  </tr>
+                ))}
+                {rankings.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-8 text-center text-slate-400">No rating summaries available.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-xl border bg-white">
+        <div className="border-b px-4 py-3">
+          <h3 className="text-sm font-bold text-slate-800">Anonymous Rating Submissions</h3>
+          <p className="mt-0.5 text-xs text-slate-500">You can delete inappropriate reviews from this list.</p>
+        </div>
+
+        {loading ? <Spinner /> : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 text-left text-xs font-medium uppercase text-slate-500">
+                <tr>
+                  <th className="px-4 py-3">College</th>
+                  <th className="px-4 py-3">Rating</th>
+                  <th className="px-4 py-3">Feedback</th>
+                  <th className="px-4 py-3">Submitted</th>
+                  <th className="px-4 py-3">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ratings.map((item) => (
+                  <tr key={item._id} className="border-t hover:bg-slate-50">
+                    <td className="px-4 py-3 font-medium text-slate-800">{item.collegeName}</td>
+                    <td className="px-4 py-3">
+                      <Badge text={`${item.rating}/5`} color={ratingColor(Number(item.rating || 0))} />
+                    </td>
+                    <td className="max-w-sm px-4 py-3 text-xs text-slate-600">{item.feedback || 'No feedback'}</td>
+                    <td className="px-4 py-3 text-xs">{fmtDateTime(item.createdAt)}</td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => remove(item._id)}
+                        disabled={deletingId === item._id}
+                        className="rounded bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {deletingId === item._id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {ratings.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-8 text-center text-slate-400">No ratings found for selected filters.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+
+            <div className="flex items-center justify-between border-t bg-slate-50 px-4 py-2.5">
+              <p className="text-xs font-medium text-slate-500">
+                Showing page {page} · {stats.filteredItems} total entries
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                  disabled={page === 1 || loading}
+                  className="rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <button
+                  onClick={() => setPage((prev) => prev + 1)}
+                  disabled={!hasMore || loading}
+                  className="rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

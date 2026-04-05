@@ -13,6 +13,8 @@ import Plan from '../models/Plan.js'
 import CollegeRankingApplication from '../models/CollegeRankingApplication.js'
 import FellowshipApplication from '../models/FellowshipApplication.js'
 import ContactRequest from '../models/ContactRequest.js'
+import CollegeRating from '../models/CollegeRating.js'
+import CollegeRatingSetting from '../models/CollegeRatingSetting.js'
 
 const router = Router()
 
@@ -22,6 +24,8 @@ const CONTACT_FORM_TITLES = {
   college_partnership: 'College Partnership',
   newsletter: 'Newsletter',
 }
+
+const escapeRegex = (value = '') => String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 /* ============================================================
    ANALYTICS
@@ -400,6 +404,138 @@ router.put('/colleges/:id', protect, adminOnly, async (req, res) => {
     const college = await College.findByIdAndUpdate(req.params.id, req.body, { new: true })
     res.json(college)
   } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+/* ============================================================
+   COLLEGE RATINGS MANAGEMENT
+   ============================================================ */
+router.get('/college-ratings/settings', protect, adminOnly, async (_req, res) => {
+  try {
+    const settings = await CollegeRatingSetting.findOne({ singletonKey: 'global' })
+    res.json({ showLiveRankingSnapshot: Boolean(settings?.showLiveRankingSnapshot) })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+router.put('/college-ratings/settings', protect, adminOnly, async (req, res) => {
+  try {
+    const requestedValue = req.body?.showLiveRankingSnapshot
+    if (typeof requestedValue !== 'boolean') {
+      return res.status(400).json({ message: 'showLiveRankingSnapshot must be a boolean value.' })
+    }
+
+    const settings = await CollegeRatingSetting.findOneAndUpdate(
+      { singletonKey: 'global' },
+      { $set: { showLiveRankingSnapshot: requestedValue } },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    )
+
+    res.json({ showLiveRankingSnapshot: Boolean(settings?.showLiveRankingSnapshot) })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+router.get('/college-ratings', protect, adminOnly, async (req, res) => {
+  try {
+    const collegeQuery = String(req.query.college || '').trim()
+    const ratingFilter = Number(req.query.rating)
+    const page = Math.max(1, Number(req.query.page) || 1)
+    const limit = Math.min(200, Math.max(10, Number(req.query.limit) || 100))
+
+    const filter = {}
+    if (collegeQuery) {
+      filter.collegeName = { $regex: escapeRegex(collegeQuery), $options: 'i' }
+    }
+    if (Number.isInteger(ratingFilter) && ratingFilter >= 1 && ratingFilter <= 5) {
+      filter.rating = ratingFilter
+    }
+
+    const [items, total] = await Promise.all([
+      CollegeRating.find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      CollegeRating.countDocuments(filter),
+    ])
+
+    res.json({
+      items,
+      total,
+      page,
+      limit,
+      hasMore: page * limit < total,
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+router.get('/college-ratings/summary', protect, adminOnly, async (req, res) => {
+  try {
+    const collegeQuery = String(req.query.college || '').trim()
+    const match = collegeQuery
+      ? { collegeName: { $regex: escapeRegex(collegeQuery), $options: 'i' } }
+      : null
+
+    const [rankings, totals] = await Promise.all([
+      CollegeRating.aggregate([
+        ...(match ? [{ $match: match }] : []),
+        {
+          $group: {
+            _id: '$collegeName',
+            averageRating: { $avg: '$rating' },
+            totalRatings: { $sum: 1 },
+            lastRatedAt: { $max: '$createdAt' },
+          },
+        },
+        { $sort: { averageRating: -1, totalRatings: -1, _id: 1 } },
+      ]),
+      CollegeRating.aggregate([
+        ...(match ? [{ $match: match }] : []),
+        {
+          $group: {
+            _id: null,
+            totalRatings: { $sum: 1 },
+            averageRating: { $avg: '$rating' },
+          },
+        },
+      ]),
+    ])
+
+    const totalInfo = totals[0] || { totalRatings: 0, averageRating: 0 }
+
+    res.json({
+      totalColleges: rankings.length,
+      totalRatings: totalInfo.totalRatings || 0,
+      averageRating: Number(Number(totalInfo.averageRating || 0).toFixed(2)),
+      rankings: rankings.map((item, index) => ({
+        rank: index + 1,
+        collegeName: item._id,
+        averageRating: Number(Number(item.averageRating || 0).toFixed(2)),
+        totalRatings: item.totalRatings,
+        lastRatedAt: item.lastRatedAt,
+      })),
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+router.delete('/college-ratings/:id', protect, adminOnly, async (req, res) => {
+  try {
+    const deletedRating = await CollegeRating.findByIdAndDelete(req.params.id)
+    if (!deletedRating) {
+      return res.status(404).json({ message: 'Rating not found' })
+    }
+    res.json({ message: 'Rating deleted successfully' })
+  } catch (err) {
+    if (err?.name === 'CastError') {
+      return res.status(404).json({ message: 'Rating not found' })
+    }
     res.status(500).json({ message: err.message })
   }
 })
