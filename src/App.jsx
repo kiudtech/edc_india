@@ -39,10 +39,12 @@ const offerings = [
   { title: 'Incubation Accelerator', desc: 'Partnering with institutions to build on-campus startup ecosystems.', icon: <Building2 className="h-6 w-6" />, route: '/college-apply' },
 ]
 const timeline = [
-  { year: '2019', title: 'Founded', text: 'EDC India was created with a belief that entrepreneurship is a mindset.' },
-  { year: '2020', title: 'National Partnerships', text: 'Collaboration with leading institutions.' },
-  { year: '2022', title: 'Global Launch', text: 'International exposure and cross-border mentorship.' },
-  { year: '2024', title: 'Scale & Growth', text: 'Funding readiness and global market access.' },
+  { year: '2019', title: 'The Beginning', text: 'EDC India was founded with a mission to build a strong entrepreneurial ecosystem.' },
+  { year: '2020', title: 'Community Expansion', text: 'Launched membership, growing to 2000+ founders with active mentorship and startup support.' },
+  { year: '2022', title: 'Strategic Partnerships', text: 'Signed 70+ MoUs with leading universities and corporates.' },
+  { year: '2023', title: 'Funding Launch', text: 'Started funding support for startups through our angel network.' },
+  { year: '2025', title: 'Global Presence', text: 'Expanded internationally with physical offices in Dubai (UAE) and Singapore.' },
+  { year: '2026', title: 'The Next Big Leap', text: 'Launching the School of Entrepreneurship — building the next generation of founders.' },
 ]
 const courseTabs = [
   {
