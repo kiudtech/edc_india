@@ -83,9 +83,9 @@ export default function SiteFooter() {
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                   </div>
                   <div className="text-sm leading-relaxed text-white/60">
-                    Office No. 1026, Floor No. 10,<br />
-                    Gaur City Mall, Noida Extension,<br />
-                    Gautam Buddha Nagar – 201306,<br />
+                    Office No. 424, EDC INDIA,<br />
+                    Golden I, Techzone 4,<br />
+                    Greater noida 201306<br />
                     Uttar Pradesh
                   </div>
                 </div>
@@ -101,7 +101,8 @@ export default function SiteFooter() {
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/20 text-blue-300">
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                   </div>
-                  <a href="tel:+919792830382" className="text-sm text-white/60 transition hover:text-white">+91 9792830382</a>
+                  <a href="tel:+919821832839" className="text-sm text-white/60 transition hover:text-white">+91 9821832839</a>
+                  <a href="tel:+911206054408" className="text-sm text-white/60 transition hover:text-white">+91 1206054408</a>
                 </div>
               </div>
             </div>
