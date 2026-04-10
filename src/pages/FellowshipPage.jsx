@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SiteFooter from '../components/SiteFooter';
@@ -33,11 +33,11 @@ const phases = [
 const mentorProfiles = [
   { name: 'Rajesh Ranjan', image: '/mentors/rajesh-ranjan.jpg', linkedin: 'https://www.linkedin.com/in/rraajjeesshhr/' },
   { name: 'Sushant Dass', image: '/mentors/shushant-dass.jpg', linkedin: 'https://www.linkedin.com/in/sushant-dass-30760422/' },
+  { name: 'Ritika Mahajan', image: '/mentors/ritika-mahajan.jpg', linkedin: 'https://www.linkedin.com/in/ritika-mahajan-8b6996285/' },
   { name: 'Gautam Jha', image: '/mentors/gautam-jha.jpg', linkedin: 'https://www.linkedin.com/in/gautaam-jhha/' },
   { name: 'Saurav Kumar', image: '/mentors/saurav-kumar.jpg', linkedin: 'https://www.linkedin.com/in/saurav-kumar-912206a8/' },
-  { name: 'Kumar Sourabh', image: '/mentors/kumar-saurabh.jpg', linkedin: 'https://www.linkedin.com/in/kumarsaurabh08/' },
-  { name: 'Ritika Mahajan', image: '/mentors/ritika-mahajan.jpg', linkedin: 'https://www.linkedin.com/in/ritika-mahajan-8b6996285/' },
   { name: 'Dr. Shweta Singh', image: '/mentors/shweta-singh.jpg', linkedin: 'https://www.linkedin.com/in/dr-shweta-singh/' },
+  { name: 'Kumar Sourabh', image: '/mentors/kumar-saurabh.jpg', linkedin: 'https://www.linkedin.com/in/kumarsaurabh08/' },
   { name: 'Satyendra Singh', image: '/mentors/satyendra-kumar.jpg', linkedin: 'https://www.linkedin.com/in/satyendra-kumar-singh-business-mentor-career-strategist-55b2b97/' },
   { name: 'Adv Vipul Kumar', image: '/mentors/vipul-kumar.jpg', linkedin: 'https://www.linkedin.com/in/lawyervipul/' },
   { name: 'Vritika Arora', image: '/mentors/vritika-arora.jpg', linkedin: 'https://www.linkedin.com/in/vritika-arora-83a967a3/' },
@@ -62,7 +62,43 @@ const mentorShowcase = [
 }));
 
 export default function FellowshipPage() {
-  ;
+  const mentorTrackRef = useRef(null);
+  const mentorCardStep = 236;
+
+  const scrollMentors = (direction) => {
+    const track = mentorTrackRef.current;
+    if (!track) return;
+
+    const loopPoint = track.scrollWidth / 2;
+    let next = track.scrollLeft + (direction === 'left' ? -mentorCardStep : mentorCardStep);
+
+    if (next < 0) next = Math.max(loopPoint - mentorCardStep, 0);
+    if (next >= loopPoint) next = 0;
+
+    track.scrollTo({ left: next, behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    const track = mentorTrackRef.current;
+    if (!track) return undefined;
+
+    const intervalId = window.setInterval(() => {
+      const currentTrack = mentorTrackRef.current;
+      if (!currentTrack) return;
+
+      const loopPoint = currentTrack.scrollWidth / 2;
+      const next = currentTrack.scrollLeft + mentorCardStep;
+
+      if (next >= loopPoint) {
+        currentTrack.scrollTo({ left: 0, behavior: 'auto' });
+        return;
+      }
+
+      currentTrack.scrollTo({ left: next, behavior: 'smooth' });
+    }, 2600);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
 
   return (
     <div className="bg-white text-slate-800 overflow-x-hidden">
@@ -179,43 +215,66 @@ export default function FellowshipPage() {
         </div>
 
         <div className="relative mt-12">
-          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-white to-transparent" />
-          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-white to-transparent" />
+          <div className="absolute inset-y-0 left-2 z-20 flex items-center">
+            <button
+              type="button"
+              aria-label="Scroll mentors left"
+              onClick={() => scrollMentors('left')}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-700 shadow-md backdrop-blur transition hover:border-slate-300 hover:text-slate-900"
+            >
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
 
-          <div className="marquee-track">
-            <div className="marquee-inner">
-              {[0, 1].map((setIdx) => (
-                <div key={setIdx} className="flex shrink-0 items-stretch gap-5 px-2">
-                  {mentorShowcase.map((mentor) => (
-                    <article
-                      key={`${setIdx}-${mentor.id}`}
-                      className="w-[240px] shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-                    >
-                      <div className="h-56 w-full overflow-hidden bg-slate-100">
-                        <img
-                          src={mentor.image}
-                          alt={mentor.name}
-                          loading="lazy"
-                          className="h-full w-full object-cover object-top"
-                        />
-                      </div>
-                      <div className="p-4">
-                        <h3 className="text-base font-bold text-slate-900">{mentor.name}</h3>
-                        <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Fellowship Mentor</p>
-                        <a
-                          href={mentor.linkedin}
-                          target="_blank"
-                          rel="noreferrer noopener"
-                          className="mt-3 inline-flex text-sm font-semibold text-blue-700 transition hover:text-blue-900"
-                        >
-                          View LinkedIn →
-                        </a>
-                      </div>
-                    </article>
-                  ))}
+          <div className="absolute inset-y-0 right-2 z-20 flex items-center">
+            <button
+              type="button"
+              aria-label="Scroll mentors right"
+              onClick={() => scrollMentors('right')}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-700 shadow-md backdrop-blur transition hover:border-slate-300 hover:text-slate-900"
+            >
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-10 bg-gradient-to-r from-white/80 to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-10 bg-gradient-to-l from-white/80 to-transparent" />
+
+          <div
+            ref={mentorTrackRef}
+            className="flex gap-4 overflow-x-auto px-2 pb-2 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {[...mentorShowcase, ...mentorShowcase].map((mentor, idx) => (
+              <article
+                key={`${mentor.id}-${idx}`}
+                className="w-[220px] shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="h-52 w-full overflow-hidden bg-slate-100">
+                  <img
+                    src={mentor.image}
+                    alt={mentor.name}
+                    loading="lazy"
+                    className="h-full w-full object-cover object-top"
+                  />
                 </div>
-              ))}
-            </div>
+                <div className="p-4">
+                  <h3 className="text-base font-bold text-slate-900">{mentor.name}</h3>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Fellowship Mentor</p>
+                  <a
+                    href={mentor.linkedin}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="mt-3 inline-flex text-sm font-semibold text-blue-700 transition hover:text-blue-900"
+                  >
+                    View LinkedIn →
+                  </a>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
