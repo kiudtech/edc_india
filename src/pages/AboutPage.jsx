@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import SiteFooter from '../components/SiteFooter';
 
 const fadeUp = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } } };
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
@@ -30,10 +31,12 @@ const whatWeDo = [
 ];
 
 const timeline = [
-  { year: '2019', title: 'Founded', desc: 'EDC India born with a belief that entrepreneurship is a mindset' },
-  { year: '2020', title: 'National Partnerships', desc: 'Collaboration with leading institutions across India' },
-  { year: '2022', title: 'Global Launch', desc: 'International exposure and cross-border mentorship' },
-  { year: '2024', title: 'Scale & Growth', desc: 'Funding readiness and global market access programs' },
+  { year: '2019', title: 'The Beginning', desc: 'EDC India was founded with a mission to build a strong entrepreneurial ecosystem.' },
+  { year: '2020', title: 'Community Expansion', desc: 'Launched membership, growing to 2000+ founders with active mentorship and startup support.' },
+  { year: '2022', title: 'Strategic Partnerships', desc: 'Signed 70+ MoUs with leading universities and corporates.' },
+  { year: '2023', title: 'Funding Launch', desc: 'Started funding support for startups through our angel network.' },
+  { year: '2025', title: 'Global Presence', desc: 'Expanded internationally with physical offices in Dubai (UAE) and Singapore.' },
+  { year: '2026', title: 'The Next Big Leap', desc: 'Launching the School of Entrepreneurship — building the next generation of founders.' },
 ];
 
 export default function AboutPage() {
@@ -205,6 +208,8 @@ export default function AboutPage() {
           </motion.div>
         </motion.div>
       </section>
+
+      <SiteFooter />
     </div>
   );
 }

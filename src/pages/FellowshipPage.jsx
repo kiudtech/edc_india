@@ -30,6 +30,37 @@ const phases = [
   { phase: 'Phase 4', title: 'Grow', desc: 'Scale with funding support and global opportunities', icon: '🌍' },
 ];
 
+const mentorProfiles = [
+  { name: 'Rajesh Ranjan', image: '/mentors/rajesh-ranjan.jpg', linkedin: 'https://www.linkedin.com/in/rraajjeesshhr/' },
+  { name: 'Sushant Dass', image: '/mentors/shushant-dass.jpg', linkedin: 'https://www.linkedin.com/in/sushant-dass-30760422/' },
+  { name: 'Gautam Jha', image: '/mentors/gautam-jha.jpg', linkedin: 'https://www.linkedin.com/in/gautaam-jhha/' },
+  { name: 'Saurav Kumar', image: '/mentors/saurav-kumar.jpg', linkedin: 'https://www.linkedin.com/in/saurav-kumar-912206a8/' },
+  { name: 'Kumar Sourabh', image: '/mentors/kumar-saurabh.jpg', linkedin: 'https://www.linkedin.com/in/kumarsaurabh08/' },
+  { name: 'Ritika Mahajan', image: '/mentors/ritika-mahajan.jpg', linkedin: 'https://www.linkedin.com/in/ritika-mahajan-8b6996285/' },
+  { name: 'Dr. Shweta Singh', image: '/mentors/shweta-singh.jpg', linkedin: 'https://www.linkedin.com/in/dr-shweta-singh/' },
+  { name: 'Satyendra Singh', image: '/mentors/satyendra-kumar.jpg', linkedin: 'https://www.linkedin.com/in/satyendra-kumar-singh-business-mentor-career-strategist-55b2b97/' },
+  { name: 'Adv Vipul Kumar', image: '/mentors/vipul-kumar.jpg', linkedin: 'https://www.linkedin.com/in/lawyervipul/' },
+  { name: 'Vritika Arora', image: '/mentors/vritika-arora.jpg', linkedin: 'https://www.linkedin.com/in/vritika-arora-83a967a3/' },
+];
+
+const mentorLookup = Object.fromEntries(mentorProfiles.map((mentor) => [mentor.name, mentor]));
+
+const mentorShowcase = [
+  'Ritika Mahajan',
+  'Rajesh Ranjan',
+  'Sushant Dass',
+  'Gautam Jha',
+  'Dr. Shweta Singh',
+  'Saurav Kumar',
+  'Kumar Sourabh',
+  'Satyendra Singh',
+  'Vritika Arora',
+  'Adv Vipul Kumar',
+].map((name, index) => ({
+  id: `${index}-${name}`,
+  ...mentorLookup[name],
+}));
+
 export default function FellowshipPage() {
   ;
 
@@ -134,6 +165,58 @@ export default function FellowshipPage() {
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </section>
+
+      {/* MENTORS */}
+      <section className="overflow-hidden bg-white py-20">
+        <div className="mx-auto max-w-6xl px-6">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center">
+            <div className="inline-block rounded-full bg-cyan-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-cyan-700 mb-4">Mentor Network</div>
+            <h2 className="text-4xl font-extrabold text-slate-900">Learn from Fellowship Mentors</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-slate-500">Profiles aligned with your uploaded mentor photos and LinkedIn presence for stronger fellowship branding.</p>
+          </motion.div>
+        </div>
+
+        <div className="relative mt-12">
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-white to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-white to-transparent" />
+
+          <div className="marquee-track">
+            <div className="marquee-inner">
+              {[0, 1].map((setIdx) => (
+                <div key={setIdx} className="flex shrink-0 items-stretch gap-5 px-2">
+                  {mentorShowcase.map((mentor) => (
+                    <article
+                      key={`${setIdx}-${mentor.id}`}
+                      className="w-[240px] shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                    >
+                      <div className="h-56 w-full overflow-hidden bg-slate-100">
+                        <img
+                          src={mentor.image}
+                          alt={mentor.name}
+                          loading="lazy"
+                          className="h-full w-full object-cover object-top"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-base font-bold text-slate-900">{mentor.name}</h3>
+                        <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Fellowship Mentor</p>
+                        <a
+                          href={mentor.linkedin}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="mt-3 inline-flex text-sm font-semibold text-blue-700 transition hover:text-blue-900"
+                        >
+                          View LinkedIn →
+                        </a>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

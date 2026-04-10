@@ -974,13 +974,10 @@ const Home = () => {
   const homeNavItems = [
     { label: 'Home', type: 'anchor', target: 'home' },
     { label: 'About', type: 'route', to: '/about-us' },
-    { label: 'Programs', type: 'anchor', target: 'programs' },
     { label: 'Fellowship', type: 'route', to: '/fellowship' },
     { label: 'Membership', type: 'route', to: '/startup-membership' },
     { label: 'Validation', type: 'route', to: '/membership-validation' },
     { label: 'Ranking', type: 'route', to: '/ranking' },
-    { label: 'Partners', type: 'anchor', target: 'partners' },
-    { label: 'Contact', type: 'anchor', target: 'contact' },
   ]
 
   const handleRouteNavTop = () => {
@@ -1520,7 +1517,7 @@ const Home = () => {
             <div className="marquee-inner">
               {[0, 1].map((setIdx) => (
                 <div key={setIdx} className="flex shrink-0 items-center gap-8">
-                  {['1.png','2.png','3.png','4.png','5.png','6.png','7.png','8.png','10.png','11.png','12.png','13.png','14.png','15.png','16.png','17.png','18.png','19.png','20.png','21.png','22.jpg','23.png','24.png','25.png'].map((file) => (
+                  {['1-2.webp','1.webp','10.webp','11.webp','12.webp','13.webp','14.webp','15.webp','16.webp','17.webp','18.webp','19.webp','2.webp','20.webp','21.webp','22-3.webp','22.webp','23.webp','24.webp','25.webp','3.webp','4.webp','5.webp','6.webp','7.webp','8-3.webp','8.webp'].map((file) => (
                     <div key={`${setIdx}-${file}`} className="flex h-20 w-36 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-3 shadow-sm sm:h-24 sm:w-44">
                       <img src={`/insti/${file}`} alt="Institution" className="max-h-full max-w-full object-contain" loading="lazy" />
                     </div>
