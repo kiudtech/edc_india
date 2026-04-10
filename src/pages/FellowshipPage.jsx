@@ -15,16 +15,16 @@ const differentiators = [
 ];
 
 const benefits = [
-  { n: '01', icon: '🎓', title: 'Earn the Title of EDC Fellow' },
-  { n: '02', icon: '💼', title: '100% Job Support' },
-  { n: '03', icon: '🚀', title: 'Complete Startup Support' },
-  { n: '04', icon: '💸', title: 'Funding Support (Seed + Growth)' },
-  { n: '05', icon: '⚖️', title: 'Company Registration & Legal Support' },
-  { n: '06', icon: '🌍', title: 'International Exposure Opportunity' },
-  { n: '07', icon: '🗺️', title: 'India Tour (4 States for Selected Students)' },
-  { n: '08', icon: '🎤', title: 'Real Expert Sessions' },
-  { n: '09', icon: '🤝', title: 'Networking with Founders & Investors' },
-  { n: '10', icon: '✨', title: 'And Many More Opportunities' },
+  { n: '01', icon: '🎓', title: 'Earn the Title of EDC Fellow', bg: 'bg-violet-500' },
+  { n: '02', icon: '💼', title: '100% Job Support', bg: 'bg-purple-600' },
+  { n: '03', icon: '🚀', title: 'Complete Startup Support', bg: 'bg-blue-500' },
+  { n: '04', icon: '💸', title: 'Funding Support (Seed + Growth)', bg: 'bg-emerald-500' },
+  { n: '05', icon: '⚖️', title: 'Company Registration & Legal Support', bg: 'bg-slate-600' },
+  { n: '06', icon: '🌍', title: 'International Exposure Opportunity', bg: 'bg-cyan-500' },
+  { n: '07', icon: '🗺️', title: 'India Tour (4 States for Selected Students)', bg: 'bg-indigo-500' },
+  { n: '08', icon: '🎤', title: 'Real Expert Sessions', bg: 'bg-rose-500' },
+  { n: '09', icon: '🤝', title: 'Networking with Founders & Investors', bg: 'bg-amber-500' },
+  { n: '10', icon: '✨', title: 'And Many More Opportunities', bg: 'bg-orange-500' },
 ];
 
 const curriculum = [
@@ -225,13 +225,21 @@ export default function FellowshipPage() {
           </motion.div>
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {benefits.map((b, i) => (
-              <motion.div key={i} variants={fadeUp} whileHover={{ y: -4 }} className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 to-blue-50/40 p-5 shadow-sm transition hover:shadow-xl hover:border-blue-200">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-indigo-600/0 group-hover:from-blue-600/5 group-hover:to-indigo-600/5 transition-all" />
+              <motion.div key={i} variants={fadeUp} whileHover={{ y: -6, scale: 1.02 }} className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:shadow-xl hover:border-slate-200">
+                {/* subtle glow on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-slate-50 to-blue-50/60" />
                 <div className="relative z-10">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 text-xl mb-3 group-hover:scale-110 transition-transform">{b.icon}</div>
-                  <div className="text-xs font-bold text-blue-600 mb-1">{b.n}</div>
+                  {/* app-style icon */}
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${b.bg} text-2xl shadow-md mb-4 group-hover:scale-110 transition-transform`}>
+                    {b.icon}
+                  </div>
+                  {/* number */}
+                  <div className="text-[10px] font-extrabold text-slate-400 tracking-widest mb-1.5">{b.n}</div>
+                  {/* title */}
                   <div className="text-sm font-bold text-slate-800 leading-snug">{b.title}</div>
                 </div>
+                {/* bottom accent line on hover */}
+                <div className={`absolute bottom-0 left-0 h-0.5 w-0 group-hover:w-full transition-all duration-300 ${b.bg}`} />
               </motion.div>
             ))}
           </motion.div>
