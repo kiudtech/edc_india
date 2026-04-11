@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import { BrowserRouter, Route, Routes, Link, useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -26,9 +26,11 @@ import MembershipValidationPage from './pages/MembershipValidationPage'
 import StartupMembershipPage from './pages/StartupMembershipPage'
 import RankingPage from './pages/RankingPage'
 import CollegeRankingApplicationPage from './pages/CollegeRankingApplicationPage'
+import FAQPage from './pages/FAQPage'
 import TermsPage from './pages/TermsPage'
 import NotFoundPage from './pages/NotFoundPage'
 import { API_BASE } from './config'
+import { getAllFaqItems } from './data/faqs'
 
 const offerings = [
   { title: 'Idea Validation', desc: 'Get a detailed validation report and clear direction for your next step.', icon: <Search className="h-6 w-6" />, route: '/membership-validation' },
@@ -979,6 +981,41 @@ const Home = () => {
     { label: 'Validation', type: 'route', to: '/membership-validation' },
     { label: 'Ranking', type: 'route', to: '/ranking' },
   ]
+  const faqPreviewItems = useMemo(() => {
+    const allFaqs = getAllFaqItems()
+    const randomized = [...allFaqs].sort(() => Math.random() - 0.5)
+    return randomized.slice(0, Math.min(allFaqs.length, 4))
+  }, [])
+  const faqCardThemes = [
+    {
+      bar: 'from-blue-500 via-cyan-500 to-indigo-500',
+      chip: 'border-blue-100 bg-blue-50 text-blue-700',
+      icon: 'border-blue-100 bg-blue-50 text-blue-700 group-hover:bg-blue-600 group-hover:text-white',
+      bullet: 'bg-blue-500',
+      hover: 'hover:border-blue-200 hover:shadow-[0_26px_44px_-28px_rgba(37,99,235,0.45)]',
+    },
+    {
+      bar: 'from-emerald-500 via-teal-500 to-cyan-500',
+      chip: 'border-emerald-100 bg-emerald-50 text-emerald-700',
+      icon: 'border-emerald-100 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white',
+      bullet: 'bg-emerald-500',
+      hover: 'hover:border-emerald-200 hover:shadow-[0_26px_44px_-28px_rgba(16,185,129,0.42)]',
+    },
+    {
+      bar: 'from-violet-500 via-indigo-500 to-blue-500',
+      chip: 'border-violet-100 bg-violet-50 text-violet-700',
+      icon: 'border-violet-100 bg-violet-50 text-violet-700 group-hover:bg-violet-600 group-hover:text-white',
+      bullet: 'bg-violet-500',
+      hover: 'hover:border-violet-200 hover:shadow-[0_26px_44px_-28px_rgba(124,58,237,0.42)]',
+    },
+    {
+      bar: 'from-amber-500 via-orange-500 to-rose-500',
+      chip: 'border-amber-100 bg-amber-50 text-amber-700',
+      icon: 'border-amber-100 bg-amber-50 text-amber-700 group-hover:bg-amber-600 group-hover:text-white',
+      bullet: 'bg-amber-500',
+      hover: 'hover:border-amber-200 hover:shadow-[0_26px_44px_-28px_rgba(245,158,11,0.38)]',
+    },
+  ]
 
   const handleRouteNavTop = () => {
     setMobileMenuOpen(false)
@@ -1768,6 +1805,91 @@ const Home = () => {
         </div>
       </section>
 
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#eef4ff] via-white to-[#ecfeff] py-16 sm:py-20">
+        <div className="pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-blue-200/40 blur-3xl" />
+        <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(#0b3d91 1px,transparent 1px),linear-gradient(90deg,#0b3d91 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="rounded-[2rem] border border-white/70 bg-white/70 p-6 shadow-[0_28px_56px_-34px_rgba(15,23,42,0.55)] backdrop-blur-xl sm:p-8 lg:p-10">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-700">
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-[11px] font-bold text-white">Q</span>
+                Frequently Asked Questions
+              </div>
+              <h2 className="mt-4 text-3xl font-extrabold text-slate-900 sm:text-4xl">Quick Answers Before You Apply</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500">Four quick answers from our complete FAQ guide for rankings, applications, and evaluation details.</p>
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Curated Preview</span>
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Ranking + Application FAQs</span>
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Updated for 2026 Event</span>
+              </div>
+            </motion.div>
+
+            <motion.div className="mt-10 grid gap-5 sm:grid-cols-2" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              {faqPreviewItems.map((faq, faqIndex) => {
+                const theme = faqCardThemes[faqIndex % faqCardThemes.length]
+                return (
+                  <motion.article
+                    key={`${faq.category}-${faq.id}`}
+                    variants={staggerItem}
+                    whileHover={{ y: -5 }}
+                    className={`group relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-5 shadow-[0_18px_34px_-26px_rgba(15,23,42,0.6)] transition ${theme.hover}`}
+                  >
+                    <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${theme.bar}`} />
+                    <div className="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full bg-slate-100/70 blur-2xl" />
+
+                    <div className="flex items-start justify-between gap-3">
+                      <div className={`inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${theme.chip}`}>
+                        {faq.category}
+                      </div>
+                      <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full border text-sm transition ${theme.icon}`}>
+                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M12 17h.01" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M9.09 9a3 3 0 115.82 1c0 2-3 2-3 4" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                    </div>
+
+                    <h3 className="mt-3 text-sm font-bold text-slate-900 sm:text-base">{faq.question}</h3>
+
+                    <div className="mt-3 space-y-2">
+                      {faq.answer.map((line, lineIndex) => (
+                        <p key={`${faq.id}-line-${lineIndex}`} className="text-sm leading-relaxed text-slate-600">
+                          {line}
+                        </p>
+                      ))}
+                    </div>
+
+                    {Array.isArray(faq.points) && faq.points.length > 0 && (
+                      <ul className="mt-3 space-y-1.5 text-sm text-slate-600">
+                        {faq.points.map((point, pointIndex) => (
+                          <li key={`${faq.id}-point-${pointIndex}`} className="flex items-start gap-2">
+                            <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${theme.bullet}`} />
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </motion.article>
+                )
+              })}
+            </motion.div>
+
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="mt-8 text-center">
+              <Link
+                to="/faq"
+                onClick={handleRouteNavTop}
+                className="group inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-white shadow-[0_18px_28px_-18px_rgba(11,61,145,0.8)] transition hover:bg-[#0a357f]"
+              >
+                See All FAQs
+                <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       <SiteFooter />
     </MotionDiv>
   )
@@ -1803,6 +1925,7 @@ function AppContent() {
         <Route path="/membership-validation" element={<MembershipValidationPage />} />
         <Route path="/startup-membership" element={<StartupMembershipPage />} />
         <Route path="/ranking" element={<RankingPage />} />
+        <Route path="/faq" element={<FAQPage />} />
         <Route path="/college-ranking-application" element={<CollegeRankingApplicationPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="*" element={<NotFoundPage />} />
