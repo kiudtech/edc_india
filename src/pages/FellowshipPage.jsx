@@ -473,7 +473,7 @@ export default function FellowshipPage() {
       </section>
 
       {/* ── MENTORS ── */}
-      <section className="overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50/30 py-24">
+      {/* <section className="overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50/30 py-24">
         <div className="mx-auto max-w-6xl px-6">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mb-12">
             <div className="inline-flex items-center gap-2 rounded-full bg-cyan-50 border border-cyan-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-cyan-700 mb-5">
@@ -511,7 +511,226 @@ export default function FellowshipPage() {
             ))}
           </div>
         </div>
+      </section> */}
+          {/* ── MENTORS ── */}
+      <section className="overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50/30 py-28 relative">
+        <style>{`
+          @keyframes flowLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .row-left { animation: flowLeft 45s linear infinite; }
+          .marquee-zone:hover .row-left { animation-play-state: paused; }
+          .li-card {
+            --mx: 0.5; --my: 0.5; --on: 0; --deg: 135deg;
+          }
+          .li-card .spot {
+            background: radial-gradient(
+              350px circle at calc(var(--mx)*100%) calc(var(--my)*100%),
+              rgba(10,102,194,0.12), transparent 55%
+            );
+            opacity: var(--on);
+            transition: opacity 0.35s;
+          }
+          .li-card .shimmer-line {
+            background: linear-gradient(
+              105deg, transparent 40%,
+              rgba(255,255,255,0.2) 50%, transparent 60%
+            );
+            background-size: 250% 100%;
+            background-position: 100% 0;
+            transition: background-position 0s;
+          }
+          .li-card:hover .shimmer-line {
+            background-position: -100% 0;
+            transition: background-position 0.8s ease;
+          }
+        `}</style>
+
+        <div className="absolute top-10 left-1/4 h-72 w-72 rounded-full bg-blue-100/40 blur-[100px]" />
+        <div className="absolute bottom-10 right-1/4 h-60 w-60 rounded-full bg-cyan-100/40 blur-[80px]" />
+
+        {/* Heading */}
+        <div className="relative z-10 mx-auto max-w-6xl px-6">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 rounded-full bg-cyan-50 border border-cyan-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-cyan-700 mb-5">
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" /> Mentor Network
+            </div>
+            <h2 className="text-4xl font-extrabold text-slate-900">Learn from Real Experts</h2>
+            <p className="mt-4 text-slate-500 max-w-lg mx-auto">Mentorship from founders, industry leaders, and domain experts who've built real things.</p>
+          </motion.div>
+        </div>
+
+        {/* Single Row Marquee */}
+        <div className="marquee-zone relative">
+          <div className="pointer-events-none absolute left-0 top-0 z-30 h-full w-36 bg-gradient-to-r from-[#f8fafc] via-[#f8fafc]/90 to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 z-30 h-full w-36 bg-gradient-to-l from-[#f8fafc] via-[#f8fafc]/90 to-transparent" />
+
+          <div className="row-left flex gap-6 w-max py-8 px-8">
+            {[...mentorShowcase, ...mentorShowcase].map((mentor, idx) => {
+              const handleMove = (e) => {
+                const el = e.currentTarget;
+                const r = el.getBoundingClientRect();
+                const px = (e.clientX - r.left) / r.width;
+                const py = (e.clientY - r.top) / r.height;
+                el.style.setProperty('--mx', px.toFixed(3));
+                el.style.setProperty('--my', py.toFixed(3));
+                el.style.setProperty('--on', '1');
+                const inner = el.querySelector('.tilt');
+                if (inner) {
+                  inner.style.transition = 'transform 0.12s ease-out, box-shadow 0.3s';
+                  inner.style.transform = `rotateX(${(0.5 - py) * 14}deg) rotateY(${(px - 0.5) * 14}deg) translateY(-12px) scale(1.02)`;
+                  inner.style.boxShadow = '0 40px 70px -20px rgba(0,0,0,0.2), 0 16px 32px -10px rgba(0,0,0,0.1), 0 0 0 1px rgba(10,102,194,0.08)';
+                }
+                const img = el.querySelector('.pimg');
+                if (img) {
+                  img.style.transition = 'transform 0.15s ease-out';
+                  img.style.transform = `scale(1.1) translate(${(px - 0.5) * -8}px, ${(py - 0.5) * -8}px)`;
+                }
+              };
+              const handleLeave = (e) => {
+                const el = e.currentTarget;
+                el.style.setProperty('--on', '0');
+                const inner = el.querySelector('.tilt');
+                if (inner) {
+                  inner.style.transition = 'transform 0.7s cubic-bezier(0.23,1,0.32,1), box-shadow 0.7s';
+                  inner.style.transform = 'rotateX(0) rotateY(0) translateY(0) scale(1)';
+                  inner.style.boxShadow = '';
+                }
+                const img = el.querySelector('.pimg');
+                if (img) {
+                  img.style.transition = 'transform 0.7s cubic-bezier(0.23,1,0.32,1)';
+                  img.style.transform = 'scale(1) translate(0,0)';
+                }
+              };
+
+              return (
+                <article
+                  key={`li-${mentor.id}-${idx}`}
+                  className="li-card group/c relative w-[280px] shrink-0 cursor-pointer"
+                  style={{ perspective: '1000px' }}
+                  onMouseMove={handleMove}
+                  onMouseLeave={handleLeave}
+                >
+                  <div
+                    className="tilt relative rounded-xl bg-white overflow-hidden border border-slate-200/80"
+                    style={{
+                      transformStyle: 'preserve-3d',
+                      willChange: 'transform',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06)',
+                    }}
+                  >
+                    {/* Cursor spotlight */}
+                    <div className="spot absolute inset-0 z-20 pointer-events-none rounded-xl" />
+                    {/* Shimmer */}
+                    <div className="shimmer-line absolute inset-0 z-20 pointer-events-none rounded-xl" />
+
+                    {/* ── LinkedIn Banner ── */}
+                    <div className="relative h-[72px] bg-gradient-to-r from-[#0a66c2] via-[#0077b5] to-[#004182] overflow-hidden">
+                      {/* Banner pattern */}
+                      <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 30%, #fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
+                      {/* LinkedIn logo watermark */}
+                      <div className="absolute top-3 right-3 opacity-20">
+                        <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* ── Avatar Area ── */}
+                    <div className="relative px-5">
+                      <div className="relative -mt-[52px] mb-3">
+                        <div className="relative inline-block">
+                          {/* Avatar ring */}
+                          <div className="absolute -inset-[3px] rounded-full bg-white" />
+                          <div className="relative h-[100px] w-[100px] rounded-full overflow-hidden border-[4px] border-white shadow-md group-hover/c:shadow-lg group-hover/c:shadow-blue-200/40 transition-shadow duration-500">
+                            <img
+                              src={mentor.image}
+                              alt={mentor.name}
+                              loading="lazy"
+                              className="pimg h-full w-full object-cover object-top"
+                              style={{ willChange: 'transform' }}
+                            />
+                          </div>
+                          {/* Online dot */}
+                          <div className="absolute bottom-1 right-1 h-4 w-4 rounded-full border-[2.5px] border-white bg-emerald-500 shadow-sm group-hover/c:animate-pulse" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ── Profile Info ── */}
+                    <div className="px-5 pb-2">
+                      <h3 className="text-[17px] font-bold text-slate-900 leading-tight group-hover/c:text-[#0a66c2] transition-colors duration-300">
+                        {mentor.name}
+                      </h3>
+                      <p className="mt-0.5 text-[13px] text-slate-500 leading-snug">
+                        Fellowship Mentor at EDC India
+                      </p>
+                      {/* Location row */}
+                      <div className="mt-1.5 flex items-center gap-1 text-[11px] text-slate-400">
+                        <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        India
+                        <span className="mx-1 text-slate-300">·</span>
+                        <span className="text-[#0a66c2] font-semibold">500+ connections</span>
+                      </div>
+                    </div>
+
+                    {/* ── Divider ── */}
+                    <div className="mx-5 my-3 h-px bg-slate-100" />
+
+                    {/* ── Skills / Tags ── */}
+                    <div className="px-5 pb-3">
+                      <div className="flex flex-wrap gap-1.5">
+                        {['Mentorship', 'Startup', 'Leadership'].map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-semibold text-[#0a66c2] border border-blue-100/80 group-hover/c:bg-blue-100/80 transition-colors duration-300"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* ── Action Buttons ── */}
+                    <div className="px-5 pb-5 flex gap-2">
+                      <a
+                        href={mentor.linkedin}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-[#0a66c2] py-2 text-[13px] font-bold text-white shadow-sm transition-all duration-300 hover:bg-[#004182] hover:shadow-md hover:shadow-blue-200/40 group-hover/c:shadow-md group-hover/c:shadow-blue-200/30"
+                      >
+                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                        </svg>
+                        Connect
+                      </a>
+                      <a
+                        href={mentor.linkedin}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="inline-flex items-center justify-center rounded-full border-2 border-[#0a66c2] px-4 py-2 text-[13px] font-bold text-[#0a66c2] transition-all duration-300 hover:bg-blue-50 hover:border-[#004182] hover:text-[#004182]"
+                      >
+                        View
+                      </a>
+                    </div>
+
+                    {/* Bottom blue accent */}
+                    <div className="absolute bottom-0 left-0 h-[3px] w-0 group-hover/c:w-full bg-gradient-to-r from-[#0a66c2] via-[#0077b5] to-[#00a0dc] transition-all duration-700 ease-out" />
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
       </section>
+
+
+
 
       {/* ── URGENCY + FINAL CTA ── */}
       <section className="py-28 bg-gradient-to-br from-[#0f172a] via-[#1e3a5f] to-[#0f2d6b] text-white text-center relative overflow-hidden">
