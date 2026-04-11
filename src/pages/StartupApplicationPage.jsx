@@ -256,11 +256,13 @@ export default function StartupApplicationPage() {
           </motion.div>
         </div>
 
-        {/* Bottom price badge */}
         <div className="relative z-10 mt-12 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
           <div className="text-xs text-white/40 uppercase tracking-widest mb-1">One-time fee</div>
           <div className="text-4xl font-extrabold text-white">₹{planAmount.toLocaleString('en-IN')}</div>
           <div className="text-sm text-white/50 mt-1">Lifetime access to the EDC India ecosystem</div>
+          <a href="/startup-membership" className="mt-3 inline-flex items-center gap-1 text-xs text-white/50 hover:text-white transition">
+            View more details →
+          </a>
         </div>
       </div>
 
