@@ -967,6 +967,7 @@ const homeMobileItemVariants = {
 
 const Home = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const [activeTab, setActiveTab] = useState(courseTabs[0])
   const [lightbox, setLightbox] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -1027,6 +1028,14 @@ const Home = () => {
     }
     document.documentElement.scrollTop = 0
     document.body.scrollTop = 0
+  }
+
+  const isHomeNavActive = (item) => {
+    if (item.type === 'anchor') return item.target === 'home' && location.pathname === '/'
+    if (item.type === 'route') {
+      return location.pathname === item.to || location.pathname.startsWith(`${item.to}/`)
+    }
+    return false
   }
 
   useEffect(() => {
@@ -1108,7 +1117,7 @@ const Home = () => {
                 <Link
                   key={item.label}
                   to={item.to}
-                  className="nav-link transition hover:text-slate-900"
+                  className={`nav-link transition ${isHomeNavActive(item) ? 'nav-link-active' : 'hover:text-slate-900'}`}
                   onClick={handleRouteNavTop}
                 >
                   {item.label}
@@ -1117,7 +1126,7 @@ const Home = () => {
                 <a
                   key={item.label}
                   href={`#${item.target}`}
-                  className="nav-link transition hover:text-slate-900"
+                  className={`nav-link transition ${isHomeNavActive(item) ? 'nav-link-active' : 'hover:text-slate-900'}`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.label}

@@ -91,11 +91,19 @@ export default function SiteNavbar() {
         </Link>
 
         <div className="hidden items-center gap-6 text-xs font-semibold text-slate-600 md:flex lg:gap-8 lg:text-sm">
-          {navItems.map((item) => (
-            <Link key={item.label} to={item.to} className="nav-link transition hover:text-slate-900" onClick={handleRouteNav}>
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const active = isItemActive(item.to)
+            return (
+              <Link
+                key={item.label}
+                to={item.to}
+                className={`nav-link transition ${active ? 'nav-link-active' : 'hover:text-slate-900'}`}
+                onClick={handleRouteNav}
+              >
+                {item.label}
+              </Link>
+            )
+          })}
         </div>
 
         <div className="flex items-center gap-3">
