@@ -34,7 +34,7 @@ export default function FellowshipApplicationPage() {
     return {
       slug: requestedPlanSlug || 'fellowship-program',
       name: selectedPlan.name || 'Fellowship Program',
-      price: Number.isFinite(selectedPrice) && selectedPrice > 0 ? selectedPrice : 5000,
+      price: Number.isFinite(selectedPrice) && selectedPrice > 0 ? selectedPrice : 10000,
     };
   });
 
@@ -59,7 +59,7 @@ export default function FellowshipApplicationPage() {
       const fallbackPlan = {
         slug: 'fellowship-program',
         name: 'Fellowship Program',
-        price: 5000,
+        price: 10000,
       };
 
       const targetSlug = requestedPlanSlug || fallbackPlan.slug;

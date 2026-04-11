@@ -200,7 +200,7 @@ const defaultPlans = [
     name: 'Fellowship Program',
     badge: 'Career + Startup',
     description: 'A structured fellowship track to build entrepreneurial skills with execution support, mentorship, and growth opportunities.',
-    price: 5000,
+    price: 10000,
     billingText: '/ one-time',
     ctaText: 'Join Fellowship',
     ctaRoute: '/fellowship-application',
@@ -1525,6 +1525,31 @@ const Home = () => {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ STARTUPS SHOWCASE ═══════════════ */}
+      <section className="bg-slate-50 py-20 sm:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
+            <div className="inline-block rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-700 mb-4">Startup Portfolio</div>
+            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Startups We Have Started</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500">A glimpse of ventures initiated and supported through the EDC India ecosystem.</p>
+          </motion.div>
+
+          <motion.div
+            className="mt-12 flex flex-wrap items-center justify-center gap-6 sm:gap-8"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {['s1.jpeg', 's2.jpeg', 's3.jpeg', 's4.jpeg'].map((file) => (
+              <motion.div key={file} variants={staggerItem} className="flex h-20 w-36 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-3 shadow-sm sm:h-24 sm:w-44">
+                <img src={`/startups/${file}`} alt="Startup" className="max-h-full max-w-full object-contain" loading="lazy" />
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 

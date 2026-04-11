@@ -62,6 +62,21 @@ export default function FellowshipPage() {
   const mentorTrackRef = useRef(null);
   const mentorCardStep = 236;
 
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const previousHtmlBehavior = html.style.scrollBehavior;
+    const previousBodyBehavior = body.style.scrollBehavior;
+
+    html.style.scrollBehavior = 'smooth';
+    body.style.scrollBehavior = 'smooth';
+
+    return () => {
+      html.style.scrollBehavior = previousHtmlBehavior;
+      body.style.scrollBehavior = previousBodyBehavior;
+    };
+  }, []);
+
   const scrollMentors = (dir) => {
     const track = mentorTrackRef.current;
     if (!track) return;
