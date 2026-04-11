@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
-import { Rocket, Lightbulb, Users, Trophy, BookOpen, Building2, Target, Globe, Handshake, Star, Search, GraduationCap, TrendingUp, DollarSign, Briefcase, BarChart3, Zap, RefreshCw, MapPin, Mail, Phone, University, ChevronRight } from 'lucide-react'
+import { Rocket, Lightbulb, Users, Trophy, BookOpen, Building2, Target, Globe, Handshake, Star, Search, GraduationCap, TrendingUp, IndianRupee, Briefcase, BarChart3, Zap, RefreshCw, MapPin, Mail, Phone, University, ChevronRight } from 'lucide-react'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
@@ -35,7 +35,7 @@ const offerings = [
   { title: 'EDC Membership', desc: 'Join India\u2019s growing entrepreneurial community for everything you need.', icon: <Users className="h-6 w-6" />, route: '/startup-membership' },
   { title: 'Entrepreneurial Fellowship', desc: 'A 1-year intensive program to build startups from scratch.', icon: <GraduationCap className="h-6 w-6" />, route: '/fellowship' },
   { title: 'Innovation & Incubation Ranking', desc: 'Transparent, on-ground evaluation of colleges and universities.', icon: <Trophy className="h-6 w-6" />, route: '/ranking' },
-  { title: 'Fund Support', desc: 'Assistance in securing government and private grants.', icon: <DollarSign className="h-6 w-6" />, route: '/join' },
+  { title: 'Fund Support', desc: 'Assistance in securing government and private grants.', icon: <IndianRupee className="h-6 w-6" />, route: '/join' },
   { title: 'Incubation Accelerator', desc: 'Partnering with institutions to build on-campus startup ecosystems.', icon: <Building2 className="h-6 w-6" />, route: '/college-apply' },
 ]
 const timeline = [
@@ -78,7 +78,7 @@ const fundingSteps = [
   { step: 'Idea Validation', text: 'Understand your idea stage and market potential.', icon: <Search className="h-5 w-5" /> },
   { step: 'Pitch and finance support', text: 'Get support for your pitch and financial planning.', icon: <Briefcase className="h-5 w-5" /> },
   { step: 'Pitch Presentation', text: 'Craft investor-ready materials and get coaching.', icon: <BarChart3 className="h-5 w-5" /> },
-  { step: 'Grant and fund Support', text: 'Assistance in securing government and private grants.', icon: <DollarSign className="h-5 w-5" /> },
+  { step: 'Grant and fund Support', text: 'Assistance in securing government and private grants.', icon: <IndianRupee className="h-5 w-5" /> },
   { step: 'Growth', text: 'Scale your startup with our ecosystem support.', icon: <TrendingUp className="h-5 w-5" /> },
 ]
 const galleryItems = [
@@ -1242,7 +1242,7 @@ const Home = () => {
           <motion.div className="mt-14 grid w-full max-w-3xl grid-cols-2 gap-5 sm:grid-cols-4 xl:max-w-4xl xl:gap-6" variants={staggerContainer} initial="hidden" animate="visible">
             {[
               { num: 500, label: 'Startups', icon: <Rocket className="h-5 w-5 text-white/70" />, suffix: '+' },
-              { num: 50, label: 'Funding Raised', icon: <DollarSign className="h-5 w-5 text-white/70" />, prefix: '₹', suffix: 'Cr+' },
+              { num: 50, label: 'Funding Raised', icon: <IndianRupee className="h-5 w-5 text-white/70" />, prefix: '₹', suffix: 'Cr+' },
               { num: 100, label: 'Partners', icon: <Handshake className="h-5 w-5 text-white/70" />, suffix: '+' },
               { num: 25, label: 'Countries', icon: <Globe className="h-5 w-5 text-white/70" />, suffix: '+' },
             ].map((stat) => (
@@ -1340,25 +1340,24 @@ const Home = () => {
             <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">A structured approach to make your startup investor-ready.</p>
           </motion.div>
           <div className="relative mt-12">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-0.5 bg-slate-200"></div>
-            <div className="relative flex justify-between">
+            {/* connector line through icon centers */}
+            <div className="hidden lg:block absolute top-5 left-[10%] right-[10%] h-0.5 bg-slate-200 z-0" />
+            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
               {fundingSteps.map((step, index) => (
-                <div key={step.step} className="flex flex-col items-center text-center">
-                  <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-bold shadow-lg">{index + 1}</div>
-                  <div className="mt-2 text-sm font-bold text-slate-800">{step.step}</div>
+                <div key={step.step} className="flex flex-col items-center text-center group">
+                  {/* icon — same one top and card, perfectly aligned */}
+                  <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
+                    {step.icon}
+                  </div>
+                  {/* card below */}
+                  <div className="mt-4 w-full rounded-2xl border border-slate-100 bg-white p-5 shadow-sm text-left transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Step {index + 1}</div>
+                    <div className="mt-2 text-sm font-bold text-slate-800">{step.step}</div>
+                    <div className="mt-1 text-xs text-slate-500">{step.text}</div>
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-            {fundingSteps.map((step, index) => (
-              <div key={step.step} className="relative rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-200">{step.icon}</div>
-                <div className="mt-1 text-[10px] font-bold uppercase tracking-wider text-blue-400">Step {index + 1}</div>
-                <div className="mt-2 text-sm font-bold text-slate-800">{step.step}</div>
-                <div className="mt-1 text-xs text-slate-500">{step.text}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -1798,3 +1797,4 @@ function App() {
 }
 
 export default App
+
