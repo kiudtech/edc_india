@@ -523,6 +523,25 @@ const COLLEGE_PAGE_SIZE = 20
 const normalizeCollegeValue = (value = '') => String(value || '').trim().replace(/\s+/g, ' ')
 const mergeUniqueCollegeNames = (names = []) => Array.from(new Set(names.map(normalizeCollegeValue).filter(Boolean)))
 
+const COLLEGE_RATING_CRITERIA = [
+  { key: 'innovationEnvironment', label: 'Innovation Environment' },
+  { key: 'placementOpportunities', label: 'Placement Opportunities' },
+  { key: 'practicalLearning', label: 'Practical Learning' },
+  { key: 'startupSupport', label: 'Startup Support' },
+  { key: 'facultyQuality', label: 'Faculty Quality' },
+  { key: 'infrastructure', label: 'Infrastructure' },
+  { key: 'industryExposure', label: 'Industry Exposure' },
+  { key: 'skillDevelopment', label: 'Skill Development' },
+  { key: 'campusCulture', label: 'Campus Culture' },
+  { key: 'overallExperience', label: 'Overall Experience' },
+]
+
+const createInitialCriteriaRatings = () =>
+  COLLEGE_RATING_CRITERIA.reduce((accumulator, item) => {
+    accumulator[item.key] = 0
+    return accumulator
+  }, {})
+
 const CollegeRatingSection = () => {
   const dropdownRef = useRef(null)
   const searchDebounceRef = useRef(null)
@@ -536,8 +555,8 @@ const CollegeRatingSection = () => {
   const [collegeLoading, setCollegeLoading] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
-  const [rating, setRating] = useState(0)
-  const [hoveredRating, setHoveredRating] = useState(0)
+  const [criteriaRatings, setCriteriaRatings] = useState(() => createInitialCriteriaRatings())
+  const [hoveredCriteriaRatings, setHoveredCriteriaRatings] = useState(() => createInitialCriteriaRatings())
   const [feedback, setFeedback] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState({ type: '', message: '' })
@@ -678,6 +697,13 @@ const CollegeRatingSection = () => {
     fetchCollegeOptions(collegeInput, collegePage + 1, true)
   }
 
+  const areAllCriteriaRated = COLLEGE_RATING_CRITERIA.every(({ key }) => Number(criteriaRatings[key]) >= 1)
+  const overallRating = useMemo(() => {
+    if (!areAllCriteriaRated) return 0
+    const totalScore = COLLEGE_RATING_CRITERIA.reduce((sum, { key }) => sum + Number(criteriaRatings[key] || 0), 0)
+    return Number((totalScore / COLLEGE_RATING_CRITERIA.length).toFixed(2))
+  }, [areAllCriteriaRated, criteriaRatings])
+
   const handleSubmit = async (event) => {
     event.preventDefault()
     setSubmitStatus({ type: '', message: '' })
@@ -687,8 +713,8 @@ const CollegeRatingSection = () => {
       return
     }
 
-    if (!rating) {
-      setSubmitStatus({ type: 'error', message: 'Please choose a star rating before submitting.' })
+    if (!areAllCriteriaRated) {
+      setSubmitStatus({ type: 'error', message: 'Please rate all 10 parameters before submitting.' })
       return
     }
 
@@ -699,7 +725,8 @@ const CollegeRatingSection = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           collegeName: selectedCollege,
-          rating,
+          rating: overallRating,
+          criteriaRatings,
           feedback: feedback.trim(),
         }),
       })
@@ -716,8 +743,8 @@ const CollegeRatingSection = () => {
 
       setSelectedCollege('')
       setCollegeInput('')
-      setRating(0)
-      setHoveredRating(0)
+      setCriteriaRatings(createInitialCriteriaRatings())
+      setHoveredCriteriaRatings(createInitialCriteriaRatings())
       setFeedback('')
       if (showLiveRankingSnapshot) {
         fetchLeaderboard()
@@ -732,8 +759,6 @@ const CollegeRatingSection = () => {
     }
   }
 
-  const activeStar = hoveredRating || rating
-
   return (
     <section id="college-ratings" className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-amber-50/50 py-20 sm:py-28">
       <div className="pointer-events-none absolute -left-20 top-12 h-[320px] w-[320px] rounded-full bg-blue-100/50 blur-3xl" />
@@ -746,7 +771,7 @@ const CollegeRatingSection = () => {
           </div>
           <h2 className="mt-4 text-3xl font-extrabold text-slate-900 sm:text-4xl lg:text-5xl">Rate Your College Experience</h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            Share your anonymous rating in seconds. Select your college, choose stars, and optionally add feedback to help improve transparency.
+            Share your anonymous rating in seconds. Select your college, rate all 10 parameters, and optionally add feedback to help improve transparency.
           </p>
         </motion.div>
 
@@ -820,24 +845,63 @@ const CollegeRatingSection = () => {
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Star Rating</label>
-                <div className="mt-2 flex flex-wrap items-center gap-1.5" onMouseLeave={() => setHoveredRating(0)}>
-                  {[1, 2, 3, 4, 5].map((starValue) => (
-                    <button
-                      key={starValue}
-                      type="button"
-                      onMouseEnter={() => setHoveredRating(starValue)}
-                      onClick={() => setRating(starValue)}
-                      className="rounded-lg p-1.5 transition hover:scale-105"
-                      aria-label={`Rate ${starValue} star${starValue > 1 ? 's' : ''}`}
-                    >
-                      <Star
-                        className={`h-7 w-7 ${activeStar >= starValue ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`}
-                        strokeWidth={1.8}
-                      />
-                    </button>
-                  ))}
-                  <span className="ml-2 text-sm font-semibold text-slate-600">{activeStar ? `${activeStar}/5` : 'Choose rating'}</span>
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Rate These 10 Parameters</label>
+                <div className="mt-3 grid grid-cols-1 gap-2.5 md:grid-cols-2">
+                  {COLLEGE_RATING_CRITERIA.map((criterion) => {
+                    const selectedValue = Number(criteriaRatings[criterion.key] || 0)
+                    const hoveredValue = Number(hoveredCriteriaRatings[criterion.key] || 0)
+                    const activeValue = hoveredValue || selectedValue
+
+                    return (
+                      <div key={criterion.key} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                        <div className="flex flex-col gap-2">
+                          <span className="text-sm font-semibold text-slate-700">{criterion.label}</span>
+                          <div
+                            className="flex flex-wrap items-center gap-1"
+                            onMouseLeave={() => {
+                              setHoveredCriteriaRatings((prev) => ({
+                                ...prev,
+                                [criterion.key]: 0,
+                              }))
+                            }}
+                          >
+                            {[1, 2, 3, 4, 5].map((starValue) => (
+                              <button
+                                key={`${criterion.key}-${starValue}`}
+                                type="button"
+                                onMouseEnter={() => {
+                                  setHoveredCriteriaRatings((prev) => ({
+                                    ...prev,
+                                    [criterion.key]: starValue,
+                                  }))
+                                }}
+                                onClick={() => {
+                                  setCriteriaRatings((prev) => ({
+                                    ...prev,
+                                    [criterion.key]: starValue,
+                                  }))
+                                }}
+                                className="rounded-lg p-1 transition hover:scale-105"
+                                aria-label={`Rate ${criterion.label} ${starValue} star${starValue > 1 ? 's' : ''}`}
+                              >
+                                <Star
+                                  className={`h-4 w-4 sm:h-5 sm:w-5 ${activeValue >= starValue ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`}
+                                  strokeWidth={1.8}
+                                />
+                              </button>
+                            ))}
+                            <span className="ml-1 text-xs font-semibold text-slate-600 sm:ml-2 sm:min-w-[72px] sm:text-right">
+                              {activeValue ? `${activeValue}/5` : 'Not rated'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                <div className="mt-3 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700">
+                  Overall Score: {overallRating ? `${overallRating}/5` : 'Rate all 10 parameters to calculate'}
                 </div>
               </div>
 

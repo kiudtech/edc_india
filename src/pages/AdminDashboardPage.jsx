@@ -2243,7 +2243,7 @@ function CollegeRatingsSection() {
                   <tr key={item._id} className="border-t hover:bg-slate-50">
                     <td className="px-4 py-3 font-medium text-slate-800">{item.collegeName}</td>
                     <td className="px-4 py-3">
-                      <Badge text={`${item.rating}/5`} color={ratingColor(Number(item.rating || 0))} />
+                      <Badge text={`${Number(item.rating || 0).toFixed(2)} / 5`} color={ratingColor(Number(item.rating || 0))} />
                     </td>
                     <td className="max-w-sm px-4 py-3 text-xs text-slate-600">{item.feedback || 'No feedback'}</td>
                     <td className="px-4 py-3 text-xs">{fmtDateTime(item.createdAt)}</td>

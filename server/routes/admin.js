@@ -450,8 +450,10 @@ router.get('/college-ratings', protect, adminOnly, async (req, res) => {
     if (collegeQuery) {
       filter.collegeName = { $regex: escapeRegex(collegeQuery), $options: 'i' }
     }
-    if (Number.isInteger(ratingFilter) && ratingFilter >= 1 && ratingFilter <= 5) {
-      filter.rating = ratingFilter
+    if (Number.isFinite(ratingFilter) && ratingFilter >= 1 && ratingFilter <= 5) {
+      filter.rating = ratingFilter === 5
+        ? { $gte: 5, $lte: 5 }
+        : { $gte: ratingFilter, $lt: ratingFilter + 1 }
     }
 
     const [items, total] = await Promise.all([

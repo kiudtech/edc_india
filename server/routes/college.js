@@ -480,6 +480,39 @@ const normalizeCollegeName = (value = '') => String(value || '').trim().replace(
 const escapeRegex = (value = '') => String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const formatAverage = (value = 0) => Number(Number(value || 0).toFixed(2))
 
+const RATING_CRITERIA_FIELDS = [
+  'innovationEnvironment',
+  'placementOpportunities',
+  'practicalLearning',
+  'startupSupport',
+  'facultyQuality',
+  'infrastructure',
+  'industryExposure',
+  'skillDevelopment',
+  'campusCulture',
+  'overallExperience',
+]
+
+const isValidStarValue = (value) => Number.isInteger(value) && value >= 1 && value <= 5
+const buildCriteriaRatings = (rawCriteria = {}) => {
+  const normalized = {}
+
+  for (const field of RATING_CRITERIA_FIELDS) {
+    const numericValue = Number(rawCriteria?.[field])
+    if (!isValidStarValue(numericValue)) {
+      return null
+    }
+    normalized[field] = numericValue
+  }
+
+  return normalized
+}
+
+const calculateCriteriaAverage = (criteriaRatings) => {
+  const total = RATING_CRITERIA_FIELDS.reduce((sum, key) => sum + Number(criteriaRatings[key] || 0), 0)
+  return formatAverage(total / RATING_CRITERIA_FIELDS.length)
+}
+
 // Public: Return homepage visibility setting for live ranking snapshot.
 router.get('/ratings/settings', async (_req, res) => {
   try {
@@ -559,24 +592,27 @@ router.post('/apply', async (req, res) => {
 router.post('/ratings', async (req, res) => {
   try {
     const normalizedCollegeName = normalizeCollegeName(req.body?.collegeName)
-    const numericRating = Number(req.body?.rating)
+    const criteriaRatings = buildCriteriaRatings(req.body?.criteriaRatings || {})
     const feedback = String(req.body?.feedback || '').trim()
 
     if (!normalizedCollegeName) {
       return res.status(400).json({ message: 'Please select a college before submitting your rating.' })
     }
 
-    if (!Number.isInteger(numericRating) || numericRating < 1 || numericRating > 5) {
-      return res.status(400).json({ message: 'Rating must be an integer between 1 and 5.' })
+    if (!criteriaRatings) {
+      return res.status(400).json({ message: 'Please rate all 10 parameters with values between 1 and 5.' })
     }
 
     if (feedback.length > 1500) {
       return res.status(400).json({ message: 'Feedback cannot exceed 1500 characters.' })
     }
 
+    const numericRating = calculateCriteriaAverage(criteriaRatings)
+
     const savedRating = await CollegeRating.create({
       collegeName: normalizedCollegeName,
       rating: numericRating,
+      criteriaRatings,
       feedback,
     })
 
@@ -597,6 +633,7 @@ router.post('/ratings', async (req, res) => {
         id: savedRating._id,
         collegeName: savedRating.collegeName,
         rating: savedRating.rating,
+        criteriaRatings: savedRating.criteriaRatings,
         feedback: savedRating.feedback,
         createdAt: savedRating.createdAt,
       },
