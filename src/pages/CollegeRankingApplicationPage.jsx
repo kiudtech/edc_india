@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE } from '../config';
 
 const fadeUp = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } } };
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
@@ -33,12 +34,13 @@ export default function CollegeRankingApplicationPage() {
     if (!agreed) { setStatus('Please agree to the Terms & Conditions.'); return; }
     setSubmitting(true); setStatus('');
     try {
-      await axios.post('/api/admin/college-ranking-application', formData);
+      const apiFromEnv = (API_BASE || '').trim().replace(/\/$/, '');
+      await axios.post(`${apiFromEnv}/api/admin/college-ranking-application`, formData);
       setSuccess(true);
       setFormData({ collegeName: '', contactPerson: '', email: '', phone: '', message: '' });
       setAgreed(false);
-    } catch {
-      setStatus('An error occurred. Please try again.');
+    } catch (error) {
+      setStatus(error?.response?.data?.message || 'An error occurred. Please try again.');
     } finally { setSubmitting(false); }
   };
 

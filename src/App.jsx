@@ -1643,12 +1643,49 @@ const Home = () => {
                 </div>
                 <form onSubmit={async (e) => {
                   e.preventDefault();
-                  const formData = { collegeName: e.target.collegeName.value, contactPerson: e.target.contactPerson.value, email: e.target.email.value, phone: e.target.phone.value, message: e.target.message.value };
-                  try {
-                    const response = await fetch('/api/admin/college-ranking-application', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
-                    if (response.ok) { alert('Application submitted successfully!'); e.target.reset(); }
-                    else alert('Failed to submit. Please try again.');
-                  } catch { alert('An error occurred. Please try again.'); }
+                  const formData = {
+                    collegeName: e.target.collegeName.value,
+                    contactPerson: e.target.contactPerson.value,
+                    email: e.target.email.value,
+                    phone: e.target.phone.value,
+                    message: e.target.message.value,
+                  };
+
+                  const isLocalhost = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
+                  const apiFromEnv = (API_BASE || '').trim().replace(/\/$/, '');
+                  const baseCandidates = Array.from(new Set([
+                    apiFromEnv,
+                    '',
+                    ...(apiFromEnv ? [] : ['http://localhost:5000']),
+                    ...(isLocalhost ? ['http://127.0.0.1:5000'] : []),
+                  ]));
+
+                  let lastError = 'Failed to submit. Please try again.';
+
+                  for (const base of baseCandidates) {
+                    try {
+                      const response = await fetch(`${base}/api/admin/college-ranking-application`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData),
+                      });
+
+                      const data = await response.json().catch(() => ({}));
+
+                      if (response.ok) {
+                        alert(data.message || 'Application submitted successfully!');
+                        e.target.reset();
+                        return;
+                      }
+
+                      lastError = data.message || `Failed to submit (status ${response.status}).`;
+                    } catch (err) {
+                      const message = String(err?.message || '').trim();
+                      if (message) lastError = message;
+                    }
+                  }
+
+                  alert(lastError);
                 }}>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {[
