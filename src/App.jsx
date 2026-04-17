@@ -497,6 +497,60 @@ const ContactCard = ({ form }) => {
 }
 
 
+const FaqAccordionCard = ({ faq, theme }) => {
+  const [open, setOpen] = useState(false)
+  return (
+    <motion.article
+      variants={staggerItem}
+      className={`group relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-[0_18px_34px_-26px_rgba(15,23,42,0.6)] transition ${theme.hover}`}
+    >
+      <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${theme.bar}`} />
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full p-5 text-left"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1">
+            <div className={`inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${theme.chip} mb-3`}>
+              {faq.category}
+            </div>
+            <h3 className="text-sm font-bold text-slate-900 sm:text-base">{faq.question}</h3>
+          </div>
+          <span className={`mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm transition-transform duration-300 ${theme.icon} ${open ? 'rotate-45' : ''}`}>
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        </div>
+      </button>
+
+      <motion.div
+        initial={false}
+        animate={{ height: open ? 'auto' : 0, opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        style={{ overflow: 'hidden' }}
+      >
+        <div className="px-5 pb-5 space-y-2">
+          {faq.answer.map((line, i) => (
+            <p key={i} className="text-sm leading-relaxed text-slate-600">{line}</p>
+          ))}
+          {Array.isArray(faq.points) && faq.points.length > 0 && (
+            <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
+              {faq.points.map((point, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${theme.bullet}`} />
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </motion.div>
+    </motion.article>
+  )
+}
+
 const homeMobileMenuVariants = {
   closed: {
     opacity: 0,
@@ -1448,48 +1502,7 @@ const Home = () => {
               {faqPreviewItems.map((faq, faqIndex) => {
                 const theme = faqCardThemes[faqIndex % faqCardThemes.length]
                 return (
-                  <motion.article
-                    key={`${faq.category}-${faq.id}`}
-                    variants={staggerItem}
-                    whileHover={{ y: -5 }}
-                    className={`group relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-5 shadow-[0_18px_34px_-26px_rgba(15,23,42,0.6)] transition ${theme.hover}`}
-                  >
-                    <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${theme.bar}`} />
-                    <div className="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full bg-slate-100/70 blur-2xl" />
-
-                    <div className="flex items-start justify-between gap-3">
-                      <div className={`inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${theme.chip}`}>
-                        {faq.category}
-                      </div>
-                      <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full border text-sm transition ${theme.icon}`}>
-                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M12 17h.01" strokeLinecap="round" strokeLinejoin="round" />
-                          <path d="M9.09 9a3 3 0 115.82 1c0 2-3 2-3 4" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </span>
-                    </div>
-
-                    <h3 className="mt-3 text-sm font-bold text-slate-900 sm:text-base">{faq.question}</h3>
-
-                    <div className="mt-3 space-y-2">
-                      {faq.answer.map((line, lineIndex) => (
-                        <p key={`${faq.id}-line-${lineIndex}`} className="text-sm leading-relaxed text-slate-600">
-                          {line}
-                        </p>
-                      ))}
-                    </div>
-
-                    {Array.isArray(faq.points) && faq.points.length > 0 && (
-                      <ul className="mt-3 space-y-1.5 text-sm text-slate-600">
-                        {faq.points.map((point, pointIndex) => (
-                          <li key={`${faq.id}-point-${pointIndex}`} className="flex items-start gap-2">
-                            <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${theme.bullet}`} />
-                            <span>{point}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </motion.article>
+                  <FaqAccordionCard key={`${faq.category}-${faq.id}`} faq={faq} theme={theme} />
                 )
               })}
             </motion.div>
