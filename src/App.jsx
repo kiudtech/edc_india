@@ -1817,50 +1817,51 @@ const Home = () => {
             <p className="mx-auto mt-4 max-w-xl text-white/50 text-sm">A glimpse into the journeys of founders, demo days, and global events.</p>
           </motion.div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {galleryItems.map((item, index) => (
-              <motion.button
-                key={item.label}
-                variants={staggerItem}
-                onClick={() => setLightbox(item.label)}
-                whileHover={{ y: -6, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-                className="group relative overflow-hidden rounded-2xl text-left focus:outline-none"
-                style={{ aspectRatio: index % 3 === 1 ? '4/3' : '16/10' }}
-              >
-                {/* image */}
-                <img
-                  src={`/stories/${item.file}`}
-                  alt={item.label}
-                  className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
-                  loading="lazy"
-                />
-                {/* dark overlay always */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                {/* hover shimmer */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-indigo-600/0 group-hover:from-blue-600/20 group-hover:to-indigo-600/20 transition-all duration-500" />
-                {/* top badge */}
-                <div className="absolute top-3 left-3 rounded-full border border-white/20 bg-black/30 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
-                  EDC India
-                </div>
-                {/* play icon */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm border border-white/30 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
-                  <svg className="h-5 w-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </div>
-                {/* bottom content */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                  <div className="text-sm font-bold text-white">{item.label}</div>
-                  <div className="mt-1 text-xs text-white/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">{item.desc}</div>
-                </div>
-              </motion.button>
-            ))}
-          </motion.div>
+          <div className="relative mt-4 space-y-4 overflow-hidden">
+            {/* fade edges */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-[#0b1e4d] to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-[#0b1e4d] to-transparent" />
+
+            {/* Row 1 — left to right */}
+            <div className="flex gap-4" style={{ animation: 'marquee-ltr 35s linear infinite' }}>
+              {[...galleryItems, ...galleryItems].map((item, i) => (
+                <button
+                  key={`ltr-${i}`}
+                  onClick={() => setLightbox(item.label)}
+                  className="group relative shrink-0 w-72 h-48 overflow-hidden rounded-2xl focus:outline-none"
+                >
+                  <img src={`/stories/${item.file}`} alt={item.label} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-indigo-600/0 group-hover:from-blue-600/25 group-hover:to-indigo-600/25 transition-all duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="text-sm font-bold text-white leading-tight">{item.label}</div>
+                    <div className="mt-1 text-[11px] text-white/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 line-clamp-1">{item.desc}</div>
+                  </div>
+                  <div className="absolute top-3 right-3 rounded-full bg-white/10 border border-white/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all">EDC</div>
+                </button>
+              ))}
+            </div>
+
+            {/* Row 2 — right to left */}
+            <div className="flex gap-4" style={{ animation: 'marquee-rtl 40s linear infinite' }}>
+              {[...galleryItems.slice().reverse(), ...galleryItems.slice().reverse()].map((item, i) => (
+                <button
+                  key={`rtl-${i}`}
+                  onClick={() => setLightbox(item.label)}
+                  className="group relative shrink-0 w-72 h-48 overflow-hidden rounded-2xl focus:outline-none"
+                >
+                  <img src={`/stories/${item.file}`} alt={item.label} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/0 to-cyan-600/0 group-hover:from-indigo-600/25 group-hover:to-cyan-600/25 transition-all duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="text-sm font-bold text-white leading-tight">{item.label}</div>
+                    <div className="mt-1 text-[11px] text-white/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 line-clamp-1">{item.desc}</div>
+                  </div>
+                  <div className="absolute top-3 right-3 rounded-full bg-white/10 border border-white/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all">EDC</div>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
