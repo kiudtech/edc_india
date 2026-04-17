@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SiteFooter from '../components/SiteFooter';
+import CollegeRatingSection from '../components/CollegeRatingSection';
 
 const fadeUp = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } } };
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
@@ -417,8 +418,9 @@ export default function RankingPage() {
         </div>
       </section>
 
-      {/* ── URGENCY + FINAL CTA ── */}
-      <section className="py-28 bg-gradient-to-br from-[#0b2d2d] to-[#0d4a4a] text-white text-center relative overflow-hidden">
+      <CollegeRatingSection theme="teal" noBg />
+
+      {/* ── URGENCY + FINAL CTA ── */}      <section className="py-28 bg-gradient-to-br from-[#0b2d2d] to-[#0d4a4a] text-white text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
         <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-teal-400/15 blur-[120px]" />
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="relative mx-auto max-w-2xl px-6">
