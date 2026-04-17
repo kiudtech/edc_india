@@ -760,37 +760,51 @@ const CollegeRatingSection = () => {
   }
 
   return (
-    <section id="college-ratings" className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-amber-50/50 py-20 sm:py-28">
-      <div className="pointer-events-none absolute -left-20 top-12 h-[320px] w-[320px] rounded-full bg-blue-100/50 blur-3xl" />
-      <div className="pointer-events-none absolute -right-16 bottom-0 h-[280px] w-[280px] rounded-full bg-amber-100/50 blur-3xl" />
+    <section id="college-ratings" className="relative overflow-hidden bg-gradient-to-br from-[#0b1e4d] via-[#1a3a8f] to-[#0f2d6b] py-20 sm:py-28">
+      {/* bg decorations */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
+      <div className="pointer-events-none absolute -left-20 top-12 h-[400px] w-[400px] rounded-full bg-blue-400/15 blur-[100px]" />
+      <div className="pointer-events-none absolute -right-16 bottom-0 h-[350px] w-[350px] rounded-full bg-indigo-400/15 blur-[100px]" />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-amber-700">
-            Community Ratings
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-cyan-300 backdrop-blur-sm mb-6">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" /> Community Ratings
           </div>
-          <h2 className="mt-4 text-3xl font-extrabold text-slate-900 sm:text-4xl lg:text-5xl">Rate Your College Experience</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            Share your anonymous rating in seconds. Select your college, rate all 10 parameters, and optionally add feedback to help improve transparency.
+          <h2 className="text-4xl font-extrabold text-white sm:text-5xl">Rate Your College <span className="bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">Experience</span></h2>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/60 sm:text-base">
+            Share your anonymous rating in seconds. Select your college, rate all 10 parameters, and help improve transparency across India.
           </p>
         </motion.div>
 
-        <div className={showLiveRankingSnapshot ? 'mt-12 grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start' : 'mt-12'}>
+        <div className={showLiveRankingSnapshot ? 'grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start' : ''}>
           <motion.form
             onSubmit={handleSubmit}
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className={`${showLiveRankingSnapshot ? '' : 'mx-auto max-w-3xl '}rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_22px_60px_-30px_rgba(15,23,42,0.35)] sm:p-8`}
+            className={`${showLiveRankingSnapshot ? '' : 'mx-auto max-w-5xl '}overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl`}
           >
-            <div className="space-y-5">
+            {/* form header */}
+            <div className="border-b border-white/10 bg-white/5 px-6 py-5 sm:px-8">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/20 text-xl">⭐</div>
+                <div>
+                  <div className="font-extrabold text-white">Anonymous College Rating</div>
+                  <div className="text-xs text-white/50">Your identity is never stored or shared</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6 p-6 sm:p-8">
+              {/* college search */}
               <div ref={dropdownRef} className="relative">
-                <label htmlFor="college-search" className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <label htmlFor="college-search" className="text-xs font-bold uppercase tracking-wider text-white/50">
                   Select College
                 </label>
-                <div className="mt-1.5 flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 focus-within:border-blue-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20">
-                  <Search className="h-4 w-4 text-slate-400" />
+                <div className="mt-2 flex items-center rounded-2xl border border-white/20 bg-white/10 px-4 focus-within:border-cyan-400/60 focus-within:bg-white/15 transition">
+                  <Search className="h-4 w-4 text-white/40 shrink-0" />
                   <input
                     id="college-search"
                     type="text"
@@ -798,183 +812,145 @@ const CollegeRatingSection = () => {
                     onChange={(event) => handleCollegeInputChange(event.target.value)}
                     onFocus={() => setDropdownOpen(true)}
                     placeholder="Start typing college name"
-                    className="h-11 w-full bg-transparent px-2 text-sm text-slate-800 outline-none placeholder:text-slate-400"
+                    className="h-12 w-full bg-transparent px-3 text-sm text-white outline-none placeholder:text-white/30"
                     autoComplete="off"
                   />
+                  {selectedCollege && <span className="shrink-0 rounded-full bg-green-400/20 px-2 py-0.5 text-[10px] font-bold text-green-300">✓ Selected</span>}
                 </div>
 
                 {dropdownOpen && (
-                  <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+                  <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0f2d6b] shadow-2xl backdrop-blur-sm">
                     <div className="max-h-56 overflow-y-auto py-1">
                       {collegeOptions.map((name) => (
-                        <button
-                          key={name}
-                          type="button"
-                          onClick={() => handleSelectCollege(name)}
-                          className={`flex w-full items-center justify-between px-4 py-2.5 text-left text-sm transition hover:bg-blue-50 ${selectedCollege === name ? 'bg-blue-50 text-blue-700' : 'text-slate-700'}`}
-                        >
+                        <button key={name} type="button" onClick={() => handleSelectCollege(name)}
+                          className={`flex w-full items-center justify-between px-4 py-2.5 text-left text-sm transition hover:bg-white/10 ${selectedCollege === name ? 'bg-white/10 text-cyan-300' : 'text-white/80'}`}>
                           <span className="line-clamp-1">{name}</span>
-                          {selectedCollege === name && <span className="text-xs font-semibold">Selected</span>}
+                          {selectedCollege === name && <span className="text-xs font-bold text-cyan-300">✓</span>}
                         </button>
                       ))}
-
-                      {!collegeLoading && collegeOptions.length === 0 && (
-                        <p className="px-4 py-3 text-sm text-slate-500">No colleges found. Try a different keyword.</p>
-                      )}
-
-                      {collegeLoading && (
-                        <p className="px-4 py-3 text-sm text-slate-500">Searching colleges...</p>
-                      )}
+                      {!collegeLoading && collegeOptions.length === 0 && <p className="px-4 py-3 text-sm text-white/40">No colleges found.</p>}
+                      {collegeLoading && <p className="px-4 py-3 text-sm text-white/40">Searching...</p>}
                     </div>
-
                     {collegeHasMore && !collegeLoading && (
-                      <button
-                        type="button"
-                        onClick={loadMoreColleges}
-                        className="w-full border-t border-slate-100 px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
-                      >
+                      <button type="button" onClick={loadMoreColleges} className="w-full border-t border-white/10 px-4 py-2 text-sm font-semibold text-cyan-300 transition hover:bg-white/10">
                         Load more colleges
                       </button>
                     )}
                   </div>
                 )}
-
                 {!selectedCollege && collegeInput.trim() && (
-                  <p className="mt-2 text-xs text-amber-600">Choose a college from the dropdown suggestions to continue.</p>
+                  <p className="mt-2 text-xs text-cyan-400">Choose a college from the dropdown to continue.</p>
                 )}
               </div>
 
+              {/* rating criteria */}
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Rate These 10 Parameters</label>
-                <div className="mt-3 grid grid-cols-1 gap-2.5 md:grid-cols-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-white/50">Rate These 10 Parameters</label>
+                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {COLLEGE_RATING_CRITERIA.map((criterion) => {
                     const selectedValue = Number(criteriaRatings[criterion.key] || 0)
                     const hoveredValue = Number(hoveredCriteriaRatings[criterion.key] || 0)
                     const activeValue = hoveredValue || selectedValue
-
                     return (
-                      <div key={criterion.key} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
-                        <div className="flex flex-col gap-2">
-                          <span className="text-sm font-semibold text-slate-700">{criterion.label}</span>
-                          <div
-                            className="flex flex-wrap items-center gap-1"
-                            onMouseLeave={() => {
-                              setHoveredCriteriaRatings((prev) => ({
-                                ...prev,
-                                [criterion.key]: 0,
-                              }))
-                            }}
-                          >
-                            {[1, 2, 3, 4, 5].map((starValue) => (
-                              <button
-                                key={`${criterion.key}-${starValue}`}
-                                type="button"
-                                onMouseEnter={() => {
-                                  setHoveredCriteriaRatings((prev) => ({
-                                    ...prev,
-                                    [criterion.key]: starValue,
-                                  }))
-                                }}
-                                onClick={() => {
-                                  setCriteriaRatings((prev) => ({
-                                    ...prev,
-                                    [criterion.key]: starValue,
-                                  }))
-                                }}
-                                className="rounded-lg p-1 transition hover:scale-105"
-                                aria-label={`Rate ${criterion.label} ${starValue} star${starValue > 1 ? 's' : ''}`}
-                              >
-                                <Star
-                                  className={`h-4 w-4 sm:h-5 sm:w-5 ${activeValue >= starValue ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`}
-                                  strokeWidth={1.8}
-                                />
-                              </button>
-                            ))}
-                            <span className="ml-1 text-xs font-semibold text-slate-600 sm:ml-2 sm:min-w-[72px] sm:text-right">
-                              {activeValue ? `${activeValue}/5` : 'Not rated'}
-                            </span>
-                          </div>
+                      <div key={criterion.key} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 hover:bg-white/10 transition">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-sm font-semibold text-white/90">{criterion.label}</span>
+                          <span className={`text-xs font-bold ${activeValue ? 'text-cyan-300' : 'text-white/30'}`}>
+                            {activeValue ? `${activeValue}/5` : '—'}
+                          </span>
+                        </div>
+                        <div className="mt-2 flex items-center gap-1"
+                          onMouseLeave={() => setHoveredCriteriaRatings((prev) => ({ ...prev, [criterion.key]: 0 }))}>
+                          {[1, 2, 3, 4, 5].map((starValue) => (
+                            <button key={`${criterion.key}-${starValue}`} type="button"
+                              onMouseEnter={() => setHoveredCriteriaRatings((prev) => ({ ...prev, [criterion.key]: starValue }))}
+                              onClick={() => setCriteriaRatings((prev) => ({ ...prev, [criterion.key]: starValue }))}
+                              className="rounded p-0.5 transition hover:scale-110"
+                              aria-label={`Rate ${criterion.label} ${starValue} stars`}>
+                              <Star className={`h-5 w-5 ${activeValue >= starValue ? 'fill-blue-400 text-blue-400' : 'text-white/20'}`} strokeWidth={1.5} />
+                            </button>
+                          ))}
                         </div>
                       </div>
                     )
                   })}
                 </div>
 
-                <div className="mt-3 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700">
-                  Overall Score: {overallRating ? `${overallRating}/5` : 'Rate all 10 parameters to calculate'}
+                {/* overall score */}
+                <div className="mt-4 flex items-center justify-between rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-5 py-3">
+                  <div className="flex items-center gap-2">
+                    <Star className="h-5 w-5 fill-blue-400 text-blue-400" />
+                    <span className="text-sm font-bold text-white">Overall Score</span>
+                  </div>
+                  <span className="text-lg font-extrabold text-cyan-300">
+                    {overallRating ? `${overallRating} / 5` : 'Rate all 10 to calculate'}
+                  </span>
                 </div>
               </div>
 
+              {/* feedback */}
               <div>
-                <label htmlFor="college-feedback" className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <label htmlFor="college-feedback" className="text-xs font-bold uppercase tracking-wider text-white/50">
                   Optional Feedback
                 </label>
                 <textarea
                   id="college-feedback"
                   value={feedback}
                   onChange={(event) => setFeedback(event.target.value)}
-                  rows={4}
+                  rows={3}
                   maxLength={1500}
-                  placeholder="Share your experience, strengths, or areas for improvement"
-                  className="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                  placeholder="Share your experience, strengths, or areas for improvement..."
+                  className="mt-2 w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-cyan-400/60 focus:bg-white/15"
                 />
-                <div className="mt-1 text-right text-[11px] font-medium text-slate-400">{feedback.length}/1500</div>
+                <div className="mt-1 text-right text-[11px] font-medium text-white/30">{feedback.length}/1500</div>
               </div>
 
               {submitStatus.message && (
-                <div className={`rounded-xl border px-4 py-3 text-sm font-medium ${submitStatus.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'}`}>
+                <div className={`rounded-2xl border px-4 py-3 text-sm font-medium ${submitStatus.type === 'success' ? 'border-green-400/30 bg-green-400/10 text-green-300' : 'border-red-400/30 bg-red-400/10 text-red-300'}`}>
                   {submitStatus.message}
                 </div>
               )}
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-200/60 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-70"
-              >
+              <button type="submit" disabled={submitting}
+                className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-900/30 transition hover:opacity-90 disabled:opacity-50">
                 {submitting ? 'Submitting...' : 'Submit Anonymous Rating'}
               </button>
             </div>
           </motion.form>
 
           {showLiveRankingSnapshot && (
-            <motion.aside
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_22px_60px_-30px_rgba(15,23,42,0.35)]"
-            >
-              <div className="border-b border-slate-100 bg-gradient-to-r from-slate-900 to-slate-800 px-6 py-5 text-white">
-                <div className="text-xs font-semibold uppercase tracking-widest text-slate-300">Live Ranking Snapshot</div>
-                <h3 className="mt-1 text-xl font-bold">Top Rated Colleges</h3>
-                <p className="mt-1 text-sm text-slate-300">Sorted by average ratings from anonymous submissions.</p>
+            <motion.aside variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
+              className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl">
+              <div className="border-b border-white/10 bg-white/5 px-6 py-5">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/20 text-xl">🏆</div>
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-white/50">Live Ranking Snapshot</div>
+                    <h3 className="mt-0.5 text-xl font-extrabold text-white">Top Rated Colleges</h3>
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-white/40">Sorted by average ratings from anonymous submissions.</p>
               </div>
-
               <div className="p-6">
-                {leaderboardLoading && <p className="text-sm text-slate-500">Loading ranking data...</p>}
-
+                {leaderboardLoading && <p className="text-sm text-white/40">Loading ranking data...</p>}
                 {!leaderboardLoading && leaderboard.length === 0 && (
-                  <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
-                    No ratings yet. Be the first one to rate your college.
+                  <p className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/40">
+                    No ratings yet. Be the first to rate your college.
                   </p>
                 )}
-
                 {!leaderboardLoading && leaderboard.length > 0 && (
                   <div className="space-y-3">
                     {leaderboard.map((item) => (
-                      <div key={item.collegeName} className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                      <div key={item.collegeName} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 hover:bg-white/10 transition">
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">Rank #{item.rank}</div>
-                            <div className="mt-0.5 text-sm font-bold text-slate-800">{item.collegeName}</div>
+                            <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">Rank #{item.rank}</div>
+                            <div className="mt-0.5 text-sm font-bold text-white">{item.collegeName}</div>
+                            <div className="mt-0.5 text-[11px] text-white/40">{item.totalRatings} ratings</div>
                           </div>
-                          <div className="text-right">
-                            <div className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-1 text-xs font-bold text-amber-700">
-                              <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-                              {Number(item.averageRating || 0).toFixed(2)}
-                            </div>
-                            <div className="mt-1 text-[11px] font-medium text-slate-500">{item.totalRatings} ratings</div>
+                          <div className="inline-flex items-center gap-1 rounded-full bg-cyan-400/20 border border-cyan-400/30 px-3 py-1.5 text-sm font-extrabold text-cyan-300 shrink-0">
+                            <Star className="h-3.5 w-3.5 fill-cyan-400 text-cyan-400" />
+                            {Number(item.averageRating || 0).toFixed(2)}
                           </div>
                         </div>
                       </div>
@@ -1783,6 +1759,8 @@ const Home = () => {
         </div>
       </section>
 
+      <CollegeRatingSection />
+
       {/* ═══════════════ IMPACT ═══════════════ */}
       <section id="impact" className="bg-white py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -1889,8 +1867,6 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
-
-      <CollegeRatingSection />
 
       {/* ═══════════════ CONTACT ═══════════════ */}
       <section id="contact" className="relative bg-gradient-to-br from-[#f0f4ff] via-white to-[#fff7f0] py-20 sm:py-28 overflow-hidden">
