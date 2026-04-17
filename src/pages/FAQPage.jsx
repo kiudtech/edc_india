@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import SiteFooter from '../components/SiteFooter'
 import { faqCategories } from '../data/faqs'
 
@@ -57,7 +57,7 @@ export default function FAQPage() {
                   const isOpen = openItemId === itemId
 
                   return (
-                    <div key={faq.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                    <motion.div layout key={faq.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                       <button
                         type="button"
                         onClick={() => toggleItem(itemId)}
@@ -72,27 +72,41 @@ export default function FAQPage() {
                         </span>
                       </button>
 
-                      {isOpen && (
-                        <div className="border-t border-slate-100 px-4 py-4 sm:px-5">
-                          <div className="space-y-2 text-sm leading-relaxed text-slate-600">
-                            {faq.answer.map((line) => (
-                              <p key={line}>{line}</p>
-                            ))}
-                          </div>
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            key="content"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{
+                              height: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+                              opacity: { duration: 0.22, ease: 'easeOut' },
+                            }}
+                            className="overflow-hidden"
+                          >
+                            <div className="border-t border-slate-100 px-4 py-4 sm:px-5">
+                              <div className="space-y-2 text-sm leading-relaxed text-slate-600">
+                                {faq.answer.map((line) => (
+                                  <p key={line}>{line}</p>
+                                ))}
+                              </div>
 
-                          {faq.points && faq.points.length > 0 && (
-                            <ul className="mt-3 space-y-1.5 text-sm text-slate-600">
-                              {faq.points.map((point) => (
-                                <li key={point} className="flex items-start gap-2">
-                                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
-                                  <span>{point}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                              {faq.points && faq.points.length > 0 && (
+                                <ul className="mt-3 space-y-1.5 text-sm text-slate-600">
+                                  {faq.points.map((point) => (
+                                    <li key={point} className="flex items-start gap-2">
+                                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                                      <span>{point}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
                   )
                 })}
               </div>

@@ -20,6 +20,7 @@ const AUTOCOMPLETE_FALLBACK_COLLEGES = [
 const COLLEGE_PAGE_SIZE = 20
 const normalizeCollegeValue = (v = '') => String(v || '').trim().replace(/\s+/g, ' ')
 const mergeUniqueCollegeNames = (names = []) => Array.from(new Set(names.map(normalizeCollegeValue).filter(Boolean)))
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const COLLEGE_RATING_CRITERIA = [
   { key: 'innovationEnvironment', label: 'Innovation Environment' },
@@ -131,6 +132,12 @@ const LIGHT_THEME = {
 export default function CollegeRatingSection({ theme = 'blue', noBg = false }) {
   const t = noBg ? LIGHT_THEME : (DARK_THEMES[theme] || DARK_THEMES.blue)
   const dt = DARK_THEMES[theme] || DARK_THEMES.blue
+  const textInputClass = noBg
+    ? 'mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-teal-400 focus:bg-white'
+    : `mt-2 h-12 w-full rounded-2xl border border-white/20 bg-white/10 px-4 text-sm text-white outline-none transition placeholder:text-white/30 ${theme === 'teal' ? 'focus:border-teal-400/60' : 'focus:border-cyan-400/60'} focus:bg-white/15`
+  const privacyNoticeClass = noBg
+    ? 'border-teal-200 bg-teal-50 text-teal-700'
+    : 'border-white/10 bg-white/5 text-white/70'
 
   const dropdownRef = useRef(null)
   const searchDebounceRef = useRef(null)
@@ -143,6 +150,8 @@ export default function CollegeRatingSection({ theme = 'blue', noBg = false }) {
   const [collegeHasMore, setCollegeHasMore] = useState(false)
   const [collegeLoading, setCollegeLoading] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [studentName, setStudentName] = useState('')
+  const [studentEmail, setStudentEmail] = useState('')
   const [criteriaRatings, setCriteriaRatings] = useState(() => createInitialCriteriaRatings())
   const [hoveredCriteriaRatings, setHoveredCriteriaRatings] = useState(() => createInitialCriteriaRatings())
   const [feedback, setFeedback] = useState('')
@@ -228,17 +237,29 @@ export default function CollegeRatingSection({ theme = 'blue', noBg = false }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); setSubmitStatus({ type: '', message: '' })
+    const normalizedStudentName = String(studentName || '').trim()
+    const normalizedStudentEmail = String(studentEmail || '').trim().toLowerCase()
+    if (!normalizedStudentName) return setSubmitStatus({ type: 'error', message: 'Please enter your name before submitting.' })
+    if (!EMAIL_REGEX.test(normalizedStudentEmail)) return setSubmitStatus({ type: 'error', message: 'Please enter a valid email address before submitting.' })
     if (!selectedCollege) return setSubmitStatus({ type: 'error', message: 'Please select a college from the dropdown list.' })
     if (!areAllCriteriaRated) return setSubmitStatus({ type: 'error', message: 'Please rate all 10 parameters before submitting.' })
     setSubmitting(true)
     try {
       const res = await fetch(`${API_BASE}/api/college/ratings`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ collegeName: selectedCollege, rating: overallRating, criteriaRatings, feedback: feedback.trim() }),
+        body: JSON.stringify({
+          studentName: normalizedStudentName,
+          studentEmail: normalizedStudentEmail,
+          collegeName: selectedCollege,
+          rating: overallRating,
+          criteriaRatings,
+          feedback: feedback.trim(),
+        }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data.message || 'Unable to submit rating right now.')
       setSubmitStatus({ type: 'success', message: data.message || 'Your anonymous rating was submitted successfully.' })
+      setStudentName(''); setStudentEmail('')
       setSelectedCollege(''); setCollegeInput('')
       setCriteriaRatings(createInitialCriteriaRatings()); setHoveredCriteriaRatings(createInitialCriteriaRatings())
       setFeedback(''); if (showLiveRankingSnapshot) fetchLeaderboard()
@@ -281,6 +302,37 @@ export default function CollegeRatingSection({ theme = 'blue', noBg = false }) {
             </div>
 
             <div className="space-y-6 p-6 sm:p-8">
+              <div className={`rounded-2xl border px-4 py-3 text-xs font-medium ${privacyNoticeClass}`}>
+                Your name and email are collected only for verification and will be kept anonymous in public ratings.
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor={`student-name-${theme}`} className={`text-xs font-bold uppercase tracking-wider ${t.labelText}`}>Name</label>
+                  <input
+                    id={`student-name-${theme}`}
+                    type="text"
+                    value={studentName}
+                    onChange={(e) => setStudentName(e.target.value)}
+                    placeholder="Enter your name"
+                    maxLength={120}
+                    className={textInputClass}
+                  />
+                </div>
+                <div>
+                  <label htmlFor={`student-email-${theme}`} className={`text-xs font-bold uppercase tracking-wider ${t.labelText}`}>Email</label>
+                  <input
+                    id={`student-email-${theme}`}
+                    type="email"
+                    value={studentEmail}
+                    onChange={(e) => setStudentEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    maxLength={254}
+                    className={textInputClass}
+                  />
+                </div>
+              </div>
+
               <div ref={dropdownRef} className="relative">
                 <label htmlFor={`college-search-${theme}`} className={`text-xs font-bold uppercase tracking-wider ${t.labelText}`}>Select College</label>
                 <div className={`mt-2 flex items-center rounded-2xl border ${t.inputBg} px-4 transition`}>

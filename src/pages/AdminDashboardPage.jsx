@@ -2231,6 +2231,8 @@ function CollegeRatingsSection() {
             <table className="w-full text-sm">
               <thead className="bg-slate-50 text-left text-xs font-medium uppercase text-slate-500">
                 <tr>
+                  <th className="px-4 py-3">Name</th>
+                  <th className="px-4 py-3">Email</th>
                   <th className="px-4 py-3">College</th>
                   <th className="px-4 py-3">Rating</th>
                   <th className="px-4 py-3">Feedback</th>
@@ -2241,6 +2243,8 @@ function CollegeRatingsSection() {
               <tbody>
                 {ratings.map((item) => (
                   <tr key={item._id} className="border-t hover:bg-slate-50">
+                    <td className="px-4 py-3 text-xs font-medium text-slate-700">{item.studentName || 'Not provided'}</td>
+                    <td className="px-4 py-3 text-xs text-slate-600">{item.studentEmail || 'Not provided'}</td>
                     <td className="px-4 py-3 font-medium text-slate-800">{item.collegeName}</td>
                     <td className="px-4 py-3">
                       <Badge text={`${Number(item.rating || 0).toFixed(2)} / 5`} color={ratingColor(Number(item.rating || 0))} />
@@ -2260,7 +2264,7 @@ function CollegeRatingsSection() {
                 ))}
                 {ratings.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-slate-400">No ratings found for selected filters.</td>
+                    <td colSpan={7} className="px-4 py-8 text-center text-slate-400">No ratings found for selected filters.</td>
                   </tr>
                 )}
               </tbody>

@@ -479,6 +479,7 @@ const FALLBACK_COLLEGE_LIST = [
 const normalizeCollegeName = (value = '') => String(value || '').trim().replace(/\s+/g, ' ')
 const escapeRegex = (value = '') => String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const formatAverage = (value = 0) => Number(Number(value || 0).toFixed(2))
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const RATING_CRITERIA_FIELDS = [
   'innovationEnvironment',
@@ -591,9 +592,23 @@ router.post('/apply', async (req, res) => {
 // ── Public: Anonymous college ratings ──
 router.post('/ratings', async (req, res) => {
   try {
+    const studentName = String(req.body?.studentName || '').trim()
+    const studentEmail = String(req.body?.studentEmail || '').trim().toLowerCase()
     const normalizedCollegeName = normalizeCollegeName(req.body?.collegeName)
     const criteriaRatings = buildCriteriaRatings(req.body?.criteriaRatings || {})
     const feedback = String(req.body?.feedback || '').trim()
+
+    if (!studentName) {
+      return res.status(400).json({ message: 'Please enter your name before submitting your rating.' })
+    }
+
+    if (studentName.length > 120) {
+      return res.status(400).json({ message: 'Name cannot exceed 120 characters.' })
+    }
+
+    if (!EMAIL_REGEX.test(studentEmail)) {
+      return res.status(400).json({ message: 'Please provide a valid email address before submitting your rating.' })
+    }
 
     if (!normalizedCollegeName) {
       return res.status(400).json({ message: 'Please select a college before submitting your rating.' })
@@ -610,6 +625,8 @@ router.post('/ratings', async (req, res) => {
     const numericRating = calculateCriteriaAverage(criteriaRatings)
 
     const savedRating = await CollegeRating.create({
+      studentName,
+      studentEmail,
       collegeName: normalizedCollegeName,
       rating: numericRating,
       criteriaRatings,
@@ -631,6 +648,8 @@ router.post('/ratings', async (req, res) => {
       message: 'Thanks for rating. Your anonymous feedback has been recorded.',
       rating: {
         id: savedRating._id,
+        studentName: savedRating.studentName,
+        studentEmail: savedRating.studentEmail,
         collegeName: savedRating.collegeName,
         rating: savedRating.rating,
         criteriaRatings: savedRating.criteriaRatings,

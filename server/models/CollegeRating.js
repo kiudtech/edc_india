@@ -2,6 +2,19 @@ import mongoose from 'mongoose'
 
 const collegeRatingSchema = new mongoose.Schema(
   {
+    studentName: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 120,
+    },
+    studentEmail: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+      maxlength: 254,
+    },
     collegeName: {
       type: String,
       required: true,

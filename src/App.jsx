@@ -129,6 +129,31 @@ const galleryItems = [
     file: 'Copy of WhatsApp Image 2023-12-16 at 13.05.33 (1).jpeg',
     desc: 'From idea to working prototype — live demonstrations.',
   },
+  {
+    label: 'Auditorium Ignite',
+    file: 'newImg1.jpeg',
+    desc: 'Hundreds of participants unite during a high-energy entrepreneurship gathering.',
+  },
+  {
+    label: 'Campus Team Build',
+    file: 'newImg2.jpeg',
+    desc: 'Student founders and mentors collaborating around practical innovation projects.',
+  },
+  {
+    label: 'Classroom Catalyst',
+    file: 'newImg3.jpeg',
+    desc: 'Interactive sessions where students explore startup thinking and execution.',
+  },
+  {
+    label: 'Learning Forum',
+    file: 'newImg4.jpeg',
+    desc: 'Focused community sessions turning ideas into actionable entrepreneurial plans.',
+  },
+  {
+    label: 'Recognition Drive',
+    file: 'newImg5.jpeg',
+    desc: 'On-ground programs celebrating impact and participation through certification.',
+  },
 ]
 
 const testimonials = [
