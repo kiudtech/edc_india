@@ -29,6 +29,7 @@ import CollegeRankingApplicationPage from './pages/CollegeRankingApplicationPage
 import FAQPage from './pages/FAQPage'
 import TermsPage from './pages/TermsPage'
 import NotFoundPage from './pages/NotFoundPage'
+import DubaiEventPage from './pages/DubaiEventPage'
 import CollegeRatingSection from './components/CollegeRatingSection'
 import { getAllFaqItems } from './data/faqs'
 
@@ -1001,6 +1002,97 @@ const Home = () => {
         </div>
       </section>
 
+      {/* ═══════════════ UPCOMING EVENT ═══════════════ */}
+      <section id="upcoming-event" className="relative overflow-hidden bg-slate-900 py-20 sm:py-28 text-white">
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
+        <div className="absolute -right-40 top-0 h-[600px] w-[600px] rounded-full bg-cyan-500/10 blur-[150px]" />
+        
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
+          <motion.div className="grid gap-10 lg:grid-cols-2 lg:items-center" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            
+            {/* Left Content */}
+            <motion.div variants={slideFromLeft} transition={{ duration: 0.6 }}>
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-cyan-300 mb-6">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75"></span>
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500"></span>
+                </span>
+                Upcoming Exposure Visit
+              </div>
+              
+              <h2 className="text-4xl font-extrabold sm:text-5xl lg:text-6xl">
+                Dubai Edition <span className="bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">2026</span>
+              </h2>
+              <p className="mt-4 text-lg font-bold text-white/90">Global Startup Exposure Visit</p>
+              
+              <p className="mt-5 text-sm leading-relaxed text-white/60">
+                <span className="font-semibold text-white/80">Dream. Explore. Build.</span> A 4-day international program designed for young founders, student innovators, and aspiring entrepreneurs. Dive into Dubai's startup ecosystem, interact with investors, and explore scaling opportunities from Delhi/Mumbai.
+              </p>
+
+              <div className="mt-8 grid grid-cols-2 gap-4">
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition hover:bg-white/10">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-cyan-400">Duration</div>
+                  <div className="mt-1 text-sm font-bold">4 Days</div>
+                  <div className="mt-0.5 text-[11px] text-white/50">Late July - Early Aug 2026</div>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition hover:bg-white/10">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-cyan-400">Route</div>
+                  <div className="mt-1 text-sm font-bold">Delhi/Mumbai ↔ Dubai</div>
+                  <div className="mt-0.5 text-[11px] text-white/50">Round Trip</div>
+                </div>
+              </div>
+
+              <div className="mt-10 flex flex-wrap items-center gap-5">
+                <Link to="/events/dubai-2026" className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-cyan-500/25 transition hover:scale-105 hover:shadow-cyan-500/40">
+                  View Event Details →
+                </Link>
+                <div className="max-w-[220px] text-[11px] leading-tight text-white/40">
+                  Organized by <span className="text-white/70">EDC India</span> in collab with IIT Ropar, TBIF & ITQAN UAE
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Right Content */}
+            <motion.div variants={slideFromRight} transition={{ duration: 0.6, delay: 0.15 }} className="relative">
+              <div className="absolute -inset-4 top-10 rounded-3xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 blur-2xl flex" />
+              <div className="relative rounded-3xl border border-white/10 bg-[#0b162c] p-6 shadow-2xl sm:p-8">
+                <h3 className="text-xl font-bold text-white">Program Highlights</h3>
+                <div className="mt-6 space-y-4">
+                  {[
+                    { title: 'International Startup Exposure', desc: "Deep dive into Dubai's thriving innovation ecosystem" },
+                    { title: 'Mentorship & Guidance', desc: 'Learn directly from global industry leaders and experts' },
+                    { title: 'Funding Opportunities', desc: 'Exclusive investor interactions and networking sessions' },
+                    { title: 'Global Market Access', desc: 'Discover strategies for scaling your venture beyond borders' },
+                  ].map((highlight, idx) => (
+                    <div key={idx} className="flex gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400">
+                        <Star className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-white">{highlight.title}</div>
+                        <div className="mt-1 text-xs text-white/50">{highlight.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="mt-8 rounded-2xl bg-white/5 p-5 text-center border border-white/5">
+                  <div className="text-[11px] font-semibold text-white/70 uppercase tracking-widest">Who Should Attend</div>
+                  <div className="mt-3 flex flex-wrap justify-center gap-2">
+                    {['Young Founders', 'Student Innovators', 'Aspiring Entrepreneurs', 'Startup Founders'].map(tag => (
+                      <span key={tag} className="rounded-md border border-white/10 bg-white/10 px-2.5 py-1 text-[10px] font-medium text-white/80">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+          </motion.div>
+        </div>
+      </section>
+
       {/* ═══════════════ PROGRAMS ═══════════════ */}
       <section id="programs" className="bg-gradient-to-br from-[#0b1e4d] to-[#1a3a8f] py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -1584,6 +1676,7 @@ function AppContent() {
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/college-ranking-application" element={<CollegeRankingApplicationPage />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path="/events/dubai-2026" element={<DubaiEventPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
