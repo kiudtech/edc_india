@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
-import { Rocket, Lightbulb, Users, Trophy, BookOpen, Building2, Target, Globe, Handshake, Star, Search, GraduationCap, TrendingUp, IndianRupee, Briefcase, BarChart3, Zap, RefreshCw, MapPin, Mail, Phone, University, ChevronRight } from 'lucide-react'
+import { Rocket, Lightbulb, Users, Trophy, BookOpen, Building2, Target, Globe, Handshake, Star, Search, GraduationCap, TrendingUp, IndianRupee, Briefcase, BarChart3, Zap, RefreshCw, MapPin, Mail, Phone, University, ChevronRight, Calendar, Plane } from 'lucide-react'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
@@ -1003,7 +1003,7 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ UPCOMING EVENT ═══════════════ */}
-      <section id="upcoming-event" className="relative overflow-hidden text-white" style={{ minHeight: '100vh', background: 'linear-gradient(to bottom, #020b18 0%, #041428 40%, #020b18 100%)' }}>
+      <section id="upcoming-event" className="relative overflow-hidden text-white" style={{ background: 'linear-gradient(to bottom, #020b18 0%, #041428 40%, #020b18 100%)' }}>
 
         {/* Dubai Skyline Background */}
         <div className="absolute inset-0 z-0">
@@ -1011,150 +1011,146 @@ const Home = () => {
             src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1800&q=80&auto=format&fit=crop"
             alt="Dubai Skyline"
             className="h-full w-full object-cover object-center"
-            style={{ opacity: 0.22 }}
+            style={{ opacity: 0.2 }}
           />
-          {/* Bottom fade to blend skyline into content */}
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(2,11,24,0.55) 0%, rgba(2,11,24,0.1) 35%, rgba(2,11,24,0.6) 70%, rgba(2,11,24,1) 100%)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(2,11,24,0.6) 0%, rgba(2,11,24,0.15) 35%, rgba(2,11,24,0.65) 70%, rgba(2,11,24,1) 100%)' }} />
         </div>
 
         {/* Gold shimmer top border */}
         <div className="absolute top-0 left-0 right-0 h-[2px] z-10" style={{ background: 'linear-gradient(90deg, transparent 0%, #c9a84c 30%, #f5d78e 50%, #c9a84c 70%, transparent 100%)' }} />
 
         {/* Ambient glow orbs */}
-        <div className="absolute left-1/4 top-1/3 h-[500px] w-[500px] rounded-full blur-[160px] z-0" style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%)' }} />
-        <div className="absolute right-1/4 bottom-1/4 h-[400px] w-[400px] rounded-full blur-[140px] z-0" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.1) 0%, transparent 70%)' }} />
+        <div className="absolute left-1/4 top-1/2 h-[400px] w-[400px] rounded-full blur-[140px] z-0" style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)' }} />
+        <div className="absolute right-1/4 top-1/2 h-[300px] w-[300px] rounded-full blur-[120px] z-0" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.08) 0%, transparent 70%)' }} />
 
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-24 sm:py-32 lg:py-36">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-14 sm:py-18 lg:py-20">
 
-          {/* Top label */}
-          <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} className="flex justify-center mb-14">
-            <div className="inline-flex items-center gap-3 rounded-full px-5 py-2 text-xs font-bold uppercase tracking-[0.2em]" style={{ border: '1px solid rgba(201,168,76,0.4)', background: 'rgba(201,168,76,0.08)', color: '#f5d78e' }}>
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ background: '#c9a84c' }}></span>
-                <span className="relative inline-flex h-2 w-2 rounded-full" style={{ background: '#c9a84c' }}></span>
-              </span>
-              Upcoming International Exposure Visit
+          {/* Top label + headline — compact horizontal layout */}
+          <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} className="mb-10">
+            <div className="flex flex-col items-center text-center gap-3">
+              <div className="inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em]" style={{ border: '1px solid rgba(201,168,76,0.35)', background: 'rgba(201,168,76,0.07)', color: '#f5d78e' }}>
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ background: '#c9a84c' }}></span>
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: '#c9a84c' }}></span>
+                </span>
+                Upcoming International Exposure Visit
+              </div>
+              <h2 className="text-4xl font-black sm:text-5xl lg:text-6xl leading-none tracking-tight">
+                <span className="text-white">Dubai </span>
+                <span style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 45%, #c9a84c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Edition 2026</span>
+              </h2>
+              <p className="text-xs font-semibold tracking-[0.22em] uppercase" style={{ color: 'rgba(245,215,142,0.6)' }}>
+                Global Startup Exposure Visit
+              </p>
+              <div className="h-px w-24" style={{ background: 'linear-gradient(90deg, transparent, #c9a84c, transparent)' }} />
             </div>
           </motion.div>
 
-          {/* Hero headline */}
-          <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-16">
-            <h2 className="text-5xl font-black sm:text-6xl lg:text-7xl xl:text-8xl leading-none tracking-tight">
-              <span className="block text-white drop-shadow-2xl">DUBAI</span>
-              <span className="block mt-1" style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 40%, #e8c060 60%, #c9a84c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                EDITION 2026
-              </span>
-            </h2>
-            <p className="mt-5 text-base sm:text-lg font-semibold tracking-widest uppercase" style={{ color: 'rgba(245,215,142,0.7)', letterSpacing: '0.25em' }}>
-              Global Startup Exposure Visit
-            </p>
-            <div className="mt-4 mx-auto h-px w-32" style={{ background: 'linear-gradient(90deg, transparent, #c9a84c, transparent)' }} />
-          </motion.div>
-
           {/* Main content grid */}
-          <motion.div className="grid gap-8 lg:grid-cols-2 lg:items-start" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div className="grid gap-6 lg:grid-cols-2 lg:items-center" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
 
             {/* Left — Info */}
-            <motion.div variants={slideFromLeft} transition={{ duration: 0.7 }} className="space-y-8">
+            <motion.div variants={slideFromLeft} transition={{ duration: 0.7 }} className="space-y-5">
 
-              <p className="text-sm sm:text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
-                <span className="font-bold text-white">Dream. Explore. Build.</span> A 4-day international program for young founders, student innovators, and aspiring entrepreneurs. Immerse yourself in Dubai's world-class startup ecosystem, connect with global investors, and unlock scaling opportunities.
+              <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                <span className="font-semibold text-white">Dream. Explore. Build.</span> A 4-day international program for young founders, student innovators, and aspiring entrepreneurs — immersed in Dubai's world-class startup ecosystem with direct access to global investors and mentors.
               </p>
 
               {/* Stats row */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2.5">
                 {[
                   { value: '4', unit: 'Days', label: 'Immersive Program' },
-                  { value: '2', unit: 'Cities', label: 'Delhi / Mumbai' },
-                  { value: '∞', unit: 'Connections', label: 'Global Network' },
+                  { value: '2', unit: 'Cities', label: 'Delhi <-> Dubai' },
+                  { value: '∞', unit: 'Network', label: 'Global Connections' },
                 ].map((stat, i) => (
-                  <div key={i} className="rounded-2xl p-4 text-center" style={{ background: 'rgba(201,168,76,0.07)', border: '1px solid rgba(201,168,76,0.2)' }}>
-                    <div className="text-2xl font-black" style={{ color: '#f5d78e' }}>{stat.value}</div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest mt-0.5" style={{ color: '#c9a84c' }}>{stat.unit}</div>
-                    <div className="text-[10px] mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>{stat.label}</div>
+                  <div key={i} className="rounded-xl p-3 text-center" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.18)' }}>
+                    <div className="text-xl font-black" style={{ color: '#f5d78e' }}>{stat.value}</div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>{stat.unit}</div>
+                    <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{stat.label}</div>
                   </div>
                 ))}
               </div>
 
               {/* Info cards */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>📅 When</div>
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="rounded-xl p-3.5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#c9a84c' }}><Calendar className="h-3 w-3" /> When</div>
                   <div className="text-sm font-bold text-white">Late July – Early Aug</div>
-                  <div className="text-[11px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>2026</div>
+                  <div className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)' }}>2026</div>
                 </div>
-                <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#c9a84c' }}>✈️ Route</div>
-                  <div className="text-sm font-bold text-white">Delhi / Mumbai</div>
-                  <div className="text-[11px] mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>↔ Dubai, UAE</div>
+                <div className="rounded-xl p-3.5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#c9a84c' }}><Plane className="h-3 w-3" /> Route</div>
+                  <div className="text-sm font-bold text-white">Delhi - Dubai</div>
+                  <div className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)' }}>↔ Dubai, UAE</div>
                 </div>
               </div>
 
               {/* CTA */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-4">
                 <Link
                   to="/events/dubai-2026"
-                  className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-sm font-black tracking-wide transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-                  style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 50%, #c9a84c 100%)', color: '#0a0a0a', boxShadow: '0 8px 32px rgba(201,168,76,0.35)' }}
+                  className="inline-flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold tracking-wide transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                  style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 50%, #c9a84c 100%)', color: '#0a0a0a', boxShadow: '0 6px 24px rgba(201,168,76,0.3)' }}
                 >
                   <Globe className="h-4 w-4" />
                   Explore the Event
                 </Link>
-                <div className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                  By <span style={{ color: 'rgba(255,255,255,0.65)' }}>EDC India</span> × IIT Ropar × TBIF × ITQAN UAE
-                </div>
+                <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                  By <span style={{ color: 'rgba(255,255,255,0.6)' }}>EDC India</span> × IIT Ropar × TBIF × ITQAN UAE
+                </p>
               </div>
             </motion.div>
 
             {/* Right — Highlights card */}
             <motion.div variants={slideFromRight} transition={{ duration: 0.7, delay: 0.15 }} className="relative">
-              {/* Glow behind card */}
-              <div className="absolute -inset-2 rounded-3xl blur-2xl" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.15), rgba(14,165,233,0.1))' }} />
+              <div className="absolute -inset-2 rounded-2xl blur-2xl" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.12), rgba(14,165,233,0.08))' }} />
 
-              <div className="relative rounded-3xl p-6 sm:p-8" style={{ background: 'linear-gradient(145deg, rgba(10,20,40,0.95) 0%, rgba(5,12,28,0.98) 100%)', border: '1px solid rgba(201,168,76,0.25)', boxShadow: '0 32px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(201,168,76,0.15)' }}>
+              <div className="relative rounded-2xl p-5 sm:p-6" style={{ background: 'linear-gradient(145deg, rgba(10,20,40,0.96) 0%, rgba(5,12,28,0.98) 100%)', border: '1px solid rgba(201,168,76,0.22)', boxShadow: '0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,168,76,0.12)' }}>
 
                 {/* Card header */}
-                <div className="flex items-center gap-3 mb-7">
-                  <div className="h-8 w-1 rounded-full" style={{ background: 'linear-gradient(to bottom, #f5d78e, #c9a84c)' }} />
-                  <h3 className="text-lg font-black text-white tracking-wide">Program Highlights</h3>
+                <div className="flex items-center gap-2.5 mb-5">
+                  <div className="h-6 w-0.5 rounded-full" style={{ background: 'linear-gradient(to bottom, #f5d78e, #c9a84c)' }} />
+                  <h3 className="text-sm font-bold text-white tracking-wide uppercase" style={{ letterSpacing: '0.08em' }}>Program Highlights</h3>
                 </div>
 
-                <div className="space-y-5">
+                <div className="space-y-3.5">
                   {[
-                    { icon: '🚀', title: 'International Startup Exposure', desc: "Deep dive into Dubai's world-class innovation ecosystem" },
-                    { icon: '🤝', title: 'Mentorship & Guidance', desc: 'Learn directly from global industry leaders and investors' },
-                    { icon: '💰', title: 'Funding Opportunities', desc: 'Exclusive investor interactions and pitch sessions' },
-                    { icon: '🌍', title: 'Global Market Access', desc: 'Strategies for scaling your venture beyond borders' },
+                    { icon: <Rocket className="h-4 w-4" />, title: 'International Startup Exposure', desc: "Deep dive into Dubai's world-class innovation ecosystem" },
+                    { icon: <Handshake className="h-4 w-4" />, title: 'Mentorship & Guidance', desc: 'Learn directly from global industry leaders and investors' },
+                    { icon: <TrendingUp className="h-4 w-4" />, title: 'Funding Opportunities', desc: 'Exclusive investor interactions and pitch sessions' },
+                    { icon: <Globe className="h-4 w-4" />, title: 'Global Market Access', desc: 'Strategies for scaling your venture beyond borders' },
                   ].map((highlight, idx) => (
-                    <div key={idx} className="flex gap-4 group">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg transition-transform duration-300 group-hover:scale-110" style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.2)' }}>
+                    <div key={idx} className="flex gap-3 group">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110" style={{ background: 'rgba(201,168,76,0.09)', border: '1px solid rgba(201,168,76,0.18)', color: '#c9a84c' }}>
                         {highlight.icon}
                       </div>
                       <div className="pt-0.5">
-                        <div className="text-sm font-bold text-white">{highlight.title}</div>
-                        <div className="mt-0.5 text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>{highlight.desc}</div>
+                        <div className="text-xs font-bold text-white">{highlight.title}</div>
+                        <div className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>{highlight.desc}</div>
                       </div>
                     </div>
                   ))}
                 </div>
 
                 {/* Who should attend */}
-                <div className="mt-8 rounded-2xl p-5" style={{ background: 'rgba(201,168,76,0.05)', border: '1px solid rgba(201,168,76,0.15)' }}>
-                  <div className="text-[10px] font-bold uppercase tracking-[0.2em] mb-3" style={{ color: '#c9a84c' }}>Who Should Attend</div>
-                  <div className="flex flex-wrap gap-2">
+                <div className="mt-5 rounded-xl p-4" style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.12)' }}>
+                  <div className="text-[10px] font-bold uppercase tracking-[0.18em] mb-2.5" style={{ color: '#c9a84c' }}>Who Should Attend</div>
+                  <div className="flex flex-wrap gap-1.5">
                     {['Young Founders', 'Student Innovators', 'Aspiring Entrepreneurs', 'Startup Founders'].map(tag => (
-                      <span key={tag} className="rounded-lg px-3 py-1 text-[11px] font-semibold" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.75)' }}>
+                      <span key={tag} className="rounded-md px-2.5 py-1 text-[10px] font-medium" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.65)' }}>
                         {tag}
                       </span>
                     ))}
                   </div>
                 </div>
 
-                {/* Burj Khalifa decorative line */}
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(201,168,76,0.3), transparent)' }} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'rgba(201,168,76,0.5)' }}>🏙️ Dubai, UAE</span>
-                  <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(201,168,76,0.3))' }} />
+                {/* Decorative footer */}
+                <div className="mt-4 flex items-center gap-3">
+                  <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(201,168,76,0.25), transparent)' }} />
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(201,168,76,0.45)' }}>
+                    <MapPin className="h-3 w-3" />Dubai, UAE
+                  </span>
+                  <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(201,168,76,0.25))' }} />
                 </div>
               </div>
             </motion.div>
