@@ -1023,11 +1023,11 @@ const Home = () => {
         <div className="absolute left-1/4 top-1/2 h-[400px] w-[400px] rounded-full blur-[140px] z-0" style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)' }} />
         <div className="absolute right-1/4 top-1/2 h-[300px] w-[300px] rounded-full blur-[120px] z-0" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.08) 0%, transparent 70%)' }} />
 
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-14 sm:py-18 lg:py-20">
+        <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 py-8 sm:py-10 lg:py-12">
 
           {/* Top label + headline — compact horizontal layout */}
-          <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} className="mb-10">
-            <div className="flex flex-col items-center text-center gap-3">
+          <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} className="mb-6">
+            <div className="flex flex-col items-center text-center gap-2">
               <div className="inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em]" style={{ border: '1px solid rgba(201,168,76,0.35)', background: 'rgba(201,168,76,0.07)', color: '#f5d78e' }}>
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ background: '#c9a84c' }}></span>
@@ -1035,7 +1035,7 @@ const Home = () => {
                 </span>
                 Upcoming International Exposure Visit
               </div>
-              <h2 className="text-4xl font-black sm:text-5xl lg:text-6xl leading-none tracking-tight">
+              <h2 className="text-3xl font-black sm:text-4xl lg:text-5xl leading-none tracking-tight">
                 <span className="text-white">Dubai </span>
                 <span style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 45%, #c9a84c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Edition 2026</span>
               </h2>
@@ -1046,98 +1046,99 @@ const Home = () => {
             </div>
           </motion.div>
 
-          {/* Main content grid */}
-          <motion.div className="grid gap-6 lg:grid-cols-2 lg:items-center" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          {/* Main content grid - 2 column layout on desktop */}
+          <motion.div className="grid gap-4 lg:grid-cols-12 lg:gap-5 lg:items-start" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
 
-            {/* Left — Info */}
-            <motion.div variants={slideFromLeft} transition={{ duration: 0.7 }} className="space-y-5">
+            {/* Left — Content + Highlights */}
+            <motion.div variants={fadeIn} transition={{ duration: 0.7 }} className="lg:col-span-7 space-y-4">
 
-              <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
                 <span className="font-semibold text-white">Dream. Explore. Build.</span> A 4-day international program for young founders, student innovators, and aspiring entrepreneurs — immersed in Dubai's world-class startup ecosystem with direct access to global investors and mentors.
               </p>
 
               {/* Stats row */}
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-3 gap-2">
                 {[
                   { value: '4', unit: 'Days', label: 'Immersive Program' },
                   { value: '2', unit: 'Cities', label: 'Delhi <-> Dubai' },
                   { value: '∞', unit: 'Network', label: 'Global Connections' },
                 ].map((stat, i) => (
-                  <div key={i} className="rounded-xl p-3 text-center" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.18)' }}>
-                    <div className="text-xl font-black" style={{ color: '#f5d78e' }}>{stat.value}</div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>{stat.unit}</div>
-                    <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{stat.label}</div>
+                  <div key={i} className="rounded-xl p-2.5 text-center" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.18)' }}>
+                    <div className="text-lg font-black" style={{ color: '#f5d78e' }}>{stat.value}</div>
+                    <div className="text-[9px] font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>{stat.unit}</div>
+                    <div className="text-[9px] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{stat.label}</div>
                   </div>
                 ))}
               </div>
 
               {/* Info cards */}
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="rounded-xl p-3.5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
-                  <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#c9a84c' }}><Calendar className="h-3 w-3" /> When</div>
-                  <div className="text-sm font-bold text-white">Late July – Early Aug</div>
-                  <div className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)' }}>2026</div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                  <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#c9a84c' }}><Calendar className="h-3 w-3" /> When</div>
+                  <div className="text-xs font-bold text-white">Late July – Early Aug</div>
+                  <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.35)' }}>2026</div>
                 </div>
-                <div className="rounded-xl p-3.5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
-                  <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#c9a84c' }}><Plane className="h-3 w-3" /> Route</div>
-                  <div className="text-sm font-bold text-white">Delhi - Dubai</div>
-                  <div className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)' }}>↔ Dubai, UAE</div>
+                <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                  <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#c9a84c' }}><Plane className="h-3 w-3" /> Route</div>
+                  <div className="text-xs font-bold text-white">Delhi - Dubai</div>
+                  <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.35)' }}>↔ Dubai, UAE</div>
                 </div>
               </div>
 
               {/* CTA */}
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap items-center gap-3">
                 <Link
                   to="/events/dubai-2026"
-                  className="inline-flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold tracking-wide transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                  className="inline-flex items-center gap-2 rounded-lg px-5 py-2 text-xs font-bold tracking-wide transition-all duration-300 hover:scale-105 hover:shadow-xl"
                   style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 50%, #c9a84c 100%)', color: '#0a0a0a', boxShadow: '0 6px 24px rgba(201,168,76,0.3)' }}
                 >
-                  <Globe className="h-4 w-4" />
+                  <Globe className="h-3.5 w-3.5" />
                   Explore the Event
                 </Link>
-                <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
                   By <span style={{ color: 'rgba(255,255,255,0.6)' }}>EDC India</span> × IIT Ropar × TBIF × ITQAN UAE
                 </p>
               </div>
-            </motion.div>
 
-            {/* Right — Highlights card */}
-            <motion.div variants={slideFromRight} transition={{ duration: 0.7, delay: 0.15 }} className="relative">
+              {/* Highlights card - moved here */}
+              <motion.div variants={slideFromRight} transition={{ duration: 0.7, delay: 0.15 }} className="relative">
+              
+              <div className="relative">
               <div className="absolute -inset-2 rounded-2xl blur-2xl" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.12), rgba(14,165,233,0.08))' }} />
 
-              <div className="relative rounded-2xl p-5 sm:p-6" style={{ background: 'linear-gradient(145deg, rgba(10,20,40,0.96) 0%, rgba(5,12,28,0.98) 100%)', border: '1px solid rgba(201,168,76,0.22)', boxShadow: '0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,168,76,0.12)' }}>
+              <div className="relative rounded-2xl p-4 sm:p-5" style={{ background: 'linear-gradient(145deg, rgba(10,20,40,0.96) 0%, rgba(5,12,28,0.98) 100%)', border: '1px solid rgba(201,168,76,0.22)', boxShadow: '0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,168,76,0.12)' }}>
 
                 {/* Card header */}
-                <div className="flex items-center gap-2.5 mb-5">
+                <div className="flex items-center gap-2.5 mb-4">
                   <div className="h-6 w-0.5 rounded-full" style={{ background: 'linear-gradient(to bottom, #f5d78e, #c9a84c)' }} />
-                  <h3 className="text-sm font-bold text-white tracking-wide uppercase" style={{ letterSpacing: '0.08em' }}>Program Highlights</h3>
+                  <h3 className="text-xs font-bold text-white tracking-wide uppercase" style={{ letterSpacing: '0.08em' }}>Program Highlights</h3>
                 </div>
 
-                <div className="space-y-3.5">
+                <div className="space-y-3">
                   {[
                     { icon: <Rocket className="h-4 w-4" />, title: 'International Startup Exposure', desc: "Deep dive into Dubai's world-class innovation ecosystem" },
                     { icon: <Handshake className="h-4 w-4" />, title: 'Mentorship & Guidance', desc: 'Learn directly from global industry leaders and investors' },
                     { icon: <TrendingUp className="h-4 w-4" />, title: 'Funding Opportunities', desc: 'Exclusive investor interactions and pitch sessions' },
                     { icon: <Globe className="h-4 w-4" />, title: 'Global Market Access', desc: 'Strategies for scaling your venture beyond borders' },
                   ].map((highlight, idx) => (
-                    <div key={idx} className="flex gap-3 group">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110" style={{ background: 'rgba(201,168,76,0.09)', border: '1px solid rgba(201,168,76,0.18)', color: '#c9a84c' }}>
+                    <div key={idx} className="flex gap-2.5 group">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110" style={{ background: 'rgba(201,168,76,0.09)', border: '1px solid rgba(201,168,76,0.18)', color: '#c9a84c' }}>
                         {highlight.icon}
                       </div>
                       <div className="pt-0.5">
-                        <div className="text-xs font-bold text-white">{highlight.title}</div>
-                        <div className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>{highlight.desc}</div>
+                        <div className="text-[11px] font-bold text-white">{highlight.title}</div>
+                        <div className="text-[10px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>{highlight.desc}</div>
                       </div>
                     </div>
                   ))}
                 </div>
 
                 {/* Who should attend */}
-                <div className="mt-5 rounded-xl p-4" style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.12)' }}>
-                  <div className="text-[10px] font-bold uppercase tracking-[0.18em] mb-2.5" style={{ color: '#c9a84c' }}>Who Should Attend</div>
+                <div className="mt-4 rounded-xl p-3" style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.12)' }}>
+                  <div className="text-[9px] font-bold uppercase tracking-[0.18em] mb-2" style={{ color: '#c9a84c' }}>Who Should Attend</div>
                   <div className="flex flex-wrap gap-1.5">
                     {['Young Founders', 'Student Innovators', 'Aspiring Entrepreneurs', 'Startup Founders'].map(tag => (
-                      <span key={tag} className="rounded-md px-2.5 py-1 text-[10px] font-medium" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.65)' }}>
+                      <span key={tag} className="rounded-md px-2 py-0.5 text-[9px] font-medium" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.65)' }}>
                         {tag}
                       </span>
                     ))}
@@ -1145,13 +1146,63 @@ const Home = () => {
                 </div>
 
                 {/* Decorative footer */}
-                <div className="mt-4 flex items-center gap-3">
+                <div className="mt-3 flex items-center gap-3">
                   <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(201,168,76,0.25), transparent)' }} />
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(201,168,76,0.45)' }}>
                     <MapPin className="h-3 w-3" />Dubai, UAE
                   </span>
                   <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(201,168,76,0.25))' }} />
                 </div>
+              </div>
+              </div>
+              </motion.div>
+
+            </motion.div>
+
+            {/* Right — Dubai Poster */}
+            <motion.div 
+              variants={slideFromRight} 
+              transition={{ duration: 0.7, delay: 0.2 }} 
+              className="hidden lg:block lg:col-span-5"
+            >
+              <div className="sticky top-24">
+                <Link to="/events/dubai-2026" className="block relative group cursor-pointer">
+                  {/* Glowing border effect */}
+                  <div className="absolute -inset-1 rounded-xl blur-lg opacity-60 group-hover:opacity-90 transition-opacity duration-500" 
+                       style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 50%, #0ea5e9 100%)' }} />
+                  
+                  {/* Image container */}
+                  <div className="relative rounded-xl overflow-hidden" 
+                       style={{ border: '2px solid rgba(201,168,76,0.5)', boxShadow: '0 20px 60px rgba(201,168,76,0.3)', maxHeight: '550px' }}>
+                    <img 
+                      src="/dubai/Dubai 2026.png" 
+                      alt="Dubai Edition 2026" 
+                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                    />
+                    {/* Overlay gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent pointer-events-none" />
+                    
+                    {/* Floating badge */}
+                    <div className="absolute top-4 right-4 rounded-full px-4 py-2 backdrop-blur-md shadow-2xl" 
+                         style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 100%)', border: '1px solid rgba(245,215,142,0.6)' }}>
+                      <span className="text-[10px] font-black text-slate-900 tracking-wider flex items-center gap-1.5">
+                        <span className="relative flex h-2 w-2">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-slate-900 opacity-75"></span>
+                          <span className="relative inline-flex h-2 w-2 rounded-full bg-slate-900"></span>
+                        </span>
+                        FEATURED EVENT
+                      </span>
+                    </div>
+
+                    {/* Hover overlay with "Click to explore" */}
+                    <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-white text-lg font-bold mb-2">Click to Explore</div>
+                        <div className="text-cyan-300 text-sm">View Full Event Details →</div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
               </div>
             </motion.div>
 
