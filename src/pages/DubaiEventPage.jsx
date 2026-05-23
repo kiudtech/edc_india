@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { MapPin, Calendar, Users, Rocket, Target, Handshake, Globe, ExternalLink, Download, Star } from 'lucide-react'
+import { MapPin, Calendar, Users, Rocket, Target, Handshake, Globe, Download, Star } from 'lucide-react'
 import SiteFooter from '../components/SiteFooter'
 
 const fadeUp = {
@@ -21,42 +21,97 @@ const staggerItem = {
 }
 
 export default function DubaiEventPage() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  
+  // Dubai slideshow images
+  const dubaiImages = [
+    '/dubai/1.png',
+    '/dubai/2.png',
+    '/dubai/image.png'
+  ]
+
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    
+    // Auto-change slideshow every 4 seconds
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % dubaiImages.length)
+    }, 4000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   return (
     <div className="bg-slate-50 text-slate-800">
-      {/* ═══════════════ HERO ═══════════════ */}
+      {/* ═══════════════ HERO WITH SLIDESHOW ═══════════════ */}
       <section className="relative overflow-hidden bg-slate-900 py-32 pt-40 sm:py-40 text-center text-white">
-        <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
-        <div className="absolute -left-32 top-0 h-[500px] w-[500px] rounded-full bg-cyan-500/20 blur-[150px]" />
+        {/* Background Slideshow */}
+        <div className="absolute inset-0">
+          {dubaiImages.map((img, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                index === currentSlide ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <img
+                src={img}
+                alt={`Dubai ${index + 1}`}
+                className="h-full w-full object-cover"
+              />
+              {/* Dark overlay for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/70 to-slate-900/90" />
+            </div>
+          ))}
+        </div>
+        
+        {/* Slideshow indicators */}
+        <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+          {dubaiImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`h-2 rounded-full transition-all ${
+                index === currentSlide 
+                  ? 'w-8 bg-cyan-400' 
+                  : 'w-2 bg-white/40 hover:bg-white/60'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
         
         <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" animate="visible">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-5 py-2 text-xs font-bold uppercase tracking-widest text-cyan-300 backdrop-blur-md mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/50 bg-cyan-400/20 px-5 py-2 text-xs font-bold uppercase tracking-widest text-cyan-200 backdrop-blur-md mb-6 shadow-lg">
               Exclusive International Program
             </div>
             
-            <h1 className="text-5xl font-extrabold sm:text-6xl lg:text-7xl">
-              Dubai Edition <span className="bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">2026</span>
+            <h1 className="text-5xl font-extrabold sm:text-6xl lg:text-7xl drop-shadow-2xl">
+              Dubai Edition <span className="bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">2026</span>
             </h1>
             
-            <p className="mt-6 text-xl font-medium text-white/90">
+            <p className="mt-6 text-xl font-bold text-white drop-shadow-lg">
               Global Startup Exposure Visit
             </p>
             
-            <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/60">
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/95 font-medium drop-shadow-md">
               Dream. Explore. Build. DUBAI 2026! A transformative 4-day journey designed to plug Indian founders and students into one of the world's fastest-growing innovation ecosystems.
             </p>
 
             <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <Link to="https://pages.razorpay.com/pl_SpaFr7wPTeUhBw/view" className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-cyan-500/25 transition hover:scale-105 hover:shadow-cyan-500/40">
+              <Link to="https://pages.razorpay.com/pl_SpaFr7wPTeUhBw/view" className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-8 py-3.5 text-sm font-bold text-white shadow-2xl shadow-cyan-500/40 transition hover:scale-105 hover:shadow-cyan-500/60">
                 Apply Now For Dubai 2026
               </Link>
-              <button disabled className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-bold text-white shadow-sm backdrop-blur-sm transition hover:bg-white/20 opacity-70 cursor-not-allowed">
-                <Download className="h-4 w-4" /> Brochure (Coming Soon)
-              </button>
+              <a 
+                href="/dubai/July Delhi - Dubai - Delhi (2).pdf" 
+                download="Dubai-2026-Brochure.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-white/30 bg-white/20 px-8 py-3.5 text-sm font-bold text-white shadow-xl backdrop-blur-md transition hover:bg-white/30 hover:scale-105"
+              >
+                <Download className="h-4 w-4" /> Download Brochure
+              </a>
             </div>
           </motion.div>
         </div>
