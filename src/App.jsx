@@ -895,60 +895,197 @@ const Home = () => {
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
         <div className="blob-float absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-blue-400/10 blur-3xl" />
         <div className="blob-float-reverse absolute -bottom-32 -left-32 h-[400px] w-[400px] rounded-full bg-indigo-400/10 blur-3xl" />
-        <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center justify-center px-4 py-20 text-center sm:px-6 sm:py-28 lg:py-32 xl:max-w-6xl xl:py-36">
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ duration: 0.7 }}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
-              Building founders through clarity, execution, and ecosystem support.
-            </div>
-            <motion.h1
-              className="mx-auto mt-8 max-w-5xl text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem]"
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-            >
-              {heroHeadlineWords.map((word, index) => (
-                <motion.span
-                  key={`${word}-${index}`}
-                  variants={staggerItem}
-                  data-text={word}
-                  className={`inline-block mr-3 ${index >= heroHeadlineWords.length - 4 ? 'hero-premium-accent' : 'text-white'}`}
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:py-32 xl:py-36">
+          <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between">
+
+            {/* ── LEFT: hero text ── */}
+            <div className="flex-1 text-center lg:text-left">
+              <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ duration: 0.7 }}>
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
+                  Building founders through clarity, execution, and ecosystem support.
+                </div>
+                <motion.h1
+                  className="mt-8 max-w-3xl text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem]"
+                  variants={staggerContainer} initial="hidden" animate="visible"
                 >
-                  {word}
-                </motion.span>
-              ))}
-            </motion.h1>
-            <motion.div
-              className="mx-auto mt-4 h-1 w-40 rounded-full bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400"
-              initial={{ opacity: 0, scaleX: 0.5 }}
-              animate={{ opacity: 1, scaleX: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-            />
-            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/60 sm:text-lg xl:text-xl xl:max-w-3xl">
-              Courses, Funding, Global Exposure &amp; Startup Growth Ecosystem
-            </p>
-            <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <Link to="/join" className="cta-pulse group rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-blue-700 shadow-2xl transition hover:bg-blue-50 lg:px-8 lg:py-4 lg:text-base" onClick={handleRouteNavTop}>
-                Join Now <span className="ml-1 inline-block transition group-hover:translate-x-1">→</span>
-              </Link>
-              <a href="#programs" className="rounded-full border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 lg:px-8 lg:py-4 lg:text-base">
-                Explore Programs
-              </a>
-            </div>
-          </motion.div>
-          <motion.div className="mt-14 grid w-full max-w-3xl grid-cols-2 gap-5 sm:grid-cols-4 xl:max-w-4xl xl:gap-6" variants={staggerContainer} initial="hidden" animate="visible">
-            {[
-              { num: 500, label: 'Startups', icon: <Rocket className="h-5 w-5 text-white/70" />, suffix: '+' },
-              { num: 50, label: 'Funding Raised', icon: <IndianRupee className="h-5 w-5 text-white/70" />, prefix: '₹', suffix: 'Cr+' },
-              { num: 100, label: 'Partners', icon: <Handshake className="h-5 w-5 text-white/70" />, suffix: '+' },
-              { num: 25, label: 'Countries', icon: <Globe className="h-5 w-5 text-white/70" />, suffix: '+' },
-            ].map((stat) => (
-              <motion.div key={stat.label} variants={staggerItem} className="card-hover-glow rounded-2xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm transition duration-300 hover:-translate-y-1">
-                <div className="flex justify-center">{stat.icon}</div>
-                <Counter value={stat.num} label={stat.label} prefix={stat.prefix || ''} suffix={stat.suffix} className="mt-1 text-xl font-bold text-white sm:text-2xl xl:text-3xl" labelClassName="mt-1 text-xs font-medium text-white/60" />
+                  {heroHeadlineWords.map((word, index) => (
+                    <motion.span key={`${word}-${index}`} variants={staggerItem} data-text={word}
+                      className={`inline-block mr-3 ${index >= heroHeadlineWords.length - 4 ? 'hero-premium-accent' : 'text-white'}`}>
+                      {word}
+                    </motion.span>
+                  ))}
+                </motion.h1>
+                <motion.div className="mt-4 h-1 w-40 rounded-full bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 lg:mx-0 mx-auto"
+                  initial={{ opacity: 0, scaleX: 0.5 }} animate={{ opacity: 1, scaleX: 1 }} transition={{ duration: 0.8, delay: 0.5 }} />
+                <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/60 sm:text-lg lg:mx-0">
+                  Courses, Funding, Global Exposure &amp; Startup Growth Ecosystem
+                </p>
+                <div className="mt-10 flex flex-wrap justify-center gap-4 lg:justify-start">
+                  <Link to="/join" className="cta-pulse group rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-blue-700 shadow-2xl transition hover:bg-blue-50 lg:px-8 lg:py-4 lg:text-base" onClick={handleRouteNavTop}>
+                    Join Now <span className="ml-1 inline-block transition group-hover:translate-x-1">→</span>
+                  </Link>
+                  <a href="#programs" className="rounded-full border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 lg:px-8 lg:py-4 lg:text-base">
+                    Explore Programs
+                  </a>
+                </div>
               </motion.div>
-            ))}
-          </motion.div>
+              <motion.div className="mt-14 grid w-full max-w-lg grid-cols-2 gap-4 sm:grid-cols-4 lg:max-w-none" variants={staggerContainer} initial="hidden" animate="visible">
+                {[
+                  { num: 500, label: 'Startups', icon: <Rocket className="h-5 w-5 text-white/70" />, suffix: '+' },
+                  { num: 50, label: 'Funding Raised', icon: <IndianRupee className="h-5 w-5 text-white/70" />, prefix: '₹', suffix: 'Cr+' },
+                  { num: 100, label: 'Partners', icon: <Handshake className="h-5 w-5 text-white/70" />, suffix: '+' },
+                  { num: 25, label: 'Countries', icon: <Globe className="h-5 w-5 text-white/70" />, suffix: '+' },
+                ].map((stat) => (
+                  <motion.div key={stat.label} variants={staggerItem} className="card-hover-glow rounded-2xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm transition duration-300 hover:-translate-y-1">
+                    <div className="flex justify-center">{stat.icon}</div>
+                    <Counter value={stat.num} label={stat.label} prefix={stat.prefix || ''} suffix={stat.suffix} className="mt-1 text-xl font-bold text-white sm:text-2xl" labelClassName="mt-1 text-xs font-medium text-white/60" />
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* ── RIGHT: Dubai Event Card ── */}
+
+
+
+
+
+
+<motion.div 
+      variants={fadeUp} 
+      initial="hidden" 
+      animate="visible" 
+      transition={{ duration: 0.7, delay: 0.3 }}
+      className="w-full max-w-sm shrink-0 lg:w-[390px] group/card"
+    >
+      <div className="relative">
+        {/* Animated premium gold edge aura glow */}
+        <div className="absolute -inset-[3px] rounded-[24px] bg-gradient-to-br from-[#c9a84c] via-[#f5d78e] to-[#c9a84c] opacity-70 blur-[6px] animate-pulse transition duration-500 group-hover/card:opacity-100 group-hover/card:blur-[10px]" />
+        <div className="absolute -inset-[1.5px] rounded-[22px] bg-gradient-to-br from-[#c9a84c] via-[#f5d78e] to-[#c9a84c]" />
+        
+        {/* Card inner container */}
+        <div className="relative overflow-hidden rounded-2xl bg-[#020b18] shadow-[0_25px_60px_rgba(0,0,0,0.8)] border border-white/5">
+          
+          {/* Dubai photo header - Reduced height from h-44 to h-36 */}
+          <div className="relative h-36 overflow-hidden bg-gradient-to-br from-[#0b2d4d] to-[#020b18]">
+            <img 
+              src="/dubai/Dubai 2026.png" 
+              alt="Dubai 2026"
+              className="h-full w-full object-cover object-center transform transition-transform duration-700 group-hover/card:scale-105"
+              onError={(e) => { e.currentTarget.style.display = 'none' }} 
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#020b18]" />
+            
+            {/* Live registration badge */}
+            <div 
+              className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-600 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-white backdrop-blur-md"
+              style={{ boxShadow: '0 0 15px rgba(239, 68, 68, 0.5)' }}
+            >
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-90" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
+              </span> 
+              Live
+            </div>
+            
+            {/* Premium Frosted Gold Featured Tag */}
+            <div className="absolute top-3 right-3 rounded-full border border-[#f5d78e]/30 bg-black/40 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-[#f5d78e] backdrop-blur-md">
+              ★ Featured
+            </div>
+          </div>
+
+          {/* Card Body - Reduced vertical padding from px-6 pb-6 pt-4 to px-5 pb-4 pt-3 */}
+          <div className="relative px-5 pb-4 pt-3">
+            <div className="pointer-events-none absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-[#c9a84c]/10 blur-[40px]" />
+            
+            <div className="relative z-10">
+              {/* Header Typography - Slightly tighter text sizing */}
+              <h3 className="text-xl font-black text-white leading-tight tracking-tight sm:text-[22px]">
+                DUBAI EDITION{' '}
+                <span style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 45%, #c9a84c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  2026
+                </span>
+              </h3>
+              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.12em]">Global Startup &amp; Innovation Visit</p>
+              
+              {/* Tighter Divider - Reduced margins from my-4 to my-3 */}
+              <div className="my-3 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent)' }} />
+              
+              {/* Details Grid - Decreased margin-bottom from mb-4.5 to mb-3 */}
+              <div className="grid grid-cols-2 gap-2.5 mb-3">
+                {[
+                  { icon: '📅', label: 'WHEN', value: 'Late July – Aug' },
+                  { icon: '✈️', label: 'ROUTE', value: 'Delhi → Dubai' },
+                ].map((d) => (
+                  <div key={d.label} className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2 transition duration-300 hover:border-[#c9a84c]/30">
+                    <span className="text-base">{d.icon}</span>
+                    <div>
+                      <div className="text-[8px] font-black uppercase tracking-widest text-[#f5d78e]">{d.label}</div>
+                      <div className="text-xs font-extrabold text-slate-200">{d.value}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Highlight Nodes - Decreased margin-bottom from mb-6 to mb-4 */}
+              <ul className="mb-4 space-y-1.5">
+                {[
+                  '🚀 Direct Pitching to Global Investors', 
+                  '💡 4 Days of Immersive Mentorship', 
+                  '🌐 Access to World-Class Ecosystems'
+                ].map((h) => (
+                  <li key={h} className="flex items-center gap-2 text-[11px] font-semibold text-slate-300 bg-white/[0.01] border border-white/[0.03] rounded-lg px-2.5 py-1.5">
+                    {h}
+                  </li>
+                ))}
+              </ul>
+              
+              {/* Premium Gold Call To Action Button - Reduced padding from py-3.5 to py-2.5 */}
+              <Link 
+                to="/events/dubai-2026" 
+                onClick={handleRouteNavTop}
+                className="relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl py-2.5 text-xs font-black text-[#0a0a0a] transition-all duration-300 hover:scale-[1.01]"
+                style={{ 
+                  background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 50%, #c9a84c 100%)',
+                  boxShadow: '0 4px 18px rgba(201,168,76,0.25)'
+                }}
+              >
+                <div className="absolute inset-0 w-1/2 h-full bg-white/20 transform -skew-x-12 -translate-x-full animate-[shimmer_3s_infinite]" style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent)' }} />
+                
+                <span className="relative z-10">Explore the Event</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </Link>
+              
+              {/* Bottom Alert Text - Reduced margin from mt-3 to mt-2 */}
+              <p className="mt-2 text-center text-[10px] font-extrabold text-red-400 tracking-wide animate-pulse">
+                ⚠️ Limited slots — Reserve your seat now!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          </div>
         </div>
         <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none"><svg viewBox="0 0 1440 80" className="w-full fill-white"><path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" /></svg></div>
       </section>
@@ -1050,7 +1187,7 @@ const Home = () => {
           <motion.div className="grid gap-4 lg:grid-cols-12 lg:gap-5 lg:items-start" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
 
             {/* Left — Content + Highlights */}
-            <motion.div variants={fadeIn} transition={{ duration: 0.7 }} className="lg:col-span-7 space-y-4">
+            <motion.div variants={fadeIn} transition={{ duration: 0.7 }} className="col-span-full lg:col-span-7 space-y-4">
 
               <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
                 <span className="font-semibold text-white">Dream. Explore. Build.</span> A 4-day international program for young founders, student innovators, and aspiring entrepreneurs — immersed in Dubai's world-class startup ecosystem with direct access to global investors and mentors.
@@ -1163,7 +1300,7 @@ const Home = () => {
             <motion.div 
               variants={slideFromRight} 
               transition={{ duration: 0.7, delay: 0.2 }} 
-              className="hidden lg:block lg:col-span-5"
+              className="col-span-full lg:col-span-5"
             >
               <div className="sticky top-24">
                 <Link to="/events/dubai-2026" className="block relative group cursor-pointer">
