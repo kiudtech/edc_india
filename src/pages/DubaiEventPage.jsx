@@ -361,7 +361,7 @@ export default function DubaiEventPage() {
                 <h4 className="text-lg font-black text-slate-900 mb-4">Investment Highlights</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="text-2xl font-black text-orange-600">₹30,000</div>
+                    <div className="text-2xl font-black text-orange-600">₹50,000</div>
                     <div className="text-xs font-semibold text-slate-600">Program Fee</div>
                   </div>
                   <div>
@@ -488,7 +488,7 @@ export default function DubaiEventPage() {
                 <div className="h-px bg-green-200" />
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-slate-700">Program Fee</span>
-                  <span className="text-lg font-black text-green-600">₹30,000</span>
+                  <span className="text-lg font-black text-green-600">₹50,000</span>
                 </div>
               </div>
 
