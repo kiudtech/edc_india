@@ -1016,7 +1016,7 @@ const Home = () => {
               {/* Details Grid - Decreased margin-bottom from mb-4.5 to mb-3 */}
               <div className="grid grid-cols-2 gap-2.5 mb-3">
                 {[
-                  { icon: '📅', label: 'WHEN', value: 'Late July – Aug' },
+                  { icon: '📅', label: 'WHEN', value: 'September 2026' },
                   { icon: '✈️', label: 'ROUTE', value: 'Delhi → Dubai' },
                 ].map((d) => (
                   <div key={d.label} className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2 transition duration-300 hover:border-[#c9a84c]/30">
@@ -1212,7 +1212,7 @@ const Home = () => {
               <div className="grid grid-cols-2 gap-2">
                 <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
                   <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#c9a84c' }}><Calendar className="h-3 w-3" /> When</div>
-                  <div className="text-xs font-bold text-white">Late July – Early Aug</div>
+                  <div className="text-xs font-bold text-white">September 2026</div>
                   <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.35)' }}>2026</div>
                 </div>
                 <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
