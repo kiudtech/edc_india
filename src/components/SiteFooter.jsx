@@ -58,17 +58,17 @@ export default function SiteFooter() {
               <div className="text-sm font-bold uppercase tracking-wider text-blue-300">Our Programs</div>
               <div className="mt-4 space-y-3">
                 {[
-                  'Startup Membership',
-                  'Idea Validation',
-                  'Funding & Grants',
-                  'Global Exposure',
-                  'College Ranking',
-                  'Mentorship',
+                  { label: 'Startup Membership', to: '/startup-membership' },
+                  { label: 'Idea Validation', to: '/join-validation' },
+                  { label: 'Funding & Grants', to: '/fellowship' },
+                  { label: 'Global Exposure', to: '/events/dubai-2026' },
+                  { label: 'College Ranking', to: '/ranking' },
+                  { label: 'Mentorship', to: '/join' },
                 ].map((item) => (
-                  <div key={item} className="group flex items-center gap-2 text-sm text-white/60 transition hover:text-white cursor-pointer">
+                  <Link key={item.label} to={item.to} className="group flex items-center gap-2 text-sm text-white/60 transition hover:text-white">
                     <span className="h-1 w-1 rounded-full bg-blue-400 opacity-0 transition group-hover:opacity-100" />
-                    {item}
-                  </div>
+                    {item.label}
+                  </Link>
                 ))}
               </div>
             </div>
@@ -101,7 +101,7 @@ export default function SiteFooter() {
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/20 text-blue-300">
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                   </div>
-                  <a href="tel:+919821832839" className="text-sm text-white/60 transition hover:text-white">+91 9821832839</a>
+                  <a href="tel:+919821832829" className="text-sm text-white/60 transition hover:text-white">+91 9821832829</a>
                   <a href="tel:+911206054408" className="text-sm text-white/60 transition hover:text-white">+91 1206054408</a>
                 </div>
               </div>
