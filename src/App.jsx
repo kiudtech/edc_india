@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import { BrowserRouter, Route, Routes, Link, useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -657,15 +657,6 @@ const trustSlides = [
     cta: { label: 'About EDC India', to: '/about-us' },
     tag: 'Recognition',
   },
-  {
-    src: '/dubai/dubai_50000.webp',
-    caption: 'Dubai Exposure Visit — September 2026',
-    title: 'Dubai Edition 2026 🌍',
-    desc: "Join India's most exciting international startup exposure program. 4 days in Dubai — live expos, investor networking, desert safari and more. ₹50,000 all-inclusive.",
-    cta: { label: 'Apply Now →', to: '/events/dubai-2026' },
-    tag: 'Live · Limited Seats',
-    highlight: true,
-  },
 ]
 
 const Home = () => {
@@ -1214,7 +1205,7 @@ const Home = () => {
           </motion.div>
 
           {/* Main content grid - 2 column layout on desktop */}
-          <motion.div className="grid gap-4 lg:grid-cols-12 lg:gap-5 lg:items-start" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div className="grid gap-4 lg:grid-cols-12 lg:gap-5 lg:items-stretch" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
 
             {/* Left — Content + Highlights */}
             <motion.div variants={fadeIn} transition={{ duration: 0.7 }} className="col-span-full lg:col-span-7 space-y-4">
@@ -1330,21 +1321,20 @@ const Home = () => {
             <motion.div 
               variants={slideFromRight} 
               transition={{ duration: 0.7, delay: 0.2 }} 
-              className="col-span-full lg:col-span-5"
+              className="col-span-full lg:col-span-5 flex relative"
             >
-              <div className="sticky top-24">
-                <Link to="/events/dubai-2026" className="block relative group cursor-pointer">
+              <Link to="/events/dubai-2026" className="block relative lg:absolute lg:inset-0 group cursor-pointer w-full aspect-[3/4] sm:aspect-[4/5] lg:aspect-auto">
                   {/* Glowing border effect */}
                   <div className="absolute -inset-1 rounded-xl blur-lg opacity-60 group-hover:opacity-90 transition-opacity duration-500" 
                        style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 50%, #0ea5e9 100%)' }} />
                   
-                  {/* Image container */}
-                  <div className="relative rounded-xl overflow-hidden" 
-                       style={{ border: '2px solid rgba(201,168,76,0.5)', boxShadow: '0 20px 60px rgba(201,168,76,0.3)', maxHeight: '550px' }}>
+                  {/* Image container — full height to match left column */}
+                  <div className="relative rounded-xl overflow-hidden h-full w-full" 
+                       style={{ border: '2px solid rgba(201,168,76,0.5)', boxShadow: '0 20px 60px rgba(201,168,76,0.3)' }}>
                     <img 
-                      src="/dubai/Dubai 2026.png" 
-                      alt="Dubai Edition 2026" 
-                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                      src="/dubai/dubai_50000_hoz.jpeg" 
+                      alt="Dubai Edition 2026 — ₹50,000 All Inclusive" 
+                      className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
                     />
                     {/* Overlay gradient */}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent pointer-events-none" />
@@ -1361,7 +1351,7 @@ const Home = () => {
                       </span>
                     </div>
 
-                    {/* Hover overlay with "Click to explore" */}
+                    {/* Hover overlay */}
                     <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <div className="text-center">
                         <div className="text-white text-lg font-bold mb-2">Click to Explore</div>
@@ -1370,7 +1360,6 @@ const Home = () => {
                     </div>
                   </div>
                 </Link>
-              </div>
             </motion.div>
 
           </motion.div>
