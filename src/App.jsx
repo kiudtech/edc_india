@@ -616,49 +616,6 @@ const homeMobileItemVariants = {
   },
 }
 
-const trustSlides = [
-  {
-    src: '/stories/newImg1.jpeg',
-    caption: 'Where Collaboration Meets Opportunity',
-    title: 'Where Collaboration Meets Opportunity',
-    desc: 'We bring together the right people, resources, and platforms to turn ideas into impact — across India and beyond.',
-    cta: { label: 'Join the Ecosystem', to: '/join' },
-    tag: 'Collaboration',
-  },
-  {
-    src: '/stories/newImg2.jpeg',
-    caption: 'Creating Pathways for Global Learning',
-    title: 'Creating Pathways for Global Learning',
-    desc: 'We create structured pathways for students, founders and professionals to learn, network, and scale in a global environment.',
-    cta: { label: 'Get Started', to: '/join' },
-    tag: 'Growth',
-  },
-  {
-    src: '/stories/Copy of WhatsApp Image 2023-12-16 at 12.59.52.jpeg',
-    caption: 'Partnerships That Shape the Future',
-    title: 'Partnerships That Shape the Future',
-    desc: 'We have built strategic alliances with institutions, corporates, and investors across India and globally to fuel startup growth.',
-    cta: { label: 'Partner With Us', to: '/join' },
-    tag: 'Partnerships',
-  },
-  {
-    src: '/stories/ChatGPT Image Jan 29, 2026, 04_18_46 PM.png',
-    caption: 'Opening Doors to International Education and Exposure',
-    title: 'Opening Doors to International Education and Exposure',
-    desc: 'EDC India connects students and founders to international education, global campuses, and cross-border learning opportunities.',
-    cta: { label: 'Explore Programs', to: '/join' },
-    tag: 'Education',
-  },
-  {
-    src: '/stories/WhatsApp Image 2026-03-22 at 9.35.11 PM.jpeg',
-    caption: 'Advancing Education Through Leadership with CM Meghalaya',
-    title: 'Advancing Education Through Leadership with CM Meghalaya',
-    desc: "Recognized by state leadership — EDC India's work in entrepreneurship development has reached the corridors of government.",
-    cta: { label: 'About EDC India', to: '/about-us' },
-    tag: 'Recognition',
-  },
-]
-
 const Home = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -669,10 +626,69 @@ const Home = () => {
   const [plansError, setPlansError] = useState('')
   const [heroSlide, setHeroSlide] = useState(0)
 
+  const trustSlides = useMemo(() => [
+    {
+      src: '/stories/Copy of WhatsApp Image 2023-12-16 at 12.59.52.jpeg',
+      caption: 'Partnerships That Shape the Future',
+      title: 'Partnerships That Shape the Future',
+      desc: 'We have built strategic alliances with institutions, corporates, and investors across India and globally to fuel startup growth.',
+      cta: { label: 'Partner With Us', to: '/join' },
+      tag: 'Partnerships',
+    },
+    {
+      src: '/stories/WhatsApp Image 2026-03-22 at 9.35.11 PM.jpeg',
+      caption: 'Advancing Education Through Leadership with CM Meghalaya',
+      title: 'Advancing Education Through Leadership with CM Meghalaya',
+      desc: "Recognized by state leadership — EDC India's work in entrepreneurship development has reached the corridors of government.",
+      cta: { label: 'About EDC India', to: '/about-us' },
+      tag: 'Recognition',
+    },
+    {
+      src: '/stories/newImg1.jpeg',
+      caption: 'Where Collaboration Meets Opportunity',
+      title: 'Where Collaboration Meets Opportunity',
+      desc: 'We bring together the right people, resources, and platforms to turn ideas into impact — across India and beyond.',
+      cta: { label: 'Join the Ecosystem', to: '/join' },
+      tag: 'Collaboration',
+    },
+    {
+      src: '/stories/newImg2.jpeg',
+      caption: 'Creating Pathways for Global Learning',
+      title: 'Creating Pathways for Global Learning',
+      desc: 'We create structured pathways for students, founders and professionals to learn, network, and scale in a global environment.',
+      cta: { label: 'Get Started', to: '/join' },
+      tag: 'Growth',
+    },
+    {
+      src: '/stories/ChatGPT Image Jan 29, 2026, 04_18_46 PM.png',
+      caption: 'Opening Doors to International Education and Exposure',
+      title: 'Opening Doors to International Education and Exposure',
+      desc: 'EDC India connects students and founders to international education, global campuses, and cross-border learning opportunities.',
+      cta: { label: 'Explore Programs', to: '/join' },
+      tag: 'Education',
+    },
+    {
+      src: '/stories/Expanding opportunities through UP government partnerships.webp',
+      caption: 'Expanding opportunities through UP government partnerships.',
+      title: 'Expanding opportunities through UP government partnerships.',
+      desc: 'Expanding opportunities through UP government partnerships.',
+      cta: { label: 'Join the Ecosystem', to: '/join' },
+      tag: 'Partnerships',
+    },
+    {
+      src: '/stories/Partnerships that create opportunities and inspire innovation..webp',
+      caption: 'Partnerships that create opportunities and inspire innovation.',
+      title: 'Partnerships that create opportunities and inspire innovation.',
+      desc: 'Partnerships that create opportunities and inspire innovation.',
+      cta: { label: 'Join the Ecosystem', to: '/join' },
+      tag: 'Innovation',
+    },
+  ], [])
+
   useEffect(() => {
     const t = setInterval(() => setHeroSlide((p) => (p + 1) % trustSlides.length), 4000)
     return () => clearInterval(t)
-  }, [])
+  }, [trustSlides.length])
   const heroHeadlineWords = 'Entrepreneurship is not just about starting a company — it’s about building a mindset.'.split(' ')
   const homeNavItems = [
     { label: 'Home', type: 'anchor', target: 'home' },
