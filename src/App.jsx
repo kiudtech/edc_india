@@ -658,7 +658,7 @@ const trustSlides = [
     tag: 'Recognition',
   },
   {
-    src: '/dubai/Dubai 2026.png',
+    src: '/dubai/dubai_50000.webp',
     caption: 'Dubai Exposure Visit — September 2026',
     title: 'Dubai Edition 2026 🌍',
     desc: "Join India's most exciting international startup exposure program. 4 days in Dubai — live expos, investor networking, desert safari and more. ₹50,000 all-inclusive.",
