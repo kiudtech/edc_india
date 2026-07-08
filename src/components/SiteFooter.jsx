@@ -4,15 +4,15 @@ export default function SiteFooter() {
   return (
     <footer className="bg-gradient-to-b from-[#071f4d] to-[#040e24] text-white">
         {/* Main Footer */}
-        <div className="mx-auto max-w-7xl px-4 pb-10 pt-14 sm:px-6 sm:pt-16">
-          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12">
+        <div className="mx-auto max-w-7xl px-3 pb-8 pt-10 sm:px-6 sm:pb-10 sm:pt-14 lg:pt-16">
+          <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-12 lg:gap-10">
 
             {/* Brand Column */}
             <div className="lg:col-span-4">
               <div className="flex items-center gap-4">
-                <img src="/logo.png" alt="EDC India" className="h-20 w-20 rounded-full bg-white p-1 object-contain shadow-lg shadow-blue-900/40" />
+                <img src="/logo.png" alt="EDC India" className="h-14 w-14 sm:h-20 sm:w-20 rounded-full bg-white p-1 object-contain shadow-lg shadow-blue-900/40" />
                 <div>
-                  <div className="text-lg font-bold leading-tight">Entrepreneurial<br />Development Council</div>
+                  <div className="text-base font-bold leading-tight sm:text-lg">Entrepreneurial<br />Development Council</div>
                   <div className="mt-0.5 text-xs font-semibold tracking-widest text-blue-300">EDC INDIA</div>
                 </div>
               </div>
@@ -102,6 +102,11 @@ export default function SiteFooter() {
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                   </div>
                   <a href="tel:+919821832829" className="text-sm text-white/60 transition hover:text-white">+91 9821832829</a>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/20 text-blue-300">
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                  </div>
                   <a href="tel:+911206054408" className="text-sm text-white/60 transition hover:text-white">+91 1206054408</a>
                 </div>
               </div>
@@ -111,11 +116,11 @@ export default function SiteFooter() {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/10">
-          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-5 sm:flex-row sm:px-6">
-            <div className="text-center text-xs text-white/40 sm:text-left">
+          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-3 py-4 sm:flex-row sm:gap-4 sm:px-6 sm:py-5">
+            <div className="text-center text-[11px] sm:text-xs text-white/40 sm:text-left">
               © {new Date().getFullYear()} Entrepreneurial Development Council India (EDC INDIA). All rights reserved.
             </div>
-            <div className="flex gap-6 text-xs text-white/40">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-[11px] sm:text-xs text-white/40">
               <Link to="/terms" className="transition hover:text-white">Privacy Policy</Link>
               <Link to="/terms" className="transition hover:text-white">Terms of Service</Link>
               <Link to="/terms" className="transition hover:text-white">Refund Policy</Link>

@@ -27,7 +27,10 @@ const allowedOrigins = new Set(configuredOrigins)
 
 // In local development, allow any localhost/127.0.0.1 port to avoid CORS issues
 // when switching Vite ports (5173, 5174, etc.) or using direct backend URLs.
-const isLocalOrigin = (origin) => /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin || '')
+// Also allow ngrok tunnel domains for remote testing.
+const isLocalOrigin = (origin) => 
+  /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin || '') ||
+  /^https?:\/\/([a-z0-9-]+)\.ngrok-free\.dev$/i.test(origin || '')
 
 app.use(cors({
   origin: (origin, callback) => {

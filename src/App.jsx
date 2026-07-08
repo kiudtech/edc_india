@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
-import { Rocket, Lightbulb, Users, Trophy, BookOpen, Building2, Target, Globe, Handshake, Star, Search, GraduationCap, TrendingUp, IndianRupee, Briefcase, BarChart3, Zap, RefreshCw, MapPin, Mail, Phone, University, ChevronRight, Calendar, Plane, Flame } from 'lucide-react'
+import { Rocket, Lightbulb, Users, Trophy, BookOpen, Building2, Target, Globe, Handshake, Star, Search, GraduationCap, TrendingUp, IndianRupee, Briefcase, BarChart3, Zap, RefreshCw, MapPin, Mail, Phone, University, ChevronLeft, ChevronRight, Calendar, Plane, Flame } from 'lucide-react'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
@@ -32,6 +32,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import DubaiEventPage from './pages/DubaiEventPage'
 import CollegeRatingSection from './components/CollegeRatingSection'
 import { getAllFaqItems } from './data/faqs'
+import { API_BASE } from './config'
 
 const offerings = [
   { title: 'Idea Validation', desc: 'Get a detailed validation report and clear direction for your next step.', icon: <Search className="h-6 w-6" />, route: '/membership-validation' },
@@ -432,20 +433,20 @@ const ContactCard = ({ form }) => {
       className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-lg transition-all duration-300"
     >
       <div className={`h-1.5 w-full bg-gradient-to-r ${form.gradient}`} />
-      <div className="p-7">
+      <div className="p-5 sm:p-7">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${form.bg} text-3xl shadow-sm`}>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className={`flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl ${form.bg} text-2xl sm:text-3xl shadow-sm`}>
               {form.icon}
             </div>
             <div>
-              <div className={`text-base font-bold ${form.accent}`}>{form.title}</div>
+              <div className={`text-sm sm:text-base font-bold ${form.accent}`}>{form.title}</div>
               <div className="text-xs text-slate-500 mt-0.5">{form.desc}</div>
             </div>
           </div>
           <button
             onClick={() => setOpen(!open)}
-            className={`ml-4 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${open ? 'border-slate-300 bg-slate-100 rotate-45' : 'border-slate-200 bg-white hover:bg-slate-50'}`}
+            className={`ml-2 sm:ml-4 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${open ? 'border-slate-300 bg-slate-100 rotate-45' : 'border-slate-200 bg-white hover:bg-slate-50'}`}
           >
             <svg className="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -626,6 +627,40 @@ const Home = () => {
   const [plansError, setPlansError] = useState('')
   const [heroSlide, setHeroSlide] = useState(0)
 
+  const tabsRef = useRef(null)
+  const [showLeftArrow, setShowLeftArrow] = useState(false)
+  const [showRightArrow, setShowRightArrow] = useState(true)
+
+  const checkScroll = useCallback(() => {
+    if (tabsRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current
+      // If layout hasn't rendered widths yet, assume we need right arrow if we have tabs
+      if (scrollWidth === 0) {
+        setShowLeftArrow(false)
+        setShowRightArrow(true)
+        return
+      }
+      setShowLeftArrow(scrollLeft > 5)
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5)
+    }
+  }, [])
+
+  useEffect(() => {
+    const el = tabsRef.current
+    if (el) {
+      el.addEventListener('scroll', checkScroll)
+      checkScroll()
+      // Run checking after short timeout to let browser layout settle
+      const t = setTimeout(checkScroll, 200)
+      window.addEventListener('resize', checkScroll)
+      return () => {
+        el.removeEventListener('scroll', checkScroll)
+        window.removeEventListener('resize', checkScroll)
+        clearTimeout(t)
+      }
+    }
+  }, [checkScroll])
+
   const trustSlides = useMemo(() => [
     {
       src: '/stories/Copy of WhatsApp Image 2023-12-16 at 12.59.52.jpeg',
@@ -765,6 +800,12 @@ const Home = () => {
     return () => document.removeEventListener('keydown', handleEscape)
   }, [mobileMenuOpen])
 
+  // Body scroll lock when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [mobileMenuOpen])
+
   useEffect(() => {
     const fetchPlans = async () => {
       setPlansError('')
@@ -821,9 +862,9 @@ const Home = () => {
     >
       <Lightbox item={lightbox} onClose={() => setLightbox(null)} />
       <nav className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="EDC India" className="h-11 w-11 rounded-full bg-white object-contain" />
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-2.5 sm:px-6 sm:py-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img src="/logo.png" alt="EDC India" className="h-9 w-9 sm:h-11 sm:w-11 rounded-full bg-white object-contain" />
             <div className="text-sm font-semibold text-slate-800">EDC India</div>
           </div>
 
@@ -854,7 +895,7 @@ const Home = () => {
           <div className="flex items-center gap-3">
             <Link
               to="/login"
-              className="inline-flex h-9 items-center rounded-full border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 sm:hidden"
+              className="inline-flex h-9 shrink-0 items-center rounded-full border border-slate-200 bg-white px-2.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 sm:hidden"
               onClick={handleRouteNavTop}
             >
               Login
@@ -894,19 +935,19 @@ const Home = () => {
               animate="open"
               exit="closed"
             >
-              <div className="mx-auto max-w-7xl px-4 pb-4 pt-2 sm:px-6">
-                <div className="overflow-hidden rounded-b-[1.5rem] border border-slate-200/80 border-t-0 bg-white p-3 shadow-[0_20px_40px_-30px_rgba(15,23,42,0.58)] backdrop-blur-xl">
+              <div className="mx-auto max-w-7xl px-3 pb-3 pt-1.5 sm:px-6 sm:pb-4 sm:pt-2">
+                <div className="overflow-hidden rounded-b-[1.5rem] border border-slate-200/80 border-t-0 bg-white p-2.5 sm:p-3 shadow-[0_20px_40px_-30px_rgba(15,23,42,0.58)] backdrop-blur-xl">
                   <div className="flex flex-col gap-1 text-sm font-semibold text-slate-700">
                     {homeNavItems.map((item) => (
                       <motion.div key={item.label} variants={homeMobileItemVariants}>
                         {item.type === 'route' ? (
                           <Link
                             to={item.to}
-                            className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                            className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-3 py-2 text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
                             onClick={handleRouteNavTop}
                           >
                             <span className="flex items-center gap-3">
-                              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700">{item.label.charAt(0)}</span>
+                               <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700">{item.label.charAt(0)}</span>
                               <span>{item.label}</span>
                             </span>
                             <svg className="h-4 w-4 text-slate-400 transition group-hover:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -916,11 +957,11 @@ const Home = () => {
                         ) : (
                           <a
                             href={`#${item.target}`}
-                            className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                            className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-3 py-2 text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
                             onClick={() => setMobileMenuOpen(false)}
                           >
                             <span className="flex items-center gap-3">
-                              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700">{item.label.charAt(0)}</span>
+                               <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700">{item.label.charAt(0)}</span>
                               <span>{item.label}</span>
                             </span>
                             <svg className="h-4 w-4 text-slate-400 transition group-hover:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -956,47 +997,56 @@ const Home = () => {
       </nav>
 
       {/* ═══════════════ ANNOUNCEMENT STRIP ═══════════════ */}
-      <div className="relative z-0 bg-gradient-to-r from-amber-500 to-orange-600 text-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-3 gap-y-1.5 px-4 py-2 text-center">
-          <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold">
-            <Flame className="h-3.5 w-3.5" />
-            Applications Open — Dubai 2026 · ₹50,000 All-Inclusive · Limited Seats
+      <div className="relative z-0 bg-gradient-to-r from-amber-500 to-orange-600 text-white py-1.5 sm:py-2.5">
+        <Link
+          to="/events/dubai-2026"
+          onClick={handleRouteNavTop}
+          className="group mx-auto flex max-w-7xl items-center justify-center gap-1.5 px-3 text-center sm:px-4 hover:brightness-105 active:scale-[0.99] transition duration-200"
+        >
+          <Flame className="h-3.5 w-3.5 text-amber-300 animate-pulse shrink-0" />
+          <span className="text-[10px] sm:text-xs font-bold tracking-wide">
+            {/* Desktop text */}
+            <span className="hidden md:inline">
+              Applications Open — Dubai 2026 · ₹50,000 All-Inclusive · Limited Seats
+            </span>
+            {/* Tablet text */}
+            <span className="hidden sm:inline md:hidden">
+              Dubai 2026 · ₹50,000 All-Inclusive · Apply Now
+            </span>
+            {/* Mobile text */}
+            <span className="inline sm:hidden">
+              Dubai 2026: ₹50k All-Inclusive · Apply Now
+            </span>
           </span>
-          <Link
-            to="/events/dubai-2026"
-            onClick={handleRouteNavTop}
-            className="inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-0.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wide backdrop-blur-sm transition hover:bg-white/30"
-          >
-            Apply Now <span className="ml-0.5">→</span>
-          </Link>
-        </div>
+          <span className="text-[10px] sm:text-xs font-extrabold ml-0.5 inline-block transition-transform duration-200 group-hover:translate-x-1">→</span>
+        </Link>
       </div>
 
       {/* ═══════════════ HERO ═══════════════ */}
       <section id="home" className="relative overflow-hidden bg-gradient-to-br from-[#0b1e4d] via-[#1a3a8f] to-[#0f2d6b]">
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
-        <div className="blob-float absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-blue-400/10 blur-3xl" />
-        <div className="blob-float-reverse absolute -bottom-32 -left-32 h-[400px] w-[400px] rounded-full bg-indigo-400/10 blur-3xl" />
+        <div className="blob-float absolute -right-40 -top-40 h-[250px] w-[250px] sm:h-[500px] sm:w-[500px] rounded-full bg-blue-400/10 blur-3xl" />
+        <div className="blob-float-reverse absolute -bottom-32 -left-32 h-[200px] w-[200px] sm:h-[400px] sm:w-[400px] rounded-full bg-indigo-400/10 blur-3xl" />
 
-        <div className="relative z-10 mx-auto max-w-7xl px-4 pt-10 pb-0 sm:px-6 sm:pt-14 lg:pt-16 xl:pt-20">
+        <div className="relative z-10 mx-auto max-w-7xl px-3 pt-6 pb-0 sm:px-6 sm:pt-14 lg:pt-16 xl:pt-20">
 
           {/* ── TWO COLUMN SPLIT ── */}
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-10 lg:gap-14 items-start">
 
             {/* ══ LEFT COLUMN — text + dynamic gallery info ══ */}
             <div className="flex flex-col">
               <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ duration: 0.7 }}>
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-sm">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] sm:text-[11px] sm:px-4 font-semibold text-white/80 backdrop-blur-sm">
                   <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
                   Building founders through clarity, execution, and ecosystem support.
                 </div>
                 <motion.h1
-                  className="mt-8 text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem]"
+                  className="mt-5 sm:mt-8 text-[2rem] font-bold leading-tight tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem]"
                   variants={staggerContainer} initial="hidden" animate="visible"
                 >
                   {heroHeadlineWords.map((word, index) => (
                     <motion.span key={`${word}-${index}`} variants={staggerItem} data-text={word}
-                      className={`inline-block mr-3 ${index >= heroHeadlineWords.length - 4 ? 'hero-premium-accent' : 'text-white'}`}>
+                      className={`inline-block mr-[0.35em] sm:mr-3 ${index >= heroHeadlineWords.length - 4 ? 'hero-premium-accent' : 'text-white'}`}>
                       {word}
                     </motion.span>
                   ))}
@@ -1006,11 +1056,11 @@ const Home = () => {
                 <p className="mt-5 max-w-xl text-base leading-relaxed text-white/60 sm:text-lg">
                   Courses, Funding, Global Exposure &amp; Startup Growth Ecosystem
                 </p>
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Link to="/join" onClick={handleRouteNavTop} className="cta-pulse group rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-blue-700 shadow-2xl transition hover:bg-blue-50 lg:px-8 lg:py-4 lg:text-base">
+                <div className="mt-6 sm:mt-8 grid grid-cols-2 sm:flex sm:flex-row gap-2.5 sm:gap-4">
+                  <Link to="/join" onClick={handleRouteNavTop} className="cta-pulse group rounded-full bg-white px-3 py-3 sm:px-7 sm:py-3.5 text-xs sm:text-sm font-semibold text-blue-700 shadow-2xl transition hover:bg-blue-50 text-center lg:px-8 lg:py-4 lg:text-base w-full sm:w-auto flex items-center justify-center whitespace-nowrap">
                     Join Now <span className="ml-1 inline-block transition group-hover:translate-x-1">→</span>
                   </Link>
-                  <a href="#programs" className="rounded-full border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 lg:px-8 lg:py-4 lg:text-base">
+                  <a href="#programs" className="rounded-full border border-white/30 bg-white/10 px-3 py-3 sm:px-7 sm:py-3.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 text-center lg:px-8 lg:py-4 lg:text-base w-full sm:w-auto flex items-center justify-center whitespace-nowrap">
                     Explore Programs
                   </a>
                 </div>
@@ -1023,7 +1073,7 @@ const Home = () => {
               className="flex flex-col"
             >
               {/* Big photo */}
-              <div className="relative rounded-2xl overflow-hidden group" style={{ height: '480px' }}>
+              <div className="relative rounded-2xl overflow-hidden group h-[220px] sm:h-[340px] lg:h-[480px]">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={heroSlide}
@@ -1046,14 +1096,14 @@ const Home = () => {
 
               {/* Prev / Next */}
               <button onClick={() => setHeroSlide(p => (p - 1 + trustSlides.length) % trustSlides.length)}
-                className="absolute left-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-white/20 opacity-0 group-hover:opacity-100"
+                className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-white/20 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                 aria-label="Previous">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
               </button>
               <button onClick={() => setHeroSlide(p => (p + 1) % trustSlides.length)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-white/20 opacity-0 group-hover:opacity-100"
+                className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-white/20 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                 aria-label="Next">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
 
               {/* Dot indicators */}
@@ -1074,9 +1124,9 @@ const Home = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.35 }}
-                  className="mt-4 space-y-3"
+                  className="mt-3 space-y-2 sm:mt-4 sm:space-y-3"
                 >
-                  <h3 className="text-xl font-black text-white leading-snug sm:text-2xl">
+                  <h3 className="text-lg font-black text-white leading-snug sm:text-xl lg:text-2xl">
                     {trustSlides[heroSlide].title}
                   </h3>
                   <p className="text-sm leading-relaxed text-white/65">
@@ -1092,7 +1142,7 @@ const Home = () => {
                   <Link
                     to={trustSlides[heroSlide].cta.to}
                     onClick={handleRouteNavTop}
-                    className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-[1.03] ${trustSlides[heroSlide].highlight ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-slate-900 shadow-lg shadow-amber-500/25' : 'bg-white/15 border border-white/20 text-white hover:bg-white/25'}`}
+                    className={`inline-flex items-center gap-2 rounded-xl px-5 py-3 sm:py-2.5 text-sm font-bold transition hover:scale-[1.03] ${trustSlides[heroSlide].highlight ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-slate-900 shadow-lg shadow-amber-500/25' : 'bg-white/15 border border-white/20 text-white hover:bg-white/25'}`}
                   >
                     {trustSlides[heroSlide].cta.label}
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -1105,7 +1155,7 @@ const Home = () => {
 
           {/* ── FULL-WIDTH STAT TILES ── */}
           <motion.div
-            className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 pb-14"
+            className="mt-6 sm:mt-10 grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-4 pb-8 sm:pb-14"
             variants={staggerContainer} initial="hidden" animate="visible"
           >
             {[
@@ -1114,9 +1164,11 @@ const Home = () => {
               { num: 100, label: 'Partners', icon: <Handshake className="h-5 w-5 text-white/70" />, suffix: '+' },
               { num: 25, label: 'Countries', icon: <Globe className="h-5 w-5 text-white/70" />, suffix: '+' },
             ].map((stat) => (
-              <motion.div key={stat.label} variants={staggerItem} className="card-hover-glow rounded-2xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm transition duration-300 hover:-translate-y-1">
-                <div className="flex justify-center">{stat.icon}</div>
-                <Counter value={stat.num} label={stat.label} prefix={stat.prefix || ''} suffix={stat.suffix} className="mt-1 text-xl font-bold text-white sm:text-2xl" labelClassName="mt-1 text-xs font-medium text-white/60" />
+              <motion.div key={stat.label} variants={staggerItem} className="card-hover-glow rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4 flex flex-row sm:flex-col items-center sm:justify-center gap-3 sm:gap-0 text-left sm:text-center backdrop-blur-sm transition duration-300 hover:-translate-y-1">
+                <div className="flex justify-center text-white/70 shrink-0 sm:mb-1">{stat.icon}</div>
+                <div>
+                  <Counter value={stat.num} label={stat.label} prefix={stat.prefix || ''} suffix={stat.suffix} className="text-base sm:text-2xl font-bold text-white block" labelClassName="mt-0.5 sm:mt-1 text-[10px] sm:text-xs font-medium text-white/60 block" />
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -1128,16 +1180,16 @@ const Home = () => {
 
 
       {/* ═══════════════ ABOUT ═══════════════ */}
-      <section id="about" className="bg-gradient-to-br from-slate-50 to-blue-50/30 py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <motion.div className="grid gap-10 lg:grid-cols-2" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
+      <section id="about" className="bg-gradient-to-br from-slate-50 to-blue-50/30 py-12 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6">
+        <motion.div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-10" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
           <motion.div variants={slideFromLeft} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Who We Are</div>
-            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Empowering Startups Across India</h2>
+            <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Empowering Startups Across India</h2>
             <p className="mt-4 text-sm leading-relaxed text-slate-600">
               Entrepreneurial Development Council (EDC India) is a mission-driven organization working to build and strengthen the entrepreneurial ecosystem across India and globally. Since 2019, we have been actively working to spread entrepreneurial awareness, enable innovation, and help individuals understand that entrepreneurship is not limited to starting a startup — it is a way of thinking, solving, and creating impact.
             </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            <div className="mt-5 sm:mt-8 grid gap-3 sm:gap-4 sm:grid-cols-2">
               {[
                 { title: 'Vision for Startup India', icon: <Target className="h-5 w-5 text-blue-600" /> },
                 { title: 'Global Entrepreneurship Focus', icon: <Globe className="h-5 w-5 text-blue-600" /> },
@@ -1156,7 +1208,7 @@ const Home = () => {
           </motion.div>
           <motion.div variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 }} className="rounded-2xl border border-slate-100 bg-gradient-to-br from-[#0b1e4d] to-[#1a3a8f] p-5 shadow-sm sm:p-8">
             <div className="text-xs uppercase tracking-[0.3em] text-white/50">Growth Timeline</div>
-            <div className="mt-6 space-y-6">
+            <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
               {timeline.map((item, index) => (
                 <div key={item.year} className="flex gap-4">
                   <div className="flex flex-col items-center">
@@ -1194,10 +1246,10 @@ const Home = () => {
         <div className="absolute top-0 left-0 right-0 h-[2px] z-10" style={{ background: 'linear-gradient(90deg, transparent 0%, #c9a84c 30%, #f5d78e 50%, #c9a84c 70%, transparent 100%)' }} />
 
         {/* Ambient glow orbs */}
-        <div className="absolute left-1/4 top-1/2 h-[400px] w-[400px] rounded-full blur-[140px] z-0" style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)' }} />
-        <div className="absolute right-1/4 top-1/2 h-[300px] w-[300px] rounded-full blur-[120px] z-0" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.08) 0%, transparent 70%)' }} />
+        <div className="absolute left-1/4 top-1/2 h-[200px] w-[200px] sm:h-[400px] sm:w-[400px] rounded-full blur-[140px] z-0" style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)' }} />
+        <div className="absolute right-1/4 top-1/2 h-[150px] w-[150px] sm:h-[300px] sm:w-[300px] rounded-full blur-[120px] z-0" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.08) 0%, transparent 70%)' }} />
 
-        <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 py-8 sm:py-10 lg:py-12">
+        <div className="relative z-10 mx-auto max-w-[1400px] px-3 sm:px-6 py-6 sm:py-10 lg:py-12">
 
           {/* Top label + headline — compact horizontal layout */}
           <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} className="mb-6">
@@ -1209,7 +1261,7 @@ const Home = () => {
                 </span>
                 Upcoming International Exposure Visit
               </div>
-              <h2 className="text-3xl font-black sm:text-4xl lg:text-5xl leading-none tracking-tight">
+              <h2 className="text-2xl font-black sm:text-3xl lg:text-5xl leading-none tracking-tight">
                 <span className="text-white">Dubai </span>
                 <span style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 45%, #c9a84c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Edition 2026</span>
               </h2>
@@ -1263,7 +1315,7 @@ const Home = () => {
               <div className="flex flex-wrap items-center gap-3">
                 <Link
                   to="/events/dubai-2026"
-                  className="inline-flex items-center gap-2 rounded-lg px-5 py-2 text-xs font-bold tracking-wide transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                  className="inline-flex items-center gap-2 rounded-lg px-5 py-2.5 sm:py-2 text-xs font-bold tracking-wide transition-all duration-300 hover:scale-105 hover:shadow-xl w-full sm:w-auto justify-center"
                   style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 50%, #c9a84c 100%)', color: '#0a0a0a', boxShadow: '0 6px 24px rgba(201,168,76,0.3)' }}
                 >
                   <Globe className="h-3.5 w-3.5" />
@@ -1339,7 +1391,7 @@ const Home = () => {
               transition={{ duration: 0.7, delay: 0.2 }} 
               className="col-span-full lg:col-span-5 flex relative"
             >
-              <Link to="/events/dubai-2026" className="block relative lg:absolute lg:inset-0 group cursor-pointer w-full aspect-[3/4] sm:aspect-[4/5] lg:aspect-auto">
+              <Link to="/events/dubai-2026" className="block relative lg:absolute lg:inset-0 group cursor-pointer w-full aspect-[4/3] sm:aspect-[3/4] lg:aspect-auto max-h-[280px] sm:max-h-none">
                   {/* Glowing border effect */}
                   <div className="absolute -inset-1 rounded-xl blur-lg opacity-60 group-hover:opacity-90 transition-opacity duration-500" 
                        style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 50%, #0ea5e9 100%)' }} />
@@ -1386,25 +1438,27 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ PROGRAMS ═══════════════ */}
-      <section id="programs" className="bg-gradient-to-br from-[#0b1e4d] to-[#1a3a8f] py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section id="programs" className="bg-gradient-to-br from-[#0b1e4d] to-[#1a3a8f] py-12 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center">
             <div className="inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/80 backdrop-blur-sm mb-4">What We Do</div>
             <h2 className="mt-4 text-2xl font-bold text-white sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Everything Your Startup Needs</h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-white/60">End-to-end ecosystem support to take your idea from concept to global scale.</p>
           </motion.div>
-          <motion.div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div className="mt-8 sm:mt-12 grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {offerings.map((item) => (
               <motion.div
                 key={item.title}
                 variants={staggerItem}
-                className="animated-border group rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:bg-white/15"
+                className="animated-border group rounded-2xl border border-white/10 bg-white/10 p-3.5 sm:p-6 backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:bg-white/15 flex flex-col justify-between"
                 whileHover={{ scale: 1.03, y: -4 }}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 text-white transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">{item.icon}</div>
-                <div className="mt-4 text-sm font-bold text-white">{item.title}</div>
-                <div className="mt-2 text-xs leading-relaxed text-white/60">{item.desc}</div>
-                <button onClick={() => navigate(item.route)} className="mt-4 inline-block text-xs font-semibold text-cyan-300">Explore →</button>
+                <div>
+                  <div className="flex h-8 w-8 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-white/20 text-white transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 shrink-0 [&_svg]:h-4 [&_svg]:w-4 sm:[&_svg]:h-6 sm:[&_svg]:w-6">{item.icon}</div>
+                  <div className="mt-3 text-xs sm:text-sm font-bold text-white leading-snug">{item.title}</div>
+                  <div className="mt-1.5 text-[10px] sm:text-xs leading-relaxed text-white/50 line-clamp-3 sm:line-clamp-none">{item.desc}</div>
+                </div>
+                <button onClick={() => navigate(item.route)} className="mt-3 inline-block text-[10px] sm:text-xs font-semibold text-cyan-300 text-left">Explore →</button>
               </motion.div>
             ))}
           </motion.div>
@@ -1412,25 +1466,31 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ FUNDING ═══════════════ */}
-      <section id="funding" className="bg-white py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section id="funding" className="bg-white py-12 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
             <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Startup Funding Support</div>
-            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Your Path to Funding</h2>
+            <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Your Path to Funding</h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">A structured approach to make your startup investor-ready.</p>
           </motion.div>
-          <div className="relative mt-12">
+          <div className="relative mt-8 sm:mt-12">
             {/* connector line through icon centers */}
             <div className="hidden lg:block absolute top-5 left-[10%] right-[10%] h-0.5 bg-slate-200 z-0" />
-            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            <div className="flex flex-col lg:grid lg:grid-cols-5 gap-0 lg:gap-4">
               {fundingSteps.map((step, index) => (
-                <div key={step.step} className="flex flex-col items-center text-center group">
-                  {/* icon — same one top and card, perfectly aligned */}
-                  <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
-                    {step.icon}
+                <div key={step.step} className="relative flex flex-row lg:flex-col items-start lg:items-center gap-4 lg:gap-0 group pb-6 lg:pb-0">
+                  {index !== fundingSteps.length - 1 && (
+                    <div className="lg:hidden absolute left-5 top-5 -bottom-6 w-0.5 bg-slate-200 group-hover:bg-blue-400 transition-colors duration-300 z-0" />
+                  )}
+                  {/* Horizontal branch line from vertical connector to the card */}
+                  <div className="lg:hidden absolute left-5 top-5 w-9 h-0.5 bg-slate-200 group-hover:bg-blue-400 transition-colors duration-300 z-0" />
+                  
+                  <div className="flex flex-col items-center shrink-0">
+                    <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform [&_svg]:h-5 [&_svg]:w-5">
+                      {step.icon}
+                    </div>
                   </div>
-                  {/* card below */}
-                  <div className="mt-4 w-full rounded-2xl border border-slate-100 bg-white p-5 shadow-sm text-left transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
+                  <div className="flex-1 lg:mt-4 w-full rounded-2xl border border-slate-100 bg-white p-5 shadow-sm text-left transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Step {index + 1}</div>
                     <div className="mt-2 text-sm font-bold text-slate-800">{step.step}</div>
                     <div className="mt-1 text-xs text-slate-500">{step.text}</div>
@@ -1443,14 +1503,14 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ PLANS ═══════════════ */}
-      <section id="plans" className="bg-gradient-to-br from-slate-50 to-indigo-50/30 py-20 sm:py-28">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 xl:max-w-6xl">
+      <section id="plans" className="bg-gradient-to-br from-slate-50 to-indigo-50/30 py-12 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-5xl px-3 sm:px-6 xl:max-w-6xl">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
             <div className="inline-block rounded-full bg-indigo-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-indigo-600 mb-4">Membership Plans</div>
-            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Choose Your Plan</h2>
+            <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Choose Your Plan</h2>
             <p className="mt-3 text-sm text-slate-500">Two pathways to grow your startup with EDC India</p>
           </motion.div>
-          <motion.div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div className="mt-8 sm:mt-10 grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {plansError && (
               <div className="col-span-full mx-auto mb-5 w-full rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 text-center">
                 {plansError}
@@ -1465,16 +1525,16 @@ const Home = () => {
               const theme = planThemes[index % planThemes.length];
 
               return (
-                <motion.div key={plan.slug || `${plan.name}-${index}`} variants={staggerItem} className={`relative rounded-3xl bg-white p-8 shadow-xl transition hover:-translate-y-1 hover:shadow-2xl ${theme.border}`} whileHover={{ scale: 1.02 }}>
+                <motion.div key={plan.slug || `${plan.name}-${index}`} variants={staggerItem} className={`relative rounded-3xl bg-white p-5 sm:p-8 shadow-xl transition hover:-translate-y-1 hover:shadow-2xl ${theme.border}`} whileHover={{ scale: 1.02 }}>
                   {plan.badge && (
                     <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-semibold ${theme.badgeTheme}`}
                     >
                       {plan.badge}
                     </div>
                   )}
-                  <h3 className="mt-4 text-lg font-bold text-slate-900">{plan.name}</h3>
+                  <h3 className="mt-4 text-base font-bold text-slate-900 sm:text-lg">{plan.name}</h3>
                   <div className="mt-2 flex items-baseline gap-1">
-                    <span className={`text-3xl font-bold ${theme.priceTheme}`}>₹{Number(plan.price || 0).toLocaleString('en-IN')}</span>
+                    <span className={`text-2xl font-bold sm:text-3xl ${theme.priceTheme}`}>₹{Number(plan.price || 0).toLocaleString('en-IN')}</span>
                     <span className="text-xs text-slate-500">{plan.billingText || 'one-time'}</span>
                   </div>
                   <p className="mt-3 text-xs leading-relaxed text-slate-500">{plan.description}</p>
@@ -1499,31 +1559,50 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ COURSES ═══════════════ */}
-      <section id="courses" className="bg-white py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <motion.div className="grid gap-8 lg:grid-cols-[1.1fr_1fr]" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
-          <motion.div variants={slideFromLeft} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }}>
+      <section id="courses" className="bg-white py-12 sm:py-20 lg:py-28 overflow-hidden">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6 w-full max-w-full">
+        <motion.div className="grid gap-6 lg:gap-8 lg:grid-cols-[1.1fr_1fr] w-full max-w-full min-w-0" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
+          <motion.div variants={slideFromLeft} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="w-full max-w-full min-w-0">
             <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Courses</div>
-            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Entrepreneurship Learning Tracks</h2>
+            <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Entrepreneurship Learning Tracks</h2>
             <p className="mt-4 text-sm text-slate-600">Modular tracks built to guide founders from ideation to global expansion.</p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {courseTabs.map((tab) => (
-                <button
-                  key={tab.name}
-                  onClick={() => setActiveTab(tab)}
-                  className={`rounded-full px-4 py-2 text-[11px] font-semibold transition ${activeTab.name === tab.name ? 'bg-primary text-white shadow-sm' : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
-                >
-                  {tab.name}
-                </button>
-              ))}
+            <div className="relative mt-6 w-full max-w-full overflow-hidden">
+              {showLeftArrow && (
+                <div className="sm:hidden absolute left-0 top-0 bottom-2 w-10 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none z-10 flex items-center justify-start">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-slate-500 shadow-[0_2px_8px_rgba(0,0,0,0.12)] border border-slate-100 backdrop-blur-sm">
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                  </div>
+                </div>
+              )}
+              {showRightArrow && (
+                <div className="sm:hidden absolute right-0 top-0 bottom-2 w-10 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none z-10 flex items-center justify-end">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-slate-500 shadow-[0_2px_8px_rgba(0,0,0,0.12)] border border-slate-100 backdrop-blur-sm">
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </div>
+                </div>
+              )}
+              <div
+                ref={tabsRef}
+                className="flex flex-row overflow-x-auto gap-2 pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
+              >
+                {courseTabs.map((tab) => (
+                  <button
+                    key={tab.name}
+                    onClick={() => setActiveTab(tab)}
+                    className={`shrink-0 rounded-full px-4 py-2.5 text-[11px] font-semibold transition ${activeTab.name === tab.name ? 'bg-primary text-white shadow-sm' : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
+                  >
+                    {tab.name}
+                  </button>
+                ))}
+              </div>
             </div>
           </motion.div>
-          <motion.div variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 }} className="rounded-2xl border-2 border-transparent bg-white p-5 shadow-sm sm:p-8" style={{ background: 'linear-gradient(white, white) padding-box, linear-gradient(135deg, #3b82f6, #06b6d4) border-box' }}>
-            <div className="text-lg font-bold text-slate-800">{activeTab.name}</div>
-            <p className="mt-3 text-sm text-slate-600">{activeTab.description}</p>
-            <div className="mt-6 space-y-3">
+          <motion.div variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 }} className="rounded-2xl border-2 border-transparent bg-white p-4 shadow-sm sm:p-8 w-full max-w-full min-w-0" style={{ background: 'linear-gradient(white, white) padding-box, linear-gradient(135deg, #3b82f6, #06b6d4) border-box' }}>
+            <div className="text-base sm:text-lg font-bold text-slate-800">{activeTab.name}</div>
+            <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm text-slate-600">{activeTab.description}</p>
+            <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
               {activeTab.topics.map((topic) => (
-                <div key={topic} className="flex items-center gap-3 text-sm text-slate-700">
+                <div key={topic} className="flex items-center gap-3 text-xs sm:text-sm text-slate-700">
                   <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
                   {topic}
                 </div>
@@ -1535,8 +1614,8 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ PARTNERS ═══════════════ */}
-      <section id="partners" className="bg-gradient-to-br from-[#0b1e4d] to-[#1a3a8f] py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section id="partners" className="bg-gradient-to-br from-[#0b1e4d] to-[#1a3a8f] py-12 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
             <div className="inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/80 backdrop-blur-sm mb-4">College Tie-Ups</div>
             <h2 className="mt-4 text-2xl font-bold text-white sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Trusted by Leading Institutions</h2>
@@ -1564,16 +1643,18 @@ const Home = () => {
               ))}
             </Swiper>
           </div>
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="mt-6 sm:mt-8 grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-4">
             {[
               { num: 120, label: 'Partner Hubs', icon: <Building2 className="h-5 w-5" /> },
               { num: 27, label: 'States Covered', icon: <MapPin className="h-5 w-5" /> },
               { num: 45, label: 'Student Reach', suffix: 'K+', icon: <Users className="h-5 w-5" /> },
               { num: 300, label: 'Innovation Labs', icon: <Zap className="h-5 w-5" /> },
             ].map((stat) => (
-              <div key={stat.label} className="rounded-xl border border-white/10 bg-white/10 p-5 text-center backdrop-blur-sm">
-                <div className="flex justify-center text-white/60 mb-2">{stat.icon}</div>
-                <Counter value={stat.num} label={stat.label} suffix={stat.suffix || '+'} className="text-xl font-bold text-white" labelClassName="mt-1 text-xs font-medium text-white/60" />
+              <div key={stat.label} className="rounded-xl border border-white/10 bg-white/10 p-3 sm:p-5 flex flex-row sm:flex-col items-center sm:justify-center gap-3 sm:gap-0 text-left sm:text-center backdrop-blur-sm">
+                <div className="flex justify-center text-white/60 shrink-0 sm:mb-2">{stat.icon}</div>
+                <div>
+                  <Counter value={stat.num} label={stat.label} suffix={stat.suffix || '+'} className="text-base sm:text-xl font-bold text-white block" labelClassName="mt-0.5 sm:mt-1 text-[10px] sm:text-xs font-medium text-white/60 block" />
+                </div>
               </div>
             ))}
           </div>
@@ -1581,23 +1662,25 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ INSTITUTIONAL PRESENCE ═══════════════ */}
-      <section className="overflow-hidden bg-white py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section className="overflow-hidden bg-white py-12 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
             <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Our Presence</div>
-            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Our Institutional Presence</h2>
+            <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Our Institutional Presence</h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500">Empowering entrepreneurship across leading institutions nationwide.</p>
           </motion.div>
         </div>
-        <div className="relative mt-12">
-          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-white to-transparent" />
-          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-white to-transparent" />
-          <div className="marquee-track">
+        <div className="relative mt-8 sm:mt-12">
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-12 sm:w-24 bg-gradient-to-r from-white to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 sm:w-24 bg-gradient-to-l from-white to-transparent" />
+
+          {/* Desktop/Tablet Marquee (Single Row) */}
+          <div className="hidden sm:block marquee-track">
             <div className="marquee-inner">
               {[0, 1].map((setIdx) => (
                 <div key={setIdx} className="flex shrink-0 items-center gap-8">
                   {['1-2.webp','1.webp','10.webp','11.webp','12.webp','13.webp','14.webp','15.webp','16.webp','17.webp','18.webp','19.webp','2.webp','20.webp','21.webp','22-3.webp','22.webp','23.webp','24.webp','25.webp','3.webp','4.webp','5.webp','6.webp','7.webp','8-3.webp','8.webp'].map((file) => (
-                    <div key={`${setIdx}-${file}`} className="flex h-20 w-36 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-3 shadow-sm sm:h-24 sm:w-44">
+                    <div key={`${setIdx}-${file}`} className="flex h-16 w-28 sm:h-20 sm:w-36 md:h-24 md:w-44 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-2 sm:p-3 shadow-sm">
                       <img src={`/insti/${file}`} alt="Institution" className="max-h-full max-w-full object-contain" loading="lazy" />
                     </div>
                   ))}
@@ -1605,27 +1688,60 @@ const Home = () => {
               ))}
             </div>
           </div>
+
+          {/* Mobile Marquee (Two Rows, LTR + RTL, Slow Speed) */}
+          <div className="block sm:hidden space-y-4">
+            {/* Row 1: Left to Right (LTR) */}
+            <div className="marquee-track overflow-hidden">
+              <div className="flex w-max animate-[marquee-ltr_45s_linear_infinite]">
+                {[0, 1].map((setIdx) => (
+                  <div key={setIdx} className="flex shrink-0 items-center gap-4 px-2">
+                    {['1-2.webp','1.webp','10.webp','11.webp','12.webp','13.webp','14.webp','15.webp','16.webp','17.webp','18.webp','19.webp','2.webp','20.webp'].map((file) => (
+                      <div key={`${setIdx}-${file}`} className="flex h-16 w-28 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-2 shadow-sm">
+                        <img src={`/insti/${file}`} alt="Institution" className="max-h-full max-w-full object-contain" loading="lazy" />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Row 2: Right to Left (RTL) */}
+            <div className="marquee-track overflow-hidden">
+              <div className="flex w-max animate-[marquee-rtl_48s_linear_infinite]">
+                {[0, 1].map((setIdx) => (
+                  <div key={setIdx} className="flex shrink-0 items-center gap-4 px-2">
+                    {['21.webp','22-3.webp','22.webp','23.webp','24.webp','25.webp','3.webp','4.webp','5.webp','6.webp','7.webp','8-3.webp','8.webp'].map((file) => (
+                      <div key={`${setIdx}-${file}`} className="flex h-16 w-28 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-2 shadow-sm">
+                        <img src={`/insti/${file}`} alt="Institution" className="max-h-full max-w-full object-contain" loading="lazy" />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ═══════════════ STARTUPS SHOWCASE ═══════════════ */}
-      <section className="bg-slate-50 py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section className="bg-slate-50 py-12 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
             <div className="inline-block rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-700 mb-4">Startup Portfolio</div>
-            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Startups We Have Started</h2>
+            <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Startups We Have Started</h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500">A glimpse of ventures initiated and supported through the EDC India ecosystem.</p>
           </motion.div>
 
           <motion.div
-            className="mt-12 flex flex-wrap items-center justify-center gap-6 sm:gap-8"
+            className="mt-8 sm:mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-8"
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
           >
             {['s1.jpeg', 's2.jpeg', 's3.jpeg', 's4.jpeg'].map((file) => (
-              <motion.div key={file} variants={staggerItem} className="flex h-20 w-36 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-3 shadow-sm sm:h-24 sm:w-44">
+              <motion.div key={file} variants={staggerItem} className="flex h-16 w-28 sm:h-20 sm:w-36 md:h-24 md:w-44 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-2 sm:p-3 shadow-sm">
                 <img src={`/startups/${file}`} alt="Startup" className="max-h-full max-w-full object-contain" loading="lazy" />
               </motion.div>
             ))}
@@ -1634,18 +1750,18 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ RANK YOUR COLLEGE ═══════════════ */}
-      <section id="ranking" className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50/40 py-20 sm:py-28">
+      <section id="ranking" className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50/40 py-12 sm:py-20 lg:py-28">
         <div className="absolute -top-32 -right-32 h-[400px] w-[400px] rounded-full bg-blue-100/60 blur-[100px]" />
         <div className="absolute -bottom-32 -left-32 h-[400px] w-[400px] rounded-full bg-indigo-100/60 blur-[100px]" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-8 sm:mb-12 lg:mb-16">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-primary mb-6">🏆 Apply for Recognition</div>
-            <h2 className="text-4xl font-extrabold text-slate-900 sm:text-5xl">Rank Your <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">College</span></h2>
+            <h2 className="text-2xl font-extrabold text-slate-900 sm:text-4xl lg:text-5xl">Rank Your <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">College</span></h2>
             <p className="mx-auto mt-4 max-w-xl text-slate-500">Get recognized by India's most transparent innovation & incubation ranking.</p>
           </motion.div>
 
-          <div className="grid gap-10 lg:grid-cols-2 items-center">
+          <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-10 items-center">
             {/* Left — stats/benefits */}
             <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="space-y-5">
               {[
@@ -1654,8 +1770,8 @@ const Home = () => {
                 { icon: '🏆', title: 'National Recognition', desc: 'Awards, certificates, and public recognition' },
                 { icon: '🌐', title: 'Global Visibility', desc: "Featured in EDC India's national reports and media" },
               ].map((item, i) => (
-                <motion.div key={i} variants={staggerItem} whileHover={{ x: 4 }} className="flex items-start gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-blue-100">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-2xl">{item.icon}</div>
+                <motion.div key={i} variants={staggerItem} whileHover={{ x: 4 }} className="flex items-start gap-3 sm:gap-4 rounded-2xl border border-slate-100 bg-white p-4 sm:p-5 shadow-sm transition hover:shadow-md hover:border-blue-100">
+                  <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl sm:text-2xl">{item.icon}</div>
                   <div>
                     <div className="font-bold text-slate-800">{item.title}</div>
                     <div className="mt-0.5 text-sm text-slate-500">{item.desc}</div>
@@ -1667,7 +1783,7 @@ const Home = () => {
             {/* Right — form */}
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="relative">
               <div className="absolute -inset-2 rounded-3xl bg-gradient-to-br from-blue-100 to-indigo-100 blur-xl opacity-60" />
-              <div className="relative rounded-3xl border border-slate-100 bg-white p-8 shadow-xl">
+              <div className="relative rounded-3xl border border-slate-100 bg-white p-5 sm:p-8 shadow-xl">
                 <div className="mb-6 flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-secondary text-2xl text-white shadow-lg">🏆</div>
                   <div>
@@ -1738,7 +1854,7 @@ const Home = () => {
                       <textarea name="message" id="message" rows={3} className="mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 transition focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Tell us about your institution..." />
                     </div>
                   </div>
-                  <div className="mt-6 flex gap-3">
+                  <div className="mt-6 flex flex-col sm:flex-row gap-3">
                     <button type="submit" className="flex-1 rounded-xl bg-gradient-to-r from-primary to-secondary py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:opacity-90 active:scale-95">
                       Apply for Ranking →
                     </button>
@@ -1756,16 +1872,16 @@ const Home = () => {
       <CollegeRatingSection />
 
       {/* ═══════════════ IMPACT ═══════════════ */}
-      <section id="impact" className="bg-white py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section id="impact" className="bg-white py-12 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
             <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Our Impact</div>
-            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Numbers That Speak</h2>
+            <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Numbers That Speak</h2>
           </motion.div>
-          <motion.div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div className="mt-8 sm:mt-12 grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {impactStats.map((stat) => (
-              <motion.div key={stat.label} variants={staggerItem} whileHover={{ scale: 1.05, y: -4 }} className="card-hover-glow rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm transition hover:shadow-xl hover:border-blue-100">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-200">{stat.icon}</div>
+              <motion.div key={stat.label} variants={staggerItem} whileHover={{ scale: 1.05, y: -4 }} className="card-hover-glow rounded-2xl border border-slate-100 bg-white p-4 sm:p-6 text-center shadow-sm transition hover:shadow-xl hover:border-blue-100">
+                <div className="mx-auto flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-200">{stat.icon}</div>
                 <Counter value={stat.value} label={stat.label} className="mt-3 text-3xl font-bold text-blue-600" labelClassName="mt-1 text-xs font-medium text-slate-500" />
               </motion.div>
             ))}
@@ -1774,33 +1890,33 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ GALLERY ═══════════════ */}
-      <section id="gallery" className="relative overflow-hidden bg-gradient-to-br from-[#0b1e4d] via-[#0f2d6b] to-[#1a3a8f] py-20 sm:py-28">
+      <section id="gallery" className="relative overflow-hidden bg-gradient-to-br from-[#0b1e4d] via-[#0f2d6b] to-[#1a3a8f] py-12 sm:py-20 lg:py-28">
         {/* bg grid */}
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
         <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-blue-400/10 blur-[120px]" />
         <div className="absolute -bottom-40 -left-40 h-[400px] w-[400px] rounded-full bg-indigo-400/10 blur-[100px]" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-white/70 backdrop-blur-sm mb-6">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-8 sm:mb-14">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-white/70 backdrop-blur-sm mb-4 sm:mb-6">
               <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse" /> Startup Showcase
             </div>
-            <h2 className="text-4xl font-extrabold text-white sm:text-5xl">Stories That <span className="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">Inspire</span></h2>
+            <h2 className="text-2xl font-extrabold text-white sm:text-4xl lg:text-5xl">Stories That <span className="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">Inspire</span></h2>
             <p className="mx-auto mt-4 max-w-xl text-white/50 text-sm">A glimpse into the journeys of founders, demo days, and global events.</p>
           </motion.div>
 
-          <div className="relative mt-4 space-y-4 overflow-hidden">
+          <div className="relative mt-2 sm:mt-4 space-y-3 sm:space-y-4 overflow-hidden">
             {/* fade edges */}
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-[#0b1e4d] to-transparent" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-[#0b1e4d] to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 sm:w-24 bg-gradient-to-r from-[#0b1e4d] to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 sm:w-24 bg-gradient-to-l from-[#0b1e4d] to-transparent" />
 
             {/* Row 1 — left to right */}
-            <div className="flex gap-4" style={{ animation: 'marquee-ltr 35s linear infinite' }}>
+            <div className="flex gap-2 sm:gap-4 marquee-ltr">
               {[...galleryItems, ...galleryItems].map((item, i) => (
                 <button
                   key={`ltr-${i}`}
                   onClick={() => setLightbox(item.label)}
-                  className="group relative shrink-0 w-72 h-48 overflow-hidden rounded-2xl focus:outline-none"
+                  className="group relative shrink-0 w-52 h-36 sm:w-64 sm:h-44 lg:w-72 lg:h-48 overflow-hidden rounded-2xl focus:outline-none"
                 >
                   <img src={`/stories/${item.file}`} alt={item.label} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
@@ -1815,12 +1931,12 @@ const Home = () => {
             </div>
 
             {/* Row 2 — right to left */}
-            <div className="flex gap-4" style={{ animation: 'marquee-rtl 40s linear infinite' }}>
+            <div className="flex gap-2 sm:gap-4 marquee-rtl">
               {[...galleryItems.slice().reverse(), ...galleryItems.slice().reverse()].map((item, i) => (
                 <button
                   key={`rtl-${i}`}
                   onClick={() => setLightbox(item.label)}
-                  className="group relative shrink-0 w-72 h-48 overflow-hidden rounded-2xl focus:outline-none"
+                  className="group relative shrink-0 w-52 h-36 sm:w-64 sm:h-44 lg:w-72 lg:h-48 overflow-hidden rounded-2xl focus:outline-none"
                 >
                   <img src={`/stories/${item.file}`} alt={item.label} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
@@ -1838,16 +1954,16 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ TESTIMONIALS ═══════════════ */}
-      <section id="testimonials" className="bg-white py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section id="testimonials" className="bg-white py-12 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
             <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Testimonials</div>
-            <h2 className="mt-4 text-4xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Trusted by Founders & Investors</h2>
+            <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Trusted by Founders & Investors</h2>
           </motion.div>
-          <motion.div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div className="mt-8 sm:mt-12 grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {testimonials.map((item) => (
-              <motion.div key={item.name} variants={staggerItem} whileHover={{ y: -4 }} className="rounded-3xl border border-slate-100 bg-white p-8 shadow-lg transition hover:shadow-2xl">
-                <div className="text-3xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">&ldquo;</div>
+              <motion.div key={item.name} variants={staggerItem} whileHover={{ y: -4 }} className="rounded-3xl border border-slate-100 bg-white p-5 sm:p-8 shadow-lg transition hover:shadow-2xl">
+                <div className="text-2xl sm:text-3xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">&ldquo;</div>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.text}</p>
                 <div className="mt-5 flex items-center gap-3 border-t border-slate-100 pt-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{item.initials}</div>
@@ -1863,17 +1979,17 @@ const Home = () => {
       </section>
 
       {/* ═══════════════ CONTACT ═══════════════ */}
-      <section id="contact" className="relative bg-gradient-to-br from-[#f0f4ff] via-white to-[#fff7f0] py-20 sm:py-28 overflow-hidden">
-        <div className="pointer-events-none absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-blue-100/40 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-40 -right-40 h-[500px] w-[500px] rounded-full bg-orange-100/30 blur-3xl" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+      <section id="contact" className="relative bg-gradient-to-br from-[#f0f4ff] via-white to-[#fff7f0] py-12 sm:py-20 lg:py-28 overflow-hidden">
+        <div className="pointer-events-none absolute -top-40 -left-40 h-[300px] w-[300px] sm:h-[500px] sm:w-[500px] rounded-full bg-blue-100/40 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-40 -right-40 h-[300px] w-[300px] sm:h-[500px] sm:w-[500px] rounded-full bg-orange-100/30 blur-3xl" />
+        <div className="relative mx-auto max-w-7xl px-3 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">Get Started</div>
-            <h2 className="mt-4 text-3xl font-extrabold text-slate-900 sm:text-4xl lg:text-5xl">Applications & Partnerships</h2>
+            <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-5xl">Applications & Partnerships</h2>
             <p className="mx-auto mt-4 max-w-xl text-base text-slate-500">Pick your path and let's build together.</p>
           </motion.div>
 
-          <motion.div className="mt-16 grid gap-6 sm:grid-cols-2 items-start" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div className="mt-10 sm:mt-16 grid gap-5 sm:gap-6 sm:grid-cols-2 items-start" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {[
               { title: 'Startup Application', formType: 'startup_application', cta: 'Apply Now', icon: '🚀', gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50', accent: 'text-blue-600', ring: 'focus:ring-blue-500/20 focus:border-blue-500', btn: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700', desc: 'Join the EDC India startup ecosystem.', successMessage: 'Thank you for applying to Startup Application. Our team will process your request shortly and get back to you.' },
               { title: 'Investor Interest', formType: 'investor_interest', cta: 'Join as Investor', icon: '💼', gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50', accent: 'text-emerald-600', ring: 'focus:ring-emerald-500/20 focus:border-emerald-500', btn: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700', desc: 'Connect with high-potential founders.', successMessage: 'Thank you for your investor interest. We will process your query shortly and connect with you.' },
@@ -1892,22 +2008,22 @@ const Home = () => {
         <div className="pointer-events-none absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(#0b3d91 1px,transparent 1px),linear-gradient(90deg,#0b3d91 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="rounded-[2rem] border border-white/70 bg-white/70 p-6 shadow-[0_28px_56px_-34px_rgba(15,23,42,0.55)] backdrop-blur-xl sm:p-8 lg:p-10">
+          <div className="rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-[0_28px_56px_-34px_rgba(15,23,42,0.55)] backdrop-blur-xl sm:p-6 lg:p-10">
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-700">
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-[11px] font-bold text-white">Q</span>
                 Frequently Asked Questions
               </div>
-              <h2 className="mt-4 text-3xl font-extrabold text-slate-900 sm:text-4xl">Quick Answers Before You Apply</h2>
+              <h2 className="mt-4 text-xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl">Quick Answers Before You Apply</h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500">Four quick answers from our complete FAQ guide for rankings, applications, and evaluation details.</p>
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              <div className="mt-3 sm:mt-5 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                 <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Curated Preview</span>
                 <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Ranking + Application FAQs</span>
                 <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Updated for 2026 Event</span>
               </div>
             </motion.div>
 
-            <motion.div className="mt-10 grid gap-5 sm:grid-cols-2" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <motion.div className="mt-6 sm:mt-10 grid gap-4 sm:gap-5 sm:grid-cols-2" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
               {faqPreviewItems.map((faq, faqIndex) => {
                 const theme = faqCardThemes[faqIndex % faqCardThemes.length]
                 return (
@@ -1916,7 +2032,7 @@ const Home = () => {
               })}
             </motion.div>
 
-            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="mt-8 text-center">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="mt-6 sm:mt-8 text-center">
               <Link
                 to="/faq"
                 onClick={handleRouteNavTop}

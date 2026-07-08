@@ -268,19 +268,19 @@ export default function CollegeRatingSection({ theme = 'blue', noBg = false }) {
   }
 
   return (
-    <section id="college-ratings" className={`relative overflow-hidden ${noBg ? 'bg-gradient-to-br from-slate-50 to-teal-50/30' : dt.section} py-20 sm:py-28`}>
+    <section id="college-ratings" className={`relative overflow-hidden ${noBg ? 'bg-gradient-to-br from-slate-50 to-teal-50/30' : dt.section} py-12 sm:py-20 lg:py-28`}>
       {!noBg && <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '60px 60px' }} />}
       {!noBg && <div className={`pointer-events-none absolute -left-20 top-12 h-[400px] w-[400px] rounded-full ${dt.blob1} blur-[100px]`} />}
       {!noBg && <div className={`pointer-events-none absolute -right-16 bottom-0 h-[350px] w-[350px] rounded-full ${dt.blob2} blur-[100px]`} />}
       {noBg && <div className="pointer-events-none absolute -left-20 top-12 h-[400px] w-[400px] rounded-full bg-teal-100/60 blur-[100px]" />}
       {noBg && <div className="pointer-events-none absolute -right-16 bottom-0 h-[350px] w-[350px] rounded-full bg-cyan-100/60 blur-[100px]" />}
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
+      <div className="relative z-10 mx-auto max-w-7xl px-3 sm:px-6">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-8 sm:mb-14">
           <div className={`inline-flex items-center gap-2 rounded-full border ${t.badgeBorder} px-5 py-2 text-xs font-semibold uppercase tracking-widest ${t.badge} mb-6`}>
             <span className={`h-1.5 w-1.5 rounded-full ${t.badgeDot} animate-pulse`} /> Community Ratings
           </div>
-          <h2 className={`text-4xl font-extrabold ${t.headingText} sm:text-5xl`}>
+          <h2 className={`text-2xl font-extrabold ${t.headingText} sm:text-3xl lg:text-5xl`}>
             Rate Your College <span className={`bg-gradient-to-r ${t.headingGrad} bg-clip-text text-transparent`}>Experience</span>
           </h2>
           <p className={`mx-auto mt-4 max-w-2xl text-sm leading-relaxed ${t.descText} sm:text-base`}>
@@ -291,7 +291,7 @@ export default function CollegeRatingSection({ theme = 'blue', noBg = false }) {
         <div className={showLiveRankingSnapshot ? 'grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start' : ''}>
           <motion.form onSubmit={handleSubmit} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
             className={`${showLiveRankingSnapshot ? '' : 'mx-auto max-w-5xl '}overflow-hidden rounded-3xl border ${t.formBg}`}>
-            <div className={`border-b ${t.formHeader} px-6 py-5 sm:px-8`}>
+            <div className={`border-b ${t.formHeader} px-4 py-4 sm:px-6 sm:py-5 lg:px-8`}>
               <div className="flex items-center gap-3">
                 <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.iconBg} text-xl`}>⭐</div>
                 <div>
@@ -301,7 +301,7 @@ export default function CollegeRatingSection({ theme = 'blue', noBg = false }) {
               </div>
             </div>
 
-            <div className="space-y-6 p-6 sm:p-8">
+            <div className="space-y-6 p-4 sm:p-6 lg:p-8">
               <div className={`rounded-2xl border px-4 py-3 text-xs font-medium ${privacyNoticeClass}`}>
                 Your name and email are collected only for verification and will be kept anonymous in public ratings.
               </div>
@@ -393,12 +393,12 @@ export default function CollegeRatingSection({ theme = 'blue', noBg = false }) {
                     )
                   })}
                 </div>
-                <div className={`mt-4 flex items-center justify-between rounded-2xl border ${t.scoreBar} px-5 py-3`}>
+                <div className={`mt-4 flex flex-col sm:flex-row items-center justify-between rounded-2xl border ${t.scoreBar} px-4 py-3 sm:px-5 gap-2`}>
                   <div className="flex items-center gap-2">
                     <Star className={`h-5 w-5 ${t.starFill}`} />
                     <span className={`text-sm font-bold ${t.scoreOverallText}`}>Overall Score</span>
                   </div>
-                  <span className={`text-lg font-extrabold ${t.scoreText}`}>{overallRating ? `${overallRating} / 5` : 'Rate all 10 to calculate'}</span>
+                  <span className={`text-sm sm:text-lg font-extrabold ${t.scoreText}`}>{overallRating ? `${overallRating} / 5` : 'Rate all 10 to calculate'}</span>
                 </div>
               </div>
 
