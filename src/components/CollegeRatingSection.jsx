@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
-import { motion } from 'framer-motion'
-import { Search, Star } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Search, Star, ChevronDown, ChevronUp } from 'lucide-react'
 import { API_BASE } from '../config'
 
 const fadeUp = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } } }
@@ -160,6 +160,15 @@ export default function CollegeRatingSection({ theme = 'blue', noBg = false }) {
   const [showLiveRankingSnapshot, setShowLiveRankingSnapshot] = useState(false)
   const [leaderboard, setLeaderboard] = useState([])
   const [leaderboardLoading, setLeaderboardLoading] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const [formExpanded, setFormExpanded] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const fetchCollegeOptions = useCallback(async (queryText, page = 1, append = false) => {
     const nq = normalizeCollegeValue(queryText)
@@ -289,19 +298,52 @@ export default function CollegeRatingSection({ theme = 'blue', noBg = false }) {
         </motion.div>
 
         <div className={showLiveRankingSnapshot ? 'grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start' : ''}>
-          <motion.form onSubmit={handleSubmit} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
-            className={`${showLiveRankingSnapshot ? '' : 'mx-auto max-w-5xl '}overflow-hidden rounded-3xl border ${t.formBg}`}>
-            <div className={`border-b ${t.formHeader} px-4 py-4 sm:px-6 sm:py-5 lg:px-8`}>
-              <div className="flex items-center gap-3">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.iconBg} text-xl`}>⭐</div>
-                <div>
-                  <div className={`font-extrabold ${t.titleText}`}>Anonymous College Rating</div>
-                  <div className={`text-xs ${t.subText}`}>Your identity is never stored or shared</div>
+          {(() => {
+            const t = LIGHT_THEME
+            const textInputClass = 'mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-teal-400 focus:bg-white'
+            const privacyNoticeClass = 'border-teal-200 bg-teal-50 text-teal-700'
+            const noBg = true
+            return (
+              <motion.form onSubmit={handleSubmit} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
+                className={`${showLiveRankingSnapshot ? '' : 'mx-auto max-w-5xl '}overflow-hidden rounded-3xl border ${t.formBg}`}>
+                <div
+                  onClick={() => {
+                    if (isMobile) {
+                      setFormExpanded(!formExpanded)
+                    }
+                  }}
+                  className={`flex items-center justify-between cursor-pointer sm:cursor-default select-none group/hdr ${(!isMobile || formExpanded) ? `border-b ${t.formHeader}` : ''} px-4 py-4 sm:px-6 sm:py-5 lg:px-8 transition-all duration-300`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${t.iconBg} text-teal-600 transition-transform duration-300 group-hover/hdr:scale-105`}>
+                      <Star className="h-5 w-5 fill-teal-600 text-teal-600" />
+                    </div>
+                    <div>
+                      <div className={`font-extrabold ${t.titleText} transition-colors duration-300 group-hover/hdr:text-primary`}>Anonymous College Rating</div>
+                      <div className={`text-xs ${t.subText} flex flex-wrap items-center gap-1 sm:gap-1.5`}>
+                        <span>Your identity is never stored or shared</span>
+                        <span className="sm:hidden text-primary font-semibold inline-flex items-center gap-1 bg-blue-50/55 px-2 py-0.5 rounded-full text-[10px] border border-blue-100/50">
+                          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                          Click to rate
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50/55 text-blue-600 border border-blue-100/50 sm:hidden transition-all duration-300 group-hover/hdr:scale-110">
+                    {formExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+            <AnimatePresence initial={false}>
+              {(!isMobile || formExpanded) && (
+                <motion.div
+                  initial={isMobile ? { height: 0, opacity: 0 } : false}
+                  animate={isMobile ? { height: 'auto', opacity: 1 } : false}
+                  exit={isMobile ? { height: 0, opacity: 0 } : false}
+                  transition={{ duration: 0.25, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="space-y-6 p-4 sm:p-6 lg:p-8">
               <div className={`rounded-2xl border px-4 py-3 text-xs font-medium ${privacyNoticeClass}`}>
                 Your name and email are collected only for verification and will be kept anonymous in public ratings.
               </div>
@@ -420,8 +462,13 @@ export default function CollegeRatingSection({ theme = 'blue', noBg = false }) {
                 className={`w-full rounded-2xl bg-gradient-to-r ${t.submitBtn} py-3.5 text-sm font-bold text-white shadow-lg transition hover:opacity-90 disabled:opacity-50`}>
                 {submitting ? 'Submitting...' : 'Submit Anonymous Rating'}
               </button>
-            </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.form>
+        )
+      })()}
 
           {showLiveRankingSnapshot && (
             <motion.aside variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}

@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
-import { Rocket, Lightbulb, Users, Trophy, BookOpen, Building2, Target, Globe, Handshake, Star, Search, GraduationCap, TrendingUp, IndianRupee, Briefcase, BarChart3, Zap, RefreshCw, MapPin, Mail, Phone, University, ChevronLeft, ChevronRight, Calendar, Plane, Flame } from 'lucide-react'
+import { Rocket, Lightbulb, Users, Trophy, BookOpen, Building2, Target, Globe, Handshake, Star, Search, GraduationCap, TrendingUp, IndianRupee, Briefcase, BarChart3, Zap, RefreshCw, MapPin, Mail, Phone, University, ChevronLeft, ChevronRight, Calendar, Plane, Flame, ChevronDown, ChevronUp } from 'lucide-react'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
@@ -32,6 +32,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import DubaiEventPage from './pages/DubaiEventPage'
 import CollegeRatingSection from './components/CollegeRatingSection'
 import { getAllFaqItems } from './data/faqs'
+import FAQTextLine from './components/FAQTextLine'
 import { API_BASE } from './config'
 
 const offerings = [
@@ -426,29 +427,38 @@ const ContactCard = ({ form }) => {
     }
   }
 
+  const hoverBorderClass = {
+    'text-blue-600': 'hover:border-blue-200 hover:shadow-blue-50/20',
+    'text-emerald-600': 'hover:border-emerald-200 hover:shadow-emerald-50/20',
+    'text-purple-600': 'hover:border-purple-200 hover:shadow-purple-50/20',
+    'text-orange-600': 'hover:border-orange-200 hover:shadow-orange-50/20',
+  }[form.accent] || 'hover:border-slate-300'
+
   return (
     <motion.div
       variants={staggerItem}
       layout
-      className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-lg transition-all duration-300"
+      className={`overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-sm transition-all duration-300 hover:shadow-xl ${hoverBorderClass}`}
     >
-      <div className={`h-1.5 w-full bg-gradient-to-r ${form.gradient}`} />
       <div className="p-5 sm:p-7">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className={`flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl ${form.bg} text-2xl sm:text-3xl shadow-sm`}>
+            <div className={`flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl ${form.bg} ${form.accent} shadow-sm shadow-slate-100`}>
               {form.icon}
             </div>
             <div>
-              <div className={`text-sm sm:text-base font-bold ${form.accent}`}>{form.title}</div>
+              <div className="text-sm sm:text-base font-extrabold text-slate-800">{form.title}</div>
               <div className="text-xs text-slate-500 mt-0.5">{form.desc}</div>
             </div>
           </div>
           <button
             onClick={() => setOpen(!open)}
-            className={`ml-2 sm:ml-4 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${open ? 'border-slate-300 bg-slate-100 rotate-45' : 'border-slate-200 bg-white hover:bg-slate-50'}`}
+            className={`ml-2 sm:ml-4 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${open
+                ? 'border-slate-300 bg-slate-100 rotate-45 text-slate-600'
+                : 'border-slate-200 bg-white text-slate-400 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-600'
+              }`}
           >
-            <svg className="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
           </button>
@@ -529,25 +539,30 @@ const FaqAccordionCard = ({ faq, theme }) => {
   return (
     <motion.article
       variants={staggerItem}
-      className={`group relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-[0_18px_34px_-26px_rgba(15,23,42,0.6)] transition ${theme.hover}`}
+      className={`group relative overflow-hidden transition-all duration-300 border-b border-slate-100 last:border-b-0 bg-transparent rounded-none shadow-none sm:border sm:border-slate-200/90 sm:bg-white sm:rounded-3xl sm:shadow-[0_18px_34px_-26px_rgba(15,23,42,0.6)] ${theme.hover}`}
     >
-      <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${theme.bar}`} />
+      <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${theme.bar} hidden sm:block`} />
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full p-5 text-left"
+        className="w-full py-4 px-0 sm:p-5 text-left focus:outline-none"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
-            <div className={`inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${theme.chip} mb-3`}>
+            <div className={`inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${theme.chip} mb-3 hidden sm:inline-flex`}>
               {faq.category}
             </div>
-            <h3 className="text-sm font-bold text-slate-900 sm:text-base">{faq.question}</h3>
+            <h3 className="text-sm font-semibold text-slate-800 sm:font-bold sm:text-slate-900 leading-snug">{faq.question}</h3>
           </div>
-          <span className={`mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm transition-transform duration-300 ${theme.icon} ${open ? 'rotate-45' : ''}`}>
+          {/* Desktop Toggle Icon */}
+          <span className={`mt-1 hidden sm:inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm transition-transform duration-300 ${theme.icon} ${open ? 'rotate-45' : ''}`}>
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
+          </span>
+          {/* Mobile Toggle Icon */}
+          <span className={`mt-0.5 inline-flex sm:hidden h-5 w-5 shrink-0 items-center justify-center text-slate-400 transition-transform duration-300 ${open ? 'rotate-180 text-primary' : ''}`}>
+            <ChevronDown className="h-4 w-4" />
           </span>
         </div>
       </button>
@@ -558,16 +573,18 @@ const FaqAccordionCard = ({ faq, theme }) => {
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         style={{ overflow: 'hidden' }}
       >
-        <div className="px-5 pb-5 space-y-2">
+        <div className="pb-4 px-0 sm:px-5 sm:pb-5 space-y-2">
           {faq.answer.map((line, i) => (
-            <p key={i} className="text-sm leading-relaxed text-slate-600">{line}</p>
+            <p key={i} className="text-[13px] sm:text-sm leading-relaxed text-slate-600">
+              <FAQTextLine text={line} bulletClass={theme.bullet} />
+            </p>
           ))}
           {Array.isArray(faq.points) && faq.points.length > 0 && (
-            <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
+            <ul className="mt-2 space-y-1.5 text-[13px] sm:text-sm text-slate-600">
               {faq.points.map((point, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${theme.bullet}`} />
-                  <span>{point}</span>
+                  <span><FAQTextLine text={point} bulletClass={theme.bullet} /></span>
                 </li>
               ))}
             </ul>
@@ -625,6 +642,23 @@ const Home = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [plans, setPlans] = useState(defaultPlans)
   const [plansError, setPlansError] = useState('')
+  const [expandedPlans, setExpandedPlans] = useState({})
+  const [isMobile, setIsMobile] = useState(false)
+  const [formExpanded, setFormExpanded] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const togglePlan = (key) => {
+    setExpandedPlans((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }))
+  }
   const [heroSlide, setHeroSlide] = useState(0)
 
   const tabsRef = useRef(null)
@@ -947,7 +981,7 @@ const Home = () => {
                             onClick={handleRouteNavTop}
                           >
                             <span className="flex items-center gap-3">
-                               <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700">{item.label.charAt(0)}</span>
+                              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700">{item.label.charAt(0)}</span>
                               <span>{item.label}</span>
                             </span>
                             <svg className="h-4 w-4 text-slate-400 transition group-hover:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -961,7 +995,7 @@ const Home = () => {
                             onClick={() => setMobileMenuOpen(false)}
                           >
                             <span className="flex items-center gap-3">
-                               <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700">{item.label.charAt(0)}</span>
+                              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700">{item.label.charAt(0)}</span>
                               <span>{item.label}</span>
                             </span>
                             <svg className="h-4 w-4 text-slate-400 transition group-hover:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -1036,12 +1070,8 @@ const Home = () => {
             {/* ══ LEFT COLUMN — text + dynamic gallery info ══ */}
             <div className="flex flex-col">
               <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ duration: 0.7 }}>
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] sm:text-[11px] sm:px-4 font-semibold text-white/80 backdrop-blur-sm">
-                  <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
-                  Building founders through clarity, execution, and ecosystem support.
-                </div>
                 <motion.h1
-                  className="mt-5 sm:mt-8 text-[2rem] font-bold leading-tight tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem]"
+                  className="mt-1 sm:mt-2 text-[2rem] font-bold leading-tight tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem]"
                   variants={staggerContainer} initial="hidden" animate="visible"
                 >
                   {heroHeadlineWords.map((word, index) => (
@@ -1074,47 +1104,47 @@ const Home = () => {
             >
               {/* Big photo */}
               <div className="relative rounded-2xl overflow-hidden group h-[220px] sm:h-[340px] lg:h-[480px]">
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={heroSlide}
-                  src={trustSlides[heroSlide].src}
-                  alt={trustSlides[heroSlide].caption}
-                  className="absolute inset-0 h-full w-full object-cover object-center"
-                  initial={{ opacity: 0, scale: 1.04 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.55 }}
-                />
-              </AnimatePresence>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={heroSlide}
+                    src={trustSlides[heroSlide].src}
+                    alt={trustSlides[heroSlide].caption}
+                    className="absolute inset-0 h-full w-full object-cover object-center"
+                    initial={{ opacity: 0, scale: 1.04 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.55 }}
+                  />
+                </AnimatePresence>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-              {/* Tag */}
-              <div className={`absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md ${trustSlides[heroSlide].highlight ? 'bg-amber-500 text-black' : 'bg-black/40 border border-white/20 text-white'}`}>
-                {trustSlides[heroSlide].highlight && <span className="h-1.5 w-1.5 rounded-full bg-black animate-pulse" />}
-                {trustSlides[heroSlide].tag}
+                {/* Tag */}
+                <div className={`absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md ${trustSlides[heroSlide].highlight ? 'bg-amber-500 text-black' : 'bg-black/40 border border-white/20 text-white'}`}>
+                  {trustSlides[heroSlide].highlight && <span className="h-1.5 w-1.5 rounded-full bg-black animate-pulse" />}
+                  {trustSlides[heroSlide].tag}
+                </div>
+
+                {/* Prev / Next */}
+                <button onClick={() => setHeroSlide(p => (p - 1 + trustSlides.length) % trustSlides.length)}
+                  className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-white/20 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                  aria-label="Previous">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+                </button>
+                <button onClick={() => setHeroSlide(p => (p + 1) % trustSlides.length)}
+                  className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-white/20 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                  aria-label="Next">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+                </button>
+
+                {/* Dot indicators */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  {trustSlides.map((_, i) => (
+                    <button key={i} onClick={() => setHeroSlide(i)}
+                      className={`rounded-full transition-all duration-300 ${i === heroSlide ? 'w-6 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'}`}
+                      aria-label={`Slide ${i + 1}`} />
+                  ))}
+                </div>
               </div>
-
-              {/* Prev / Next */}
-              <button onClick={() => setHeroSlide(p => (p - 1 + trustSlides.length) % trustSlides.length)}
-                className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-white/20 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
-                aria-label="Previous">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-              </button>
-              <button onClick={() => setHeroSlide(p => (p + 1) % trustSlides.length)}
-                className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-white/20 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
-                aria-label="Next">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-              </button>
-
-              {/* Dot indicators */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-                {trustSlides.map((_, i) => (
-                  <button key={i} onClick={() => setHeroSlide(i)}
-                    className={`rounded-full transition-all duration-300 ${i === heroSlide ? 'w-6 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'}`}
-                    aria-label={`Slide ${i + 1}`} />
-                ))}
-              </div>
-            </div>
 
               {/* Dynamic text below photo */}
               <AnimatePresence mode="wait">
@@ -1145,7 +1175,7 @@ const Home = () => {
                     className={`inline-flex items-center gap-2 rounded-xl px-5 py-3 sm:py-2.5 text-sm font-bold transition hover:scale-[1.03] ${trustSlides[heroSlide].highlight ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-slate-900 shadow-lg shadow-amber-500/25' : 'bg-white/15 border border-white/20 text-white hover:bg-white/25'}`}
                   >
                     {trustSlides[heroSlide].cta.label}
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
                   </Link>
                 </motion.div>
               </AnimatePresence>
@@ -1182,49 +1212,49 @@ const Home = () => {
       {/* ═══════════════ ABOUT ═══════════════ */}
       <section id="about" className="bg-gradient-to-br from-slate-50 to-blue-50/30 py-12 sm:py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-3 sm:px-6">
-        <motion.div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-10" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
-          <motion.div variants={slideFromLeft} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Who We Are</div>
-            <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Empowering Startups Across India</h2>
-            <p className="mt-4 text-sm leading-relaxed text-slate-600">
-              Entrepreneurial Development Council (EDC India) is a mission-driven organization working to build and strengthen the entrepreneurial ecosystem across India and globally. Since 2019, we have been actively working to spread entrepreneurial awareness, enable innovation, and help individuals understand that entrepreneurship is not limited to starting a startup — it is a way of thinking, solving, and creating impact.
-            </p>
-            <div className="mt-5 sm:mt-8 grid gap-3 sm:gap-4 sm:grid-cols-2">
-              {[
-                { title: 'Vision for Startup India', icon: <Target className="h-5 w-5 text-blue-600" /> },
-                { title: 'Global Entrepreneurship Focus', icon: <Globe className="h-5 w-5 text-blue-600" /> },
-                { title: 'Trusted Corporate Network', icon: <Handshake className="h-5 w-5 text-blue-600" /> },
-                { title: 'Premium Talent Pipeline', icon: <Star className="h-5 w-5 text-blue-600" /> },
-              ].map((item) => (
-                <div key={item.title} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100/50">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">{item.icon}</span>
-                    <div className="text-sm font-bold text-slate-800">{item.title}</div>
+          <motion.div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-10" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
+            <motion.div variants={slideFromLeft} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }}>
+              <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Who We Are</div>
+              <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Empowering Startups Across India</h2>
+              <p className="mt-4 text-sm leading-relaxed text-slate-600">
+                Entrepreneurial Development Council (EDC India) is a mission-driven organization working to build and strengthen the entrepreneurial ecosystem across India and globally. Since 2019, we have been actively working to spread entrepreneurial awareness, enable innovation, and help individuals understand that entrepreneurship is not limited to starting a startup — it is a way of thinking, solving, and creating impact.
+              </p>
+              <div className="mt-5 sm:mt-8 grid gap-3 sm:gap-4 sm:grid-cols-2">
+                {[
+                  { title: 'Vision for Startup India', icon: <Target className="h-5 w-5 text-blue-600" /> },
+                  { title: 'Global Entrepreneurship Focus', icon: <Globe className="h-5 w-5 text-blue-600" /> },
+                  { title: 'Trusted Corporate Network', icon: <Handshake className="h-5 w-5 text-blue-600" /> },
+                  { title: 'Premium Talent Pipeline', icon: <Star className="h-5 w-5 text-blue-600" /> },
+                ].map((item) => (
+                  <div key={item.title} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100/50">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">{item.icon}</span>
+                      <div className="text-sm font-bold text-slate-800">{item.title}</div>
+                    </div>
+                    <div className="mt-2 text-xs text-slate-500">Building a high-impact entrepreneurship and innovation ecosystem.</div>
                   </div>
-                  <div className="mt-2 text-xs text-slate-500">Building a high-impact entrepreneurship and innovation ecosystem.</div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </motion.div>
+            <motion.div variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 }} className="rounded-2xl border border-slate-100 bg-gradient-to-br from-[#0b1e4d] to-[#1a3a8f] p-5 shadow-sm sm:p-8">
+              <div className="text-xs uppercase tracking-[0.3em] text-white/50">Growth Timeline</div>
+              <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
+                {timeline.map((item, index) => (
+                  <div key={item.year} className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="h-3 w-3 rounded-full bg-cyan-400" />
+                      {index !== timeline.length - 1 && <div className="h-full w-px bg-white/20" />}
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-cyan-300">{item.year}</div>
+                      <div className="text-sm font-bold text-white">{item.title}</div>
+                      <div className="text-xs text-white/60">{item.text}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
-          <motion.div variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 }} className="rounded-2xl border border-slate-100 bg-gradient-to-br from-[#0b1e4d] to-[#1a3a8f] p-5 shadow-sm sm:p-8">
-            <div className="text-xs uppercase tracking-[0.3em] text-white/50">Growth Timeline</div>
-            <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
-              {timeline.map((item, index) => (
-                <div key={item.year} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="h-3 w-3 rounded-full bg-cyan-400" />
-                    {index !== timeline.length - 1 && <div className="h-full w-px bg-white/20" />}
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-cyan-300">{item.year}</div>
-                    <div className="text-sm font-bold text-white">{item.title}</div>
-                    <div className="text-xs text-white/60">{item.text}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </motion.div>
         </div>
       </section>
 
@@ -1328,106 +1358,106 @@ const Home = () => {
 
               {/* Highlights card - moved here */}
               <motion.div variants={slideFromRight} transition={{ duration: 0.7, delay: 0.15 }} className="relative">
-              
-              <div className="relative">
-              <div className="absolute -inset-2 rounded-2xl blur-2xl" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.12), rgba(14,165,233,0.08))' }} />
 
-              <div className="relative rounded-2xl p-4 sm:p-5" style={{ background: 'linear-gradient(145deg, rgba(10,20,40,0.96) 0%, rgba(5,12,28,0.98) 100%)', border: '1px solid rgba(201,168,76,0.22)', boxShadow: '0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,168,76,0.12)' }}>
+                <div className="relative">
+                  <div className="absolute -inset-2 rounded-2xl blur-2xl" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.12), rgba(14,165,233,0.08))' }} />
 
-                {/* Card header */}
-                <div className="flex items-center gap-2.5 mb-4">
-                  <div className="h-6 w-0.5 rounded-full" style={{ background: 'linear-gradient(to bottom, #f5d78e, #c9a84c)' }} />
-                  <h3 className="text-xs font-bold text-white tracking-wide uppercase" style={{ letterSpacing: '0.08em' }}>Program Highlights</h3>
-                </div>
+                  <div className="relative rounded-2xl p-4 sm:p-5" style={{ background: 'linear-gradient(145deg, rgba(10,20,40,0.96) 0%, rgba(5,12,28,0.98) 100%)', border: '1px solid rgba(201,168,76,0.22)', boxShadow: '0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,168,76,0.12)' }}>
 
-                <div className="space-y-3">
-                  {[
-                    { icon: <Rocket className="h-4 w-4" />, title: 'International Startup Exposure', desc: "Deep dive into Dubai's world-class innovation ecosystem" },
-                    { icon: <Handshake className="h-4 w-4" />, title: 'Mentorship & Guidance', desc: 'Learn directly from global industry leaders and investors' },
-                    { icon: <TrendingUp className="h-4 w-4" />, title: 'Funding Opportunities', desc: 'Exclusive investor interactions and pitch sessions' },
-                    { icon: <Globe className="h-4 w-4" />, title: 'Global Market Access', desc: 'Strategies for scaling your venture beyond borders' },
-                  ].map((highlight, idx) => (
-                    <div key={idx} className="flex gap-2.5 group">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110" style={{ background: 'rgba(201,168,76,0.09)', border: '1px solid rgba(201,168,76,0.18)', color: '#c9a84c' }}>
-                        {highlight.icon}
-                      </div>
-                      <div className="pt-0.5">
-                        <div className="text-[11px] font-bold text-white">{highlight.title}</div>
-                        <div className="text-[10px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>{highlight.desc}</div>
+                    {/* Card header */}
+                    <div className="flex items-center gap-2.5 mb-4">
+                      <div className="h-6 w-0.5 rounded-full" style={{ background: 'linear-gradient(to bottom, #f5d78e, #c9a84c)' }} />
+                      <h3 className="text-xs font-bold text-white tracking-wide uppercase" style={{ letterSpacing: '0.08em' }}>Program Highlights</h3>
+                    </div>
+
+                    <div className="space-y-3">
+                      {[
+                        { icon: <Rocket className="h-4 w-4" />, title: 'International Startup Exposure', desc: "Deep dive into Dubai's world-class innovation ecosystem" },
+                        { icon: <Handshake className="h-4 w-4" />, title: 'Mentorship & Guidance', desc: 'Learn directly from global industry leaders and investors' },
+                        { icon: <TrendingUp className="h-4 w-4" />, title: 'Funding Opportunities', desc: 'Exclusive investor interactions and pitch sessions' },
+                        { icon: <Globe className="h-4 w-4" />, title: 'Global Market Access', desc: 'Strategies for scaling your venture beyond borders' },
+                      ].map((highlight, idx) => (
+                        <div key={idx} className="flex gap-2.5 group">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110" style={{ background: 'rgba(201,168,76,0.09)', border: '1px solid rgba(201,168,76,0.18)', color: '#c9a84c' }}>
+                            {highlight.icon}
+                          </div>
+                          <div className="pt-0.5">
+                            <div className="text-[11px] font-bold text-white">{highlight.title}</div>
+                            <div className="text-[10px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>{highlight.desc}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Who should attend */}
+                    <div className="mt-4 rounded-xl p-3" style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.12)' }}>
+                      <div className="text-[9px] font-bold uppercase tracking-[0.18em] mb-2" style={{ color: '#c9a84c' }}>Who Should Attend</div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {['Young Founders', 'Student Innovators', 'Aspiring Entrepreneurs', 'Startup Founders'].map(tag => (
+                          <span key={tag} className="rounded-md px-2 py-0.5 text-[9px] font-medium" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.65)' }}>
+                            {tag}
+                          </span>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </div>
 
-                {/* Who should attend */}
-                <div className="mt-4 rounded-xl p-3" style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.12)' }}>
-                  <div className="text-[9px] font-bold uppercase tracking-[0.18em] mb-2" style={{ color: '#c9a84c' }}>Who Should Attend</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {['Young Founders', 'Student Innovators', 'Aspiring Entrepreneurs', 'Startup Founders'].map(tag => (
-                      <span key={tag} className="rounded-md px-2 py-0.5 text-[9px] font-medium" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.65)' }}>
-                        {tag}
+                    {/* Decorative footer */}
+                    <div className="mt-3 flex items-center gap-3">
+                      <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(201,168,76,0.25), transparent)' }} />
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(201,168,76,0.45)' }}>
+                        <MapPin className="h-3 w-3" />Dubai, UAE
                       </span>
-                    ))}
+                      <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(201,168,76,0.25))' }} />
+                    </div>
                   </div>
                 </div>
-
-                {/* Decorative footer */}
-                <div className="mt-3 flex items-center gap-3">
-                  <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(201,168,76,0.25), transparent)' }} />
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(201,168,76,0.45)' }}>
-                    <MapPin className="h-3 w-3" />Dubai, UAE
-                  </span>
-                  <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(201,168,76,0.25))' }} />
-                </div>
-              </div>
-              </div>
               </motion.div>
 
             </motion.div>
 
             {/* Right — Dubai Poster */}
-            <motion.div 
-              variants={slideFromRight} 
-              transition={{ duration: 0.7, delay: 0.2 }} 
+            <motion.div
+              variants={slideFromRight}
+              transition={{ duration: 0.7, delay: 0.2 }}
               className="col-span-full lg:col-span-5 flex relative"
             >
               <Link to="/events/dubai-2026" className="block relative lg:absolute lg:inset-0 group cursor-pointer w-full aspect-[4/3] sm:aspect-[3/4] lg:aspect-auto max-h-[280px] sm:max-h-none">
-                  {/* Glowing border effect */}
-                  <div className="absolute -inset-1 rounded-xl blur-lg opacity-60 group-hover:opacity-90 transition-opacity duration-500" 
-                       style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 50%, #0ea5e9 100%)' }} />
-                  
-                  {/* Image container — full height to match left column */}
-                  <div className="relative rounded-xl overflow-hidden h-full w-full" 
-                       style={{ border: '2px solid rgba(201,168,76,0.5)', boxShadow: '0 20px 60px rgba(201,168,76,0.3)' }}>
-                    <img 
-                      src="/dubai/dubai_50000_hoz.jpeg" 
-                      alt="Dubai Edition 2026 — ₹50,000 All Inclusive" 
-                      className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
-                    />
-                    {/* Overlay gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent pointer-events-none" />
-                    
-                    {/* Floating badge */}
-                    <div className="absolute top-4 right-4 rounded-full px-4 py-2 backdrop-blur-md shadow-2xl" 
-                         style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 100%)', border: '1px solid rgba(245,215,142,0.6)' }}>
-                      <span className="text-[10px] font-black text-slate-900 tracking-wider flex items-center gap-1.5">
-                        <span className="relative flex h-2 w-2">
-                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-slate-900 opacity-75"></span>
-                          <span className="relative inline-flex h-2 w-2 rounded-full bg-slate-900"></span>
-                        </span>
-                        FEATURED EVENT
-                      </span>
-                    </div>
+                {/* Glowing border effect */}
+                <div className="absolute -inset-1 rounded-xl blur-lg opacity-60 group-hover:opacity-90 transition-opacity duration-500"
+                  style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 50%, #0ea5e9 100%)' }} />
 
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-white text-lg font-bold mb-2">Click to Explore</div>
-                        <div className="text-cyan-300 text-sm">View Full Event Details →</div>
-                      </div>
+                {/* Image container — full height to match left column */}
+                <div className="relative rounded-xl overflow-hidden h-full w-full"
+                  style={{ border: '2px solid rgba(201,168,76,0.5)', boxShadow: '0 20px 60px rgba(201,168,76,0.3)' }}>
+                  <img
+                    src="/dubai/dubai_50000_hoz.jpeg"
+                    alt="Dubai Edition 2026 — ₹50,000 All Inclusive"
+                    className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
+                  />
+                  {/* Overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent pointer-events-none" />
+
+                  {/* Floating badge */}
+                  <div className="absolute top-4 right-4 rounded-full px-4 py-2 backdrop-blur-md shadow-2xl"
+                    style={{ background: 'linear-gradient(135deg, #c9a84c 0%, #f5d78e 100%)', border: '1px solid rgba(245,215,142,0.6)' }}>
+                    <span className="text-[10px] font-black text-slate-900 tracking-wider flex items-center gap-1.5">
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-slate-900 opacity-75"></span>
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-slate-900"></span>
+                      </span>
+                      FEATURED EVENT
+                    </span>
+                  </div>
+
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-white text-lg font-bold mb-2">Click to Explore</div>
+                      <div className="text-cyan-300 text-sm">View Full Event Details →</div>
                     </div>
                   </div>
-                </Link>
+                </div>
+              </Link>
             </motion.div>
 
           </motion.div>
@@ -1484,7 +1514,7 @@ const Home = () => {
                   )}
                   {/* Horizontal branch line from vertical connector to the card */}
                   <div className="lg:hidden absolute left-5 top-5 w-9 h-0.5 bg-slate-200 group-hover:bg-blue-400 transition-colors duration-300 z-0" />
-                  
+
                   <div className="flex flex-col items-center shrink-0">
                     <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform [&_svg]:h-5 [&_svg]:w-5">
                       {step.icon}
@@ -1510,7 +1540,7 @@ const Home = () => {
             <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Choose Your Plan</h2>
             <p className="mt-3 text-sm text-slate-500">Two pathways to grow your startup with EDC India</p>
           </motion.div>
-          <motion.div className="mt-8 sm:mt-10 grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div className="mt-8 sm:mt-10 hidden sm:grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {plansError && (
               <div className="col-span-full mx-auto mb-5 w-full rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 text-center">
                 {plansError}
@@ -1555,61 +1585,134 @@ const Home = () => {
               );
             })}
           </motion.div>
+
+          {/* Mobile Collapsible View */}
+          <div className="mt-8 flex flex-col gap-4 sm:hidden">
+            {plans.map((plan, index) => {
+              const key = plan.slug || `${plan.name}-${index}`;
+              const isExpanded = !!expandedPlans[key];
+              const planThemes = [
+                { border: 'border border-slate-200', badgeTheme: 'bg-blue-50 text-blue-600', priceTheme: 'text-primary', checkColor: 'text-green-500', btnTheme: 'bg-primary hover:bg-blue-700 shadow-blue-200/50' },
+                { border: 'border border-purple-200', badgeTheme: 'bg-purple-50 text-purple-600', priceTheme: 'text-purple-600', checkColor: 'text-purple-500', btnTheme: 'bg-purple-600 hover:bg-purple-700 shadow-purple-200/50' },
+                { border: 'border border-indigo-200', badgeTheme: 'bg-indigo-50 text-indigo-600', priceTheme: 'text-indigo-600', checkColor: 'text-indigo-500', btnTheme: 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-200/50' },
+              ];
+              const theme = planThemes[index % planThemes.length];
+
+              return (
+                <div key={key} className={`rounded-2xl bg-white p-4 shadow-md transition-all ${theme.border}`}>
+                  {/* Collapsible Header */}
+                  <div
+                    onClick={() => togglePlan(key)}
+                    className="flex items-center justify-between cursor-pointer select-none"
+                  >
+                    <div className="flex flex-col">
+                      {plan.badge && (
+                        <span className={`inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider mb-1.5 ${theme.badgeTheme}`}>
+                          {plan.badge}
+                        </span>
+                      )}
+                      <h3 className="text-sm font-extrabold text-slate-800">{plan.name}</h3>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col items-end">
+                        <span className={`text-base font-extrabold ${theme.priceTheme}`}>₹{Number(plan.price || 0).toLocaleString('en-IN')}</span>
+                        <span className="text-[9px] font-semibold text-slate-500">{plan.billingText || 'one-time'}</span>
+                      </div>
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-50 text-slate-500 border border-slate-100">
+                        {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Collapsible Content */}
+                  <AnimatePresence initial={false}>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pt-4 border-t border-slate-100 mt-3.5">
+                          <p className="text-xs leading-relaxed text-slate-500 mb-4 font-medium">{plan.description}</p>
+                          <ul className="space-y-2.5 text-xs text-slate-600 mb-5 bg-white">
+                            {(plan.features || []).map((f, i) => (
+                              <li key={i} className="flex items-start gap-2 font-semibold">
+                                <span className={`mt-0.5 ${theme.checkColor}`}>✓</span>
+                                <span>{f}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          <button
+                            onClick={() => navigate((plan.ctaRoute || '/join').trim().startsWith('/') ? (plan.ctaRoute || '/join').trim() : `/${(plan.ctaRoute || 'join').trim()}`)}
+                            className={`w-full rounded-xl py-3 text-xs font-semibold text-white shadow-md transition ${theme.btnTheme}`}
+                          >
+                            {(plan.ctaText || 'Join Now')} — ₹{Number(plan.price || 0).toLocaleString('en-IN')}
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
       {/* ═══════════════ COURSES ═══════════════ */}
       <section id="courses" className="bg-white py-12 sm:py-20 lg:py-28 overflow-hidden">
         <div className="mx-auto max-w-7xl px-3 sm:px-6 w-full max-w-full">
-        <motion.div className="grid gap-6 lg:gap-8 lg:grid-cols-[1.1fr_1fr] w-full max-w-full min-w-0" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
-          <motion.div variants={slideFromLeft} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="w-full max-w-full min-w-0">
-            <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Courses</div>
-            <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Entrepreneurship Learning Tracks</h2>
-            <p className="mt-4 text-sm text-slate-600">Modular tracks built to guide founders from ideation to global expansion.</p>
-            <div className="relative mt-6 w-full max-w-full overflow-hidden">
-              {showLeftArrow && (
-                <div className="sm:hidden absolute left-0 top-0 bottom-2 w-10 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none z-10 flex items-center justify-start">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-slate-500 shadow-[0_2px_8px_rgba(0,0,0,0.12)] border border-slate-100 backdrop-blur-sm">
-                    <ChevronLeft className="h-3.5 w-3.5" />
+          <motion.div className="grid gap-6 lg:gap-8 lg:grid-cols-[1.1fr_1fr] w-full max-w-full min-w-0" variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.5 }}>
+            <motion.div variants={slideFromLeft} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="w-full max-w-full min-w-0">
+              <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Courses</div>
+              <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Entrepreneurship Learning Tracks</h2>
+              <p className="mt-4 text-sm text-slate-600">Modular tracks built to guide founders from ideation to global expansion.</p>
+              <div className="relative mt-6 w-full max-w-full overflow-hidden">
+                {showLeftArrow && (
+                  <div className="sm:hidden absolute left-0 top-0 bottom-2 w-10 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none z-10 flex items-center justify-start">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-slate-500 shadow-[0_2px_8px_rgba(0,0,0,0.12)] border border-slate-100 backdrop-blur-sm">
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                    </div>
                   </div>
-                </div>
-              )}
-              {showRightArrow && (
-                <div className="sm:hidden absolute right-0 top-0 bottom-2 w-10 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none z-10 flex items-center justify-end">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-slate-500 shadow-[0_2px_8px_rgba(0,0,0,0.12)] border border-slate-100 backdrop-blur-sm">
-                    <ChevronRight className="h-3.5 w-3.5" />
+                )}
+                {showRightArrow && (
+                  <div className="sm:hidden absolute right-0 top-0 bottom-2 w-10 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none z-10 flex items-center justify-end">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-slate-500 shadow-[0_2px_8px_rgba(0,0,0,0.12)] border border-slate-100 backdrop-blur-sm">
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </div>
                   </div>
+                )}
+                <div
+                  ref={tabsRef}
+                  className="flex flex-row overflow-x-auto gap-2 pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
+                >
+                  {courseTabs.map((tab) => (
+                    <button
+                      key={tab.name}
+                      onClick={() => setActiveTab(tab)}
+                      className={`shrink-0 rounded-full px-4 py-2.5 text-[11px] font-semibold transition ${activeTab.name === tab.name ? 'bg-primary text-white shadow-sm' : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
+                    >
+                      {tab.name}
+                    </button>
+                  ))}
                 </div>
-              )}
-              <div
-                ref={tabsRef}
-                className="flex flex-row overflow-x-auto gap-2 pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
-              >
-                {courseTabs.map((tab) => (
-                  <button
-                    key={tab.name}
-                    onClick={() => setActiveTab(tab)}
-                    className={`shrink-0 rounded-full px-4 py-2.5 text-[11px] font-semibold transition ${activeTab.name === tab.name ? 'bg-primary text-white shadow-sm' : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300'}`}
-                  >
-                    {tab.name}
-                  </button>
+              </div>
+            </motion.div>
+            <motion.div variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 }} className="rounded-2xl border-2 border-transparent bg-white p-4 shadow-sm sm:p-8 w-full max-w-full min-w-0" style={{ background: 'linear-gradient(white, white) padding-box, linear-gradient(135deg, #3b82f6, #06b6d4) border-box' }}>
+              <div className="text-base sm:text-lg font-bold text-slate-800">{activeTab.name}</div>
+              <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm text-slate-600">{activeTab.description}</p>
+              <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
+                {activeTab.topics.map((topic) => (
+                  <div key={topic} className="flex items-center gap-3 text-xs sm:text-sm text-slate-700">
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
+                    {topic}
+                  </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </motion.div>
-          <motion.div variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.15 }} className="rounded-2xl border-2 border-transparent bg-white p-4 shadow-sm sm:p-8 w-full max-w-full min-w-0" style={{ background: 'linear-gradient(white, white) padding-box, linear-gradient(135deg, #3b82f6, #06b6d4) border-box' }}>
-            <div className="text-base sm:text-lg font-bold text-slate-800">{activeTab.name}</div>
-            <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm text-slate-600">{activeTab.description}</p>
-            <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
-              {activeTab.topics.map((topic) => (
-                <div key={topic} className="flex items-center gap-3 text-xs sm:text-sm text-slate-700">
-                  <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
-                  {topic}
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </motion.div>
         </div>
       </section>
 
@@ -1679,7 +1782,7 @@ const Home = () => {
             <div className="marquee-inner">
               {[0, 1].map((setIdx) => (
                 <div key={setIdx} className="flex shrink-0 items-center gap-8">
-                  {['1-2.webp','1.webp','10.webp','11.webp','12.webp','13.webp','14.webp','15.webp','16.webp','17.webp','18.webp','19.webp','2.webp','20.webp','21.webp','22-3.webp','22.webp','23.webp','24.webp','25.webp','3.webp','4.webp','5.webp','6.webp','7.webp','8-3.webp','8.webp'].map((file) => (
+                  {['1-2.webp', '1.webp', '10.webp', '11.webp', '12.webp', '13.webp', '14.webp', '15.webp', '16.webp', '17.webp', '18.webp', '19.webp', '2.webp', '20.webp', '21.webp', '22-3.webp', '22.webp', '23.webp', '24.webp', '25.webp', '3.webp', '4.webp', '5.webp', '6.webp', '7.webp', '8-3.webp', '8.webp'].map((file) => (
                     <div key={`${setIdx}-${file}`} className="flex h-16 w-28 sm:h-20 sm:w-36 md:h-24 md:w-44 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-2 sm:p-3 shadow-sm">
                       <img src={`/insti/${file}`} alt="Institution" className="max-h-full max-w-full object-contain" loading="lazy" />
                     </div>
@@ -1696,7 +1799,7 @@ const Home = () => {
               <div className="flex w-max animate-[marquee-ltr_45s_linear_infinite]">
                 {[0, 1].map((setIdx) => (
                   <div key={setIdx} className="flex shrink-0 items-center gap-4 px-2">
-                    {['1-2.webp','1.webp','10.webp','11.webp','12.webp','13.webp','14.webp','15.webp','16.webp','17.webp','18.webp','19.webp','2.webp','20.webp'].map((file) => (
+                    {['1-2.webp', '1.webp', '10.webp', '11.webp', '12.webp', '13.webp', '14.webp', '15.webp', '16.webp', '17.webp', '18.webp', '19.webp', '2.webp', '20.webp'].map((file) => (
                       <div key={`${setIdx}-${file}`} className="flex h-16 w-28 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-2 shadow-sm">
                         <img src={`/insti/${file}`} alt="Institution" className="max-h-full max-w-full object-contain" loading="lazy" />
                       </div>
@@ -1711,7 +1814,7 @@ const Home = () => {
               <div className="flex w-max animate-[marquee-rtl_48s_linear_infinite]">
                 {[0, 1].map((setIdx) => (
                   <div key={setIdx} className="flex shrink-0 items-center gap-4 px-2">
-                    {['21.webp','22-3.webp','22.webp','23.webp','24.webp','25.webp','3.webp','4.webp','5.webp','6.webp','7.webp','8-3.webp','8.webp'].map((file) => (
+                    {['21.webp', '22-3.webp', '22.webp', '23.webp', '24.webp', '25.webp', '3.webp', '4.webp', '5.webp', '6.webp', '7.webp', '8-3.webp', '8.webp'].map((file) => (
                       <div key={`${setIdx}-${file}`} className="flex h-16 w-28 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-2 shadow-sm">
                         <img src={`/insti/${file}`} alt="Institution" className="max-h-full max-w-full object-contain" loading="lazy" />
                       </div>
@@ -1756,113 +1859,162 @@ const Home = () => {
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-primary mb-6">🏆 Apply for Recognition</div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary mb-6">
+              <Trophy className="h-3.5 w-3.5 text-primary" />
+              Apply for Recognition
+            </div>
             <h2 className="text-2xl font-extrabold text-slate-900 sm:text-4xl lg:text-5xl">Rank Your <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">College</span></h2>
             <p className="mx-auto mt-4 max-w-xl text-slate-500">Get recognized by India's most transparent innovation & incubation ranking.</p>
           </motion.div>
 
           <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-10 items-center">
             {/* Left — stats/benefits */}
-            <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="space-y-5">
+            <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-2 gap-3 sm:flex sm:flex-col sm:gap-5">
               {[
-                { icon: '🏛️', title: '70+ Universities', desc: 'Already ranked and recognized by EDC India' },
-                { icon: '📊', title: 'Transparent Evaluation', desc: 'On-ground, data-driven ranking methodology' },
-                { icon: '🏆', title: 'National Recognition', desc: 'Awards, certificates, and public recognition' },
-                { icon: '🌐', title: 'Global Visibility', desc: "Featured in EDC India's national reports and media" },
-              ].map((item, i) => (
-                <motion.div key={i} variants={staggerItem} whileHover={{ x: 4 }} className="flex items-start gap-3 sm:gap-4 rounded-2xl border border-slate-100 bg-white p-4 sm:p-5 shadow-sm transition hover:shadow-md hover:border-blue-100">
-                  <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl sm:text-2xl">{item.icon}</div>
-                  <div>
-                    <div className="font-bold text-slate-800">{item.title}</div>
-                    <div className="mt-0.5 text-sm text-slate-500">{item.desc}</div>
-                  </div>
-                </motion.div>
-              ))}
+                { icon: University, title: '70+ Universities', desc: 'Already ranked and recognized by EDC India' },
+                { icon: BarChart3, title: 'Transparent Evaluation', desc: 'On-ground, data-driven ranking methodology' },
+                { icon: Trophy, title: 'National Recognition', desc: 'Awards, certificates, and public recognition' },
+                { icon: Globe, title: 'Global Visibility', desc: "Featured in EDC India's national reports and media" },
+              ].map((item, i) => {
+                const Icon = item.icon
+                return (
+                  <motion.div
+                    key={i}
+                    variants={staggerItem}
+                    whileHover={{ scale: 1.02 }}
+                    className="flex flex-col p-3.5 sm:p-5 rounded-2xl border border-slate-100 bg-white shadow-sm transition hover:shadow-md hover:border-blue-100 sm:flex-row sm:items-start sm:gap-4"
+                  >
+                    <div className="flex items-center gap-2 sm:contents">
+                      <div className="flex h-8 w-8 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-blue-50 text-blue-600">
+                        <Icon className="h-4.5 w-4.5 sm:h-6 sm:w-6" />
+                      </div>
+                      <div className="font-bold text-slate-800 text-xs sm:text-base leading-snug sm:hidden text-left">{item.title}</div>
+                    </div>
+                    <div className="mt-2.5 sm:mt-0 text-left">
+                      <div className="font-bold text-slate-800 text-xs sm:text-base leading-snug hidden sm:block mb-1">{item.title}</div>
+                      <div className="text-[10px] sm:text-sm text-slate-500 leading-relaxed">{item.desc}</div>
+                    </div>
+                  </motion.div>
+                )
+              })}
             </motion.div>
 
             {/* Right — form */}
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="relative">
               <div className="absolute -inset-2 rounded-3xl bg-gradient-to-br from-blue-100 to-indigo-100 blur-xl opacity-60" />
-              <div className="relative rounded-3xl border border-slate-100 bg-white p-5 sm:p-8 shadow-xl">
-                <div className="mb-6 flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-secondary text-2xl text-white shadow-lg">🏆</div>
-                  <div>
-                    <div className="font-bold text-slate-900">Quick Application</div>
-                    <div className="text-xs text-slate-500">Takes less than 2 minutes</div>
-                  </div>
-                </div>
-                <form onSubmit={async (e) => {
-                  e.preventDefault();
-                  const formData = {
-                    collegeName: e.target.collegeName.value,
-                    contactPerson: e.target.contactPerson.value,
-                    email: e.target.email.value,
-                    phone: e.target.phone.value,
-                    message: e.target.message.value,
-                  };
-
-                  const isLocalhost = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
-                  const apiFromEnv = (API_BASE || '').trim().replace(/\/$/, '');
-                  const baseCandidates = Array.from(new Set([
-                    apiFromEnv,
-                    '',
-                    ...(apiFromEnv ? [] : ['http://localhost:5000']),
-                    ...(isLocalhost ? ['http://127.0.0.1:5000'] : []),
-                  ]));
-
-                  let lastError = 'Failed to submit. Please try again.';
-
-                  for (const base of baseCandidates) {
-                    try {
-                      const response = await fetch(`${base}/api/admin/college-ranking-application`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(formData),
-                      });
-
-                      const data = await response.json().catch(() => ({}));
-
-                      if (response.ok) {
-                        alert(data.message || 'Application submitted successfully!');
-                        e.target.reset();
-                        return;
-                      }
-
-                      lastError = data.message || `Failed to submit (status ${response.status}).`;
-                    } catch (err) {
-                      const message = String(err?.message || '').trim();
-                      if (message) lastError = message;
+              <div className={`relative rounded-3xl border bg-white p-4 sm:p-8 shadow-xl transition-all duration-300 ${formExpanded ? 'border-blue-200 shadow-2xl shadow-blue-100/30' : 'border-slate-100'}`}>
+                <div
+                  onClick={() => {
+                    if (isMobile) {
+                      setFormExpanded(!formExpanded)
                     }
-                  }
-
-                  alert(lastError);
-                }}>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    {[
-                      { id: 'collegeName', label: 'College / University Name', type: 'text', span: 2 },
-                      { id: 'contactPerson', label: 'Contact Person', type: 'text', span: 1 },
-                      { id: 'phone', label: 'Phone Number', type: 'tel', span: 1 },
-                      { id: 'email', label: 'Email Address', type: 'email', span: 2 },
-                    ].map((f) => (
-                      <div key={f.id} className={f.span === 2 ? 'sm:col-span-2' : ''}>
-                        <label htmlFor={f.id} className="text-xs font-semibold uppercase tracking-wide text-slate-500">{f.label} *</label>
-                        <input type={f.type} name={f.id} id={f.id} required className="mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 transition focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                  }}
+                  className={`flex items-center justify-between cursor-pointer sm:cursor-default select-none group/hdr transition-all duration-300 ${formExpanded ? 'mb-6' : 'mb-0 sm:mb-6'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-secondary text-white shadow-lg transition-transform duration-300 group-hover/hdr:scale-105">
+                      <Trophy className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 text-left transition-colors duration-300 group-hover/hdr:text-primary">Quick Application</div>
+                      <div className="text-xs text-slate-500 text-left flex flex-wrap items-center gap-1 sm:gap-1.5">
+                        <span>Takes less than 2 minutes</span>
+                        <span className="sm:hidden text-primary font-semibold inline-flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded-full text-[10px]">
+                          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                          Click to fill
+                        </span>
                       </div>
-                    ))}
-                    <div className="sm:col-span-2">
-                      <label htmlFor="message" className="text-xs font-semibold uppercase tracking-wide text-slate-500">Message</label>
-                      <textarea name="message" id="message" rows={3} className="mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 transition focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Tell us about your institution..." />
                     </div>
                   </div>
-                  <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                    <button type="submit" className="flex-1 rounded-xl bg-gradient-to-r from-primary to-secondary py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:opacity-90 active:scale-95">
-                      Apply for Ranking →
-                    </button>
-                    <Link to="/ranking" className="flex-1 rounded-xl border-2 border-slate-200 py-3.5 text-center text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
-                      Full Application
-                    </Link>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50/50 text-blue-600 border border-blue-100/50 sm:hidden transition-all duration-300 group-hover/hdr:scale-110">
+                    {formExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                   </div>
-                </form>
+                </div>
+
+                <AnimatePresence initial={false}>
+                  {(!isMobile || formExpanded) && (
+                    <motion.div
+                      initial={isMobile ? { height: 0, opacity: 0 } : false}
+                      animate={isMobile ? { height: 'auto', opacity: 1 } : false}
+                      exit={isMobile ? { height: 0, opacity: 0 } : false}
+                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                      className="overflow-hidden"
+                    >
+                      <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        const formData = {
+                          collegeName: e.target.collegeName.value,
+                          contactPerson: e.target.contactPerson.value,
+                          email: e.target.email.value,
+                          phone: e.target.phone.value,
+                          message: e.target.message.value,
+                        };
+
+                        const isLocalhost = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
+                        const apiFromEnv = (API_BASE || '').trim().replace(/\/$/, '');
+                        const baseCandidates = Array.from(new Set([
+                          apiFromEnv,
+                          '',
+                          ...(apiFromEnv ? [] : ['http://localhost:5000']),
+                          ...(isLocalhost ? ['http://127.0.0.1:5000'] : []),
+                        ]));
+
+                        let lastError = 'Failed to submit. Please try again.';
+
+                        for (const base of baseCandidates) {
+                          try {
+                            const response = await fetch(`${base}/api/admin/college-ranking-application`, {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify(formData),
+                            });
+
+                            const data = await response.json().catch(() => ({}));
+
+                            if (response.ok) {
+                              alert(data.message || 'Application submitted successfully!');
+                              e.target.reset();
+                              return;
+                            }
+
+                            lastError = data.message || `Failed to submit (status ${response.status}).`;
+                          } catch (err) {
+                            const message = String(err?.message || '').trim();
+                            if (message) lastError = message;
+                          }
+                        }
+
+                        alert(lastError);
+                      }}>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-2">
+                          {[
+                            { id: 'collegeName', label: 'College / University Name', type: 'text', span: 2 },
+                            { id: 'contactPerson', label: 'Contact Person', type: 'text', span: 1 },
+                            { id: 'phone', label: 'Phone Number', type: 'tel', span: 1 },
+                            { id: 'email', label: 'Email Address', type: 'email', span: 2 },
+                          ].map((f) => (
+                            <div key={f.id} className={f.span === 2 ? 'sm:col-span-2' : ''}>
+                              <label htmlFor={f.id} className="text-xs font-semibold uppercase tracking-wide text-slate-500">{f.label} *</label>
+                              <input type={f.type} name={f.id} id={f.id} required className="mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 transition focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                            </div>
+                          ))}
+                          <div className="sm:col-span-2">
+                            <label htmlFor="message" className="text-xs font-semibold uppercase tracking-wide text-slate-500">Message</label>
+                            <textarea name="message" id="message" rows={3} className="mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 transition focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Tell us about your institution..." />
+                          </div>
+                        </div>
+                        <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                          <button type="submit" className="flex-1 rounded-xl bg-gradient-to-r from-primary to-secondary py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:opacity-90 active:scale-95">
+                            Apply for Ranking →
+                          </button>
+                          <Link to="/ranking" className="flex-1 rounded-xl border-2 border-slate-200 py-3.5 text-center text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
+                            Full Application
+                          </Link>
+                        </div>
+                      </form>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
           </div>
@@ -1878,7 +2030,7 @@ const Home = () => {
             <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Our Impact</div>
             <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Numbers That Speak</h2>
           </motion.div>
-          <motion.div className="mt-8 sm:mt-12 grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div className="mt-8 sm:mt-12 hidden sm:grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {impactStats.map((stat) => (
               <motion.div key={stat.label} variants={staggerItem} whileHover={{ scale: 1.05, y: -4 }} className="card-hover-glow rounded-2xl border border-slate-100 bg-white p-4 sm:p-6 text-center shadow-sm transition hover:shadow-xl hover:border-blue-100">
                 <div className="mx-auto flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-200">{stat.icon}</div>
@@ -1886,6 +2038,36 @@ const Home = () => {
               </motion.div>
             ))}
           </motion.div>
+
+          {/* Mobile Swiper View */}
+          <div className="mt-8 block sm:hidden">
+            <Swiper
+              modules={[Autoplay]}
+              autoplay={{ delay: 2500, disableOnInteraction: false }}
+              loop
+              slidesPerView={1}
+              spaceBetween={16}
+              className="py-2"
+            >
+              {impactStats.map((stat) => (
+                <SwiperSlide key={stat.label}>
+                  <div className="mx-auto max-w-[280px] flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-md text-left">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-200">
+                      {stat.icon}
+                    </div>
+                    <div>
+                      <Counter
+                        value={stat.value}
+                        label={stat.label}
+                        className="text-xl font-bold text-blue-600"
+                        labelClassName="mt-0.5 text-[11px] font-semibold text-slate-500 uppercase tracking-widest leading-normal"
+                      />
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
         </div>
       </section>
 
@@ -1960,7 +2142,7 @@ const Home = () => {
             <div className="inline-block rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-4">Testimonials</div>
             <h2 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl xl:text-[2.75rem]">Trusted by Founders & Investors</h2>
           </motion.div>
-          <motion.div className="mt-8 sm:mt-12 grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div className="mt-8 sm:mt-12 hidden sm:grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {testimonials.map((item) => (
               <motion.div key={item.name} variants={staggerItem} whileHover={{ y: -4 }} className="rounded-3xl border border-slate-100 bg-white p-5 sm:p-8 shadow-lg transition hover:shadow-2xl">
                 <div className="text-2xl sm:text-3xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">&ldquo;</div>
@@ -1975,6 +2157,34 @@ const Home = () => {
               </motion.div>
             ))}
           </motion.div>
+
+          {/* Mobile Swiper View */}
+          <div className="mt-8 block sm:hidden">
+            <Swiper
+              modules={[Autoplay]}
+              autoplay={{ delay: 3000, disableOnInteraction: false }}
+              loop
+              slidesPerView={1}
+              spaceBetween={16}
+              className="py-2"
+            >
+              {testimonials.map((item) => (
+                <SwiperSlide key={item.name}>
+                  <div className="mx-auto max-w-[280px] rounded-3xl border border-slate-100 bg-white p-5 shadow-lg text-left">
+                    <div className="text-2xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent leading-none">&ldquo;</div>
+                    <p className="mt-1.5 text-xs leading-relaxed text-slate-600 line-clamp-4">{item.text}</p>
+                    <div className="mt-4 flex items-center gap-3 border-t border-slate-100 pt-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">{item.initials}</div>
+                      <div>
+                        <div className="text-xs font-bold text-slate-800">{item.name}</div>
+                        <div className="text-[10px] text-slate-500 leading-none mt-0.5">{item.role}</div>
+                      </div>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
         </div>
       </section>
 
@@ -1991,10 +2201,10 @@ const Home = () => {
 
           <motion.div className="mt-10 sm:mt-16 grid gap-5 sm:gap-6 sm:grid-cols-2 items-start" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {[
-              { title: 'Startup Application', formType: 'startup_application', cta: 'Apply Now', icon: '🚀', gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50', accent: 'text-blue-600', ring: 'focus:ring-blue-500/20 focus:border-blue-500', btn: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700', desc: 'Join the EDC India startup ecosystem.', successMessage: 'Thank you for applying to Startup Application. Our team will process your request shortly and get back to you.' },
-              { title: 'Investor Interest', formType: 'investor_interest', cta: 'Join as Investor', icon: '💼', gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50', accent: 'text-emerald-600', ring: 'focus:ring-emerald-500/20 focus:border-emerald-500', btn: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700', desc: 'Connect with high-potential founders.', successMessage: 'Thank you for your investor interest. We will process your query shortly and connect with you.' },
-              { title: 'College Partnership', formType: 'college_partnership', cta: 'Partner With Us', icon: '🏛️', gradient: 'from-purple-500 to-pink-600', bg: 'bg-purple-50', accent: 'text-purple-600', ring: 'focus:ring-purple-500/20 focus:border-purple-500', btn: 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700', desc: 'Build an on-campus startup ecosystem.', successMessage: 'Thank you for your college partnership request. We will process your query shortly.' },
-              { title: 'Newsletter', formType: 'newsletter', cta: 'Subscribe', icon: '📩', gradient: 'from-orange-500 to-rose-500', bg: 'bg-orange-50', accent: 'text-orange-600', ring: 'focus:ring-orange-500/20 focus:border-orange-500', btn: 'bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600', desc: 'Stay updated with funding & events.', successMessage: 'Thank you for subscribing. We will process your request shortly and share updates with you.' },
+              { title: 'Startup Application', formType: 'startup_application', cta: 'Apply Now', icon: <Rocket className="h-6 w-6 sm:h-7 sm:w-7" />, gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50', accent: 'text-blue-600', ring: 'focus:ring-blue-500/20 focus:border-blue-500', btn: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700', desc: 'Join the EDC India startup ecosystem.', successMessage: 'Thank you for applying to Startup Application. Our team will process your request shortly and get back to you.' },
+              { title: 'Investor Interest', formType: 'investor_interest', cta: 'Join as Investor', icon: <Briefcase className="h-6 w-6 sm:h-7 sm:w-7" />, gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50', accent: 'text-emerald-600', ring: 'focus:ring-emerald-500/20 focus:border-emerald-500', btn: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700', desc: 'Connect with high-potential founders.', successMessage: 'Thank you for your investor interest. We will process your query shortly and connect with you.' },
+              { title: 'College Partnership', formType: 'college_partnership', cta: 'Partner With Us', icon: <University className="h-6 w-6 sm:h-7 sm:w-7" />, gradient: 'from-purple-500 to-pink-600', bg: 'bg-purple-50', accent: 'text-purple-600', ring: 'focus:ring-purple-500/20 focus:border-purple-500', btn: 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700', desc: 'Build an on-campus startup ecosystem.', successMessage: 'Thank you for your college partnership request. We will process your query shortly.' },
+              { title: 'Newsletter', formType: 'newsletter', cta: 'Subscribe', icon: <Mail className="h-6 w-6 sm:h-7 sm:w-7" />, gradient: 'from-orange-500 to-rose-500', bg: 'bg-orange-50', accent: 'text-orange-600', ring: 'focus:ring-orange-500/20 focus:border-orange-500', btn: 'bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600', desc: 'Stay updated with funding & events.', successMessage: 'Thank you for subscribing. We will process your request shortly and share updates with you.' },
             ].map((form) => (
               <ContactCard key={form.title} form={form} />
             ))}
@@ -2002,28 +2212,28 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#eef4ff] via-white to-[#ecfeff] py-16 sm:py-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#eef4ff] via-white to-[#ecfeff] py-12 sm:py-20">
         <div className="pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-blue-200/40 blur-3xl" />
         <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
         <div className="pointer-events-none absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(#0b3d91 1px,transparent 1px),linear-gradient(90deg,#0b3d91 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-[0_28px_56px_-34px_rgba(15,23,42,0.55)] backdrop-blur-xl sm:p-6 lg:p-10">
+          <div className="rounded-3xl border border-white/50 bg-white/30 p-5 shadow-none backdrop-blur-md sm:rounded-[2rem] sm:border-white/70 sm:bg-white/70 sm:p-6 lg:p-10 sm:shadow-[0_28px_56px_-34px_rgba(15,23,42,0.55)] sm:backdrop-blur-xl">
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-700">
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-3 py-1 sm:px-4 sm:py-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-blue-700">
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-[11px] font-bold text-white">Q</span>
                 Frequently Asked Questions
               </div>
               <h2 className="mt-4 text-xl font-extrabold text-slate-900 sm:text-3xl lg:text-4xl">Quick Answers Before You Apply</h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500">Four quick answers from our complete FAQ guide for rankings, applications, and evaluation details.</p>
-              <div className="mt-3 sm:mt-5 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              <div className="mt-3 sm:mt-5 hidden sm:flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                 <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Curated Preview</span>
                 <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Ranking + Application FAQs</span>
                 <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Updated for 2026 Event</span>
               </div>
             </motion.div>
 
-            <motion.div className="mt-6 sm:mt-10 grid gap-4 sm:gap-5 sm:grid-cols-2" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <motion.div className="mt-6 sm:mt-10 grid gap-0 sm:gap-5 sm:grid-cols-2" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
               {faqPreviewItems.map((faq, faqIndex) => {
                 const theme = faqCardThemes[faqIndex % faqCardThemes.length]
                 return (
@@ -2036,7 +2246,7 @@ const Home = () => {
               <Link
                 to="/faq"
                 onClick={handleRouteNavTop}
-                className="group inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-white shadow-[0_18px_28px_-18px_rgba(11,61,145,0.8)] transition hover:bg-[#0a357f]"
+                className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs sm:px-7 sm:py-3.5 sm:text-sm font-semibold text-white shadow-[0_18px_28px_-18px_rgba(11,61,145,0.8)] transition hover:bg-[#0a357f]"
               >
                 See All FAQs
                 <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -2057,7 +2267,7 @@ function AppContent() {
     location.pathname === '/' ||
     location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/dashboard') ||
-['/payment', '/college-apply'].includes(location.pathname)
+    ['/payment', '/college-apply'].includes(location.pathname)
 
   return (
     <>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import SiteFooter from '../components/SiteFooter'
 import { faqCategories } from '../data/faqs'
+import FAQTextLine from '../components/FAQTextLine'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 26 },
@@ -88,7 +89,7 @@ export default function FAQPage() {
                             <div className="border-t border-slate-100 px-4 py-4 sm:px-5">
                               <div className="space-y-2 text-sm leading-relaxed text-slate-600">
                                 {faq.answer.map((line) => (
-                                  <p key={line}>{line}</p>
+                                  <p key={line} className="flex items-start"><FAQTextLine text={line} /></p>
                                 ))}
                               </div>
 
@@ -97,7 +98,7 @@ export default function FAQPage() {
                                   {faq.points.map((point) => (
                                     <li key={point} className="flex items-start gap-2">
                                       <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
-                                      <span>{point}</span>
+                                      <span><FAQTextLine text={point} /></span>
                                     </li>
                                   ))}
                                 </ul>

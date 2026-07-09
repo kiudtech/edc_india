@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, BadgeCheck, Check, ShieldCheck, Sparkles, WalletCards } from 'lucide-react'
+import { ArrowRight, BadgeCheck, Check, ShieldCheck, Sparkles, WalletCards, ChevronDown, ChevronUp } from 'lucide-react'
 import { API_BASE } from '../config'
 import SiteFooter from '../components/SiteFooter'
 
@@ -116,6 +116,14 @@ export default function JoinPage() {
   const navigate = useNavigate()
   const [plans, setPlans] = useState(defaultPlans)
   const [plansError, setPlansError] = useState('')
+  const [expandedPlans, setExpandedPlans] = useState({})
+
+  const togglePlan = (key) => {
+    setExpandedPlans((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }))
+  }
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -274,7 +282,7 @@ export default function JoinPage() {
               initial="hidden"
               animate="visible"
               variants={staggerContainer}
-              className="mx-auto grid max-w-6xl items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              className="mx-auto hidden sm:grid max-w-6xl items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3"
             >
               {plans.map((plan, index) => (
                 <motion.article key={plan.slug || `${plan.name}-${index}`} variants={fadeUp} className={cardClassByIndex(index, plan.isPopular)}>
@@ -323,6 +331,81 @@ export default function JoinPage() {
                 </motion.article>
               ))}
             </motion.div>
+
+          {/* Mobile Collapsible View */}
+          <div className="mt-8 flex flex-col gap-4 sm:hidden">
+            {plans.map((plan, index) => {
+              const key = plan.slug || `${plan.name}-${index}`;
+              const isExpanded = !!expandedPlans[key];
+              const isPopularOrFirst = plan.isPopular || index === 0;
+              const borderTheme = isPopularOrFirst ? 'border border-primary/30' : 'border border-slate-200';
+              const badgeTheme = isPopularOrFirst ? 'border-primary/30 bg-primary/10 text-primary' : 'border-slate-200 bg-slate-100 text-slate-600';
+              const btnTheme = isPopularOrFirst ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-md' : 'bg-ink text-white hover:bg-slate-800 shadow-md';
+
+              return (
+                <div key={key} className={`rounded-2xl bg-white p-4 shadow-md transition-all ${borderTheme}`}>
+                  {/* Collapsible Header */}
+                  <div
+                    onClick={() => togglePlan(key)}
+                    className="flex items-center justify-between cursor-pointer select-none"
+                  >
+                    <div className="flex flex-col">
+                      {plan.badge && (
+                        <span className={`inline-flex w-fit items-center rounded-full border px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider mb-1.5 ${badgeTheme}`}>
+                          {plan.badge}
+                        </span>
+                      )}
+                      <h3 className={`text-sm font-extrabold ${isPopularOrFirst ? 'text-primary' : 'text-ink'}`}>{plan.name}</h3>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col items-end">
+                        <span className="text-base font-extrabold text-ink">₹{formatPrice(plan.price)}</span>
+                        <span className="text-[9px] font-semibold text-slate-500">{plan.billingText || '/ one-time'}</span>
+                      </div>
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-50 text-slate-500 border border-slate-100">
+                        {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Collapsible Content */}
+                  <AnimatePresence initial={false}>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pt-4 border-t border-slate-100 mt-3.5">
+                          <p className="text-xs leading-relaxed text-slate-500 mb-4 font-medium">{plan.description}</p>
+                          <ul className="space-y-2.5 text-xs text-slate-600 mb-5 bg-white">
+                            {(plan.features || []).map((f, i) => (
+                              <li key={i} className="flex items-start gap-2.5 font-semibold">
+                                <div className="mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                  <Check className="h-3 w-3" strokeWidth={2.5} />
+                                </div>
+                                <span>{f}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          <button
+                            onClick={() => handleNavigateToPlan(plan)}
+                            className={`inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-xs font-semibold transition duration-300 active:scale-[0.99] ${btnTheme}`}
+                          >
+                            <span>{plan.ctaText || 'Join Now'}</span>
+                            <span className="opacity-85">₹{formatPrice(plan.price)}</span>
+                            <ArrowRight className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
 
             <motion.section
               initial="hidden"

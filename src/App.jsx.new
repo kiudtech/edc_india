@@ -392,12 +392,8 @@ const Home = () => {
         <div className="blob-float-reverse absolute -bottom-32 -left-32 h-[400px] w-[400px] rounded-full bg-orange-100/30 blur-3xl" />
         <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center justify-center px-4 py-20 text-center sm:px-6 sm:py-28 lg:py-32 xl:max-w-6xl xl:py-36">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ duration: 0.7 }}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-[11px] font-semibold text-blue-700">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-              Building founders through clarity, execution, and ecosystem support.
-            </div>
             <motion.h1
-              className="mx-auto mt-8 max-w-5xl text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem]"
+              className="mx-auto mt-2 max-w-5xl text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem]"
               variants={staggerContainer}
               initial="hidden"
               animate="visible"

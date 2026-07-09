@@ -5,10 +5,10 @@ export default function SiteFooter() {
     <footer className="bg-gradient-to-b from-[#071f4d] to-[#040e24] text-white">
         {/* Main Footer */}
         <div className="mx-auto max-w-7xl px-3 pb-8 pt-10 sm:px-6 sm:pb-10 sm:pt-14 lg:pt-16">
-          <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-12 lg:gap-10">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-8 md:grid-cols-2 lg:grid-cols-12 lg:gap-10">
 
             {/* Brand Column */}
-            <div className="lg:col-span-4">
+            <div className="col-span-2 md:col-span-2 lg:col-span-4">
               <div className="flex items-center gap-4">
                 <img src="/logo.png" alt="EDC India" className="h-14 w-14 sm:h-20 sm:w-20 rounded-full bg-white p-1 object-contain shadow-lg shadow-blue-900/40" />
                 <div>
@@ -33,7 +33,7 @@ export default function SiteFooter() {
             </div>
 
             {/* Quick Links */}
-            <div className="lg:col-span-2">
+            <div className="col-span-1 md:col-span-1 lg:col-span-2">
               <div className="text-sm font-bold uppercase tracking-wider text-blue-300">Quick Links</div>
               <div className="mt-4 space-y-3">
                 {[
@@ -54,7 +54,7 @@ export default function SiteFooter() {
             </div>
 
             {/* Programs */}
-            <div className="lg:col-span-2">
+            <div className="col-span-1 md:col-span-1 lg:col-span-2">
               <div className="text-sm font-bold uppercase tracking-wider text-blue-300">Our Programs</div>
               <div className="mt-4 space-y-3">
                 {[
@@ -74,7 +74,7 @@ export default function SiteFooter() {
             </div>
 
             {/* Contact & Address */}
-            <div className="lg:col-span-4">
+            <div className="col-span-2 md:col-span-2 lg:col-span-4">
               <div className="text-sm font-bold uppercase tracking-wider text-blue-300">Contact Us</div>
               <div className="mt-4 space-y-4">
                 {/* Address */}
@@ -97,17 +97,14 @@ export default function SiteFooter() {
                   <a href="mailto:enquiry@edcindia.in" className="text-sm text-white/60 transition hover:text-white">enquiry@edcindia.in</a>
                 </div>
                 {/* Phone */}
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/20 text-blue-300">
+                <div className="flex gap-3">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/20 text-blue-300">
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                   </div>
-                  <a href="tel:+919821832829" className="text-sm text-white/60 transition hover:text-white">+91 9821832829</a>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/20 text-blue-300">
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                  <div className="flex flex-col gap-1 text-sm text-white/60">
+                    <a href="tel:+919821832829" className="transition hover:text-white">+91 9821832829</a>
+                    <a href="tel:+911206054408" className="transition hover:text-white">+91 1206054408</a>
                   </div>
-                  <a href="tel:+911206054408" className="text-sm text-white/60 transition hover:text-white">+91 1206054408</a>
                 </div>
               </div>
             </div>
