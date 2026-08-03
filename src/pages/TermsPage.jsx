@@ -91,11 +91,11 @@ export default function TermsPage() {
           <p><strong>Fellowship Program:</strong> No refund once the fellowship has commenced. If a fellow withdraws before the program start date (minimum 7 days prior), a partial refund of 50% may be considered at EDC India's sole discretion.</p>
           <p><strong>Exceptions:</strong> Refunds may be considered in the following cases only:</p>
           <ul className="list-disc list-inside space-y-1">
-            <li>Duplicate payment due to a technical error (full refund within 7 working days)</li>
+            <li>Duplicate payment due to a technical error (full refund within 30 working days)</li>
             <li>Service not delivered due to EDC India's failure (full or partial refund at our discretion)</li>
             <li>Payment made by mistake before any service activation (request must be raised within 24 hours)</li>
           </ul>
-          <p><strong>Refund Process:</strong> To request a refund, email <a href="mailto:enquiry@edcindia.in" className="text-blue-600 hover:underline">enquiry@edcindia.in</a> with your registered email, transaction ID, and reason. Approved refunds will be processed within 7–14 working days to the original payment method.</p>
+          <p><strong>Refund Process:</strong> To request a refund, email <a href="mailto:enquiry@edcindia.in" className="text-blue-600 hover:underline">enquiry@edcindia.in</a> with your registered email, transaction ID, and reason. Approved refunds will be processed within 30 working days to the original payment method.</p>
           <p>EDC India is not responsible for any bank charges or currency conversion fees incurred during refund processing.</p>
         </Section>
 
