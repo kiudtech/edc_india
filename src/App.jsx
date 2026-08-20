@@ -1430,7 +1430,7 @@ const Home = () => {
                 <div className="relative rounded-xl overflow-hidden h-full w-full"
                   style={{ border: '2px solid rgba(201,168,76,0.5)', boxShadow: '0 20px 60px rgba(201,168,76,0.3)' }}>
                   <img
-                    src="/dubai/dubai_50000_hoz.jpeg"
+                    src="/dubai/dubai_70000_hoz.webp"
                     alt="Dubai Edition 2026 — ₹70,000 All Inclusive"
                     className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
                   />
