@@ -1331,8 +1331,8 @@ const Home = () => {
               <div className="grid grid-cols-2 gap-2">
                 <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
                   <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#c9a84c' }}><Calendar className="h-3 w-3" /> When</div>
-                  <div className="text-xs font-bold text-white">September 2026</div>
-                  <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.35)' }}>2026</div>
+                  <div className="text-xs font-bold text-white">Every Month</div>
+                  <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.35)' }}>Year Round</div>
                 </div>
                 <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
                   <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#c9a84c' }}><Plane className="h-3 w-3" /> Route</div>
