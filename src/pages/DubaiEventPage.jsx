@@ -428,6 +428,176 @@ export default function DubaiEventPage() {
         </div>
       </section>
 
+      {/* ═══════════════ DUBAI AI FESTIVAL ═══════════════ */}
+      <section className="bg-white py-8 sm:py-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <motion.div
+            className="text-center mb-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeUp}
+          >
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+              Dubai AI Festival — <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">EDC India</span>
+            </h2>
+            <p className="mt-2 text-sm text-slate-600 max-w-xl mx-auto font-medium">
+              “Discover Dubai. Connect with Leaders. Build Your Future.”
+            </p>
+          </motion.div>
+
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr] items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="space-y-6"
+            >
+              {/* Top Row: Event Overview & Organizers */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-1.5">
+                    <Calendar className="h-4 w-4 text-blue-600" /> Event Overview
+                  </h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-0.5">Duration</p>
+                      <p className="text-xs font-semibold text-slate-800">3 Nights / 4 Days</p>
+                    </div>
+                    <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-0.5">Travel</p>
+                      <p className="text-xs font-semibold text-slate-800">25 Oct – 28 Oct</p>
+                    </div>
+                    <div className="col-span-2 bg-slate-50 p-2.5 rounded-lg border border-slate-100 flex items-center justify-between">
+                      <div>
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-0.5">Theme</p>
+                        <p className="text-xs font-semibold text-slate-800">Learn • Network • Explore</p>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1.5 italic leading-tight">
+                    * Dates reflect full travel schedule (India to India).
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-1.5">
+                    <Building2 className="h-4 w-4 text-blue-600" /> Organizers
+                  </h3>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2 text-xs text-slate-700 font-medium">
+                      <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 shrink-0 text-blue-500" /> EDC India
+                    </li>
+                    <li className="flex items-start gap-2 text-xs text-slate-700 font-medium">
+                      <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 shrink-0 text-blue-500" /> ITQAN ELITE — Consultancy
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* What's Included */}
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-1.5">
+                  <Award className="h-4 w-4 text-blue-600" /> What's Included
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { icon: <Hotel className="h-3.5 w-3.5" />, text: '4-Star Hotel Stay' },
+                    { icon: <UtensilsCrossed className="h-3.5 w-3.5" />, text: 'Breakfast + Dinner' },
+                    { icon: <Plane className="h-3.5 w-3.5" />, text: 'Round Trip Flight + Visa' },
+                    { icon: <Bus className="h-3.5 w-3.5" />, text: 'Tours & Transport' },
+                    { icon: <Award className="h-3.5 w-3.5" />, text: 'Pitching Round' },
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-md border border-slate-100">
+                      <span className="text-blue-500">{item.icon}</span>
+                      <span className="text-[11px] font-semibold text-slate-700">{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Bottom Row: Who Can Join & Key Activities */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex flex-col">
+                  <h3 className="text-sm font-bold text-blue-900 mb-2 flex items-center gap-1.5">
+                    <Users className="h-4 w-4 text-blue-600" /> Who Can Join?
+                  </h3>
+                  <ul className="space-y-1.5 mb-4 flex-1">
+                    {[
+                      'Students (18+ years)',
+                      'Startup Founders & Entrepreneurs',
+                      'Young Professionals & Innovators',
+                      'Anyone exploring global opportunities',
+                    ].map((point, idx) => (
+                      <li key={idx} className="flex items-start gap-1.5 text-xs text-blue-800 leading-tight">
+                        <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 shrink-0 text-blue-500" />
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    to="https://dubaiaifestival.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex w-full items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-500/30 transition-all hover:bg-blue-700 hover:scale-[1.02]"
+                  >
+                    Apply Now <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4 text-blue-600" /> Key Activities
+                  </h3>
+                  <div className="overflow-hidden rounded-xl border border-slate-200">
+                    <table className="w-full text-left text-[11px]">
+                      <tbody className="divide-y divide-slate-100 bg-white">
+                        <tr>
+                          <td className="px-2.5 py-2 font-semibold text-slate-900">Cruise Dinner</td>
+                          <td className="px-2.5 py-2 text-slate-600">With Indian founders</td>
+                        </tr>
+                        <tr>
+                          <td className="px-2.5 py-2 font-semibold text-slate-900">Expo Visit</td>
+                          <td className="px-2.5 py-2 text-slate-600">Full-day networking</td>
+                        </tr>
+                        <tr>
+                          <td className="px-2.5 py-2 font-semibold text-slate-900">DIFC Visit</td>
+                          <td className="px-2.5 py-2 text-slate-600">Financial District</td>
+                        </tr>
+                        <tr>
+                          <td className="px-2.5 py-2 font-semibold text-slate-900">Live Pitch</td>
+                          <td className="px-2.5 py-2 text-slate-600">Desert Safari meetings</td>
+                        </tr>
+                        <tr>
+                          <td className="px-2.5 py-2 font-semibold text-slate-900">Pitching</td>
+                          <td className="px-2.5 py-2 text-slate-600">Pitch/network</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="flex justify-center items-center h-full"
+            >
+              <img
+                src="/dist/dubai/dubai-ai-fest.png"
+                alt="Dubai AI Festival Poster"
+                className="w-full max-h-[520px] object-contain rounded-xl"
+                onError={(e) => { e.currentTarget.src = '/dubai/dubai-ai-fest.png' }}
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* ═══════════════ CHOOSE YOUR TRACK — SIGNATURE SECTION ═══════════════ */}
       <section className="relative bg-slate-900 py-16 sm:py-20 overflow-hidden">
         {/* Ambient animated glow blobs */}
