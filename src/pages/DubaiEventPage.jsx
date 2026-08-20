@@ -617,6 +617,18 @@ export default function DubaiEventPage() {
                   className="relative w-full object-contain rounded-2xl shadow-2xl shadow-slate-900/20 border border-white/60 transition-transform duration-500 group-hover:scale-[1.015]"
                   onError={(e) => { e.currentTarget.src = '/dubai/dubai-ai-fest.png' }}
                 />
+                {/* Hover overlay with Apply CTA */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-400 flex flex-col items-center justify-end pb-8 px-6">
+                  <p className="text-white/80 text-xs font-semibold mb-3 tracking-wide">Ready to join the festival?</p>
+                  <Link
+                    to="https://dubaiaifestival.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 rounded-xl bg-white px-8 py-3 text-sm font-black text-slate-900 shadow-xl transition-all hover:bg-blue-50 hover:scale-[1.03]"
+                  >
+                    Apply Now <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
             </motion.div>
           </div>
