@@ -1041,11 +1041,11 @@ const Home = () => {
           <span className="text-[10px] sm:text-xs font-bold tracking-wide">
             {/* Desktop text */}
             <span className="hidden md:inline">
-              Applications Open — Dubai 2026 · ₹50,000 All-Inclusive · Limited Seats
+              Applications Open — Dubai 2026 · ₹70,000 All-Inclusive · Limited Seats
             </span>
             {/* Tablet text */}
             <span className="hidden sm:inline md:hidden">
-              Dubai 2026 · ₹50,000 All-Inclusive · Apply Now
+              Dubai 2026 · ₹70,000 All-Inclusive · Apply Now
             </span>
             {/* Mobile text */}
             <span className="inline sm:hidden">
@@ -1164,7 +1164,7 @@ const Home = () => {
                   </p>
                   {trustSlides[heroSlide].highlight && (
                     <div className="flex flex-wrap gap-1.5 pt-1">
-                      {['✈️ Delhi → Dubai', '📅 September 2026', '₹50,000 All-Inclusive', '4 Days · 3 Nights'].map(f => (
+                      {['✈️ Delhi → Dubai', '📅 September 2026', '₹70,000 All-Inclusive', '4 Days · 3 Nights'].map(f => (
                         <span key={f} className="rounded-full bg-amber-500/15 border border-amber-400/25 px-2.5 py-1 text-[10px] font-semibold text-amber-200">{f}</span>
                       ))}
                     </div>
@@ -1431,7 +1431,7 @@ const Home = () => {
                   style={{ border: '2px solid rgba(201,168,76,0.5)', boxShadow: '0 20px 60px rgba(201,168,76,0.3)' }}>
                   <img
                     src="/dubai/dubai_50000_hoz.jpeg"
-                    alt="Dubai Edition 2026 — ₹50,000 All Inclusive"
+                    alt="Dubai Edition 2026 — ₹70,000 All Inclusive"
                     className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
                   />
                   {/* Overlay gradient */}
@@ -1461,6 +1461,25 @@ const Home = () => {
             </motion.div>
 
           </motion.div>
+
+          {/* Banner Strip Linking to Dubai AI Festival */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-12 sm:mt-16 w-full max-w-4xl mx-auto px-4 sm:px-0"
+          >
+            <Link to="/events/dubai-2026#dubai-ai-festival" className="block relative group rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
+              <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+              <img
+                src="/dubai/dubai-ai-strip.webp"
+                alt="Dubai AI Festival — EDC India"
+                className="w-full h-auto object-cover"
+              />
+            </Link>
+          </motion.div>
+
         </div>
 
         {/* Gold shimmer bottom border */}

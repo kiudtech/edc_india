@@ -154,7 +154,7 @@ export default function DubaiEventPage() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-3 gap-y-1.5 px-4 py-2 text-center">
           <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold">
             <Flame className="h-3.5 w-3.5" />
-            Applications Open — Dubai 2026 · ₹50,000 All-Inclusive · Limited Seats
+            Applications Open — Dubai 2026 · ₹70,000 All-Inclusive · Limited Seats
           </span>
           <Link
             to="https://pages.razorpay.com/pl_SpaFr7wPTeUhBw/view"
@@ -313,7 +313,7 @@ export default function DubaiEventPage() {
             { icon: <Calendar className="h-6 w-6 text-amber-500" />, label: 'Schedule', val: 'September 2026' },
             { icon: <MapPin className="h-6 w-6 text-amber-500" />, label: 'Location', val: 'Dubai, UAE' },
             { icon: <Clock className="h-6 w-6 text-amber-500" />, label: 'Duration', val: '4 Days · 3 Nights' },
-            { icon: <IndianRupee className="h-6 w-6 text-amber-500" />, label: 'Program Fee', val: '₹50,000' },
+            { icon: <IndianRupee className="h-6 w-6 text-amber-500" />, label: 'Program Fee', val: '₹70,000' },
           ].map((item, i) => (
             <motion.div
               key={i}
@@ -427,210 +427,222 @@ export default function DubaiEventPage() {
       </section>
 
       {/* ═══════════════ DUBAI AI FESTIVAL ═══════════════ */}
-      <section className="bg-white py-8 sm:py-10">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section id="dubai-ai-festival" className="relative bg-slate-50 py-8 sm:py-10 overflow-hidden">
+        {/* Ambient background blobs */}
+        <div className="absolute top-0 right-0 w-72 h-72 bg-blue-100/60 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-100/50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+
+        <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 xl:px-8">
+
+          {/* Header */}
           <motion.div
-            className="text-center mb-8"
+            className="text-center mb-8 sm:mb-10"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeUp}
           >
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
-              Dubai AI Festival — <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">EDC India</span>
+            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-100 px-4 py-1.5 mb-3 shadow-sm">
+              <Sparkles className="h-3.5 w-3.5 text-blue-600" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-blue-700">Premium Experience</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">
+              Dubai AI Festival —{' '}
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">EDC India</span>
             </h2>
-            <p className="mt-2 text-sm text-slate-600 max-w-xl mx-auto font-medium">
-              “Discover Dubai. Connect with Leaders. Build Your Future.”
+            <p className="mt-2 text-sm sm:text-base text-slate-500 max-w-xl mx-auto">
+              "Discover Dubai. Connect with Leaders. Build Your Future."
             </p>
           </motion.div>
 
-          <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr] items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="space-y-6"
-            >
-              {/* Top Row: Event Overview & Organizers */}
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-                    <Calendar className="h-4 w-4 text-blue-600" /> Event Overview
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-0.5">Duration</p>
-                      <p className="text-xs font-semibold text-slate-800">3 Nights / 4 Days</p>
-                    </div>
-                    <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-0.5">Travel</p>
-                      <p className="text-xs font-semibold text-slate-800">25 Oct – 28 Oct</p>
-                    </div>
-                    <div className="col-span-2 bg-slate-50 p-2.5 rounded-lg border border-slate-100 flex items-center justify-between">
-                      <div>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-0.5">Theme</p>
-                        <p className="text-xs font-semibold text-slate-800">Learn • Network • Explore</p>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-slate-400 mt-1.5 italic leading-tight">
-                    * Dates reflect full travel schedule (India to India).
-                  </p>
-                </div>
+          {/* Main Grid — mobile: stacked, desktop: 3 columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1fr_360px] xl:grid-cols-[1fr_1fr_400px] gap-6 xl:gap-8 items-start">
 
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-                    <Building2 className="h-4 w-4 text-blue-600" /> Organizers
-                  </h3>
-                  <ul className="space-y-2">
-                    <li className="flex items-start gap-2 text-xs text-slate-700 font-medium">
-                      <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 shrink-0 text-blue-500" /> EDC India
-                    </li>
-                    <li className="flex items-start gap-2 text-xs text-slate-700 font-medium">
-                      <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 shrink-0 text-blue-500" /> ITQAN ELITE — Consultancy
-                    </li>
-                  </ul>
+            {/* ── COLUMN 1: Overview & Activities ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="space-y-6 order-2 lg:order-1"
+            >
+
+              {/* 1. Event Quick Facts */}
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 h-full">
+                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
+                  <Calendar className="h-3.5 w-3.5 text-blue-500" /> Event Overview
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { label: 'Dates', value: '25 Oct – 28 Oct' },
+                    { label: 'Duration', value: '3 Nights / 4 Days' },
+                  ].map((item, idx) => (
+                    <div key={idx} className="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1">{item.label}</p>
+                      <p className="text-xs font-bold text-slate-800 leading-tight">{item.value}</p>
+                    </div>
+                  ))}
+                  <div className="col-span-2 bg-slate-50 rounded-xl p-3 border border-slate-100">
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1">Theme</p>
+                    <p className="text-xs font-bold text-slate-800 leading-tight">Learn • Network • Explore</p>
+                  </div>
                 </div>
+                <p className="text-[10px] text-slate-400 italic mt-3">* Dates reflect full travel schedule (India to India)</p>
               </div>
 
-              {/* What's Included */}
-              <div>
-                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-                  <Award className="h-4 w-4 text-blue-600" /> What's Included
+              {/* 3. Key Activities */}
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
+                  <MapPin className="h-3.5 w-3.5 text-blue-500" /> Key Activities
                 </h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="space-y-4">
+                  {[
+                    { title: 'Cruise Dinner', desc: 'With Indian founders' },
+                    { title: 'Expo Visit', desc: 'Full-day networking' },
+                    { title: 'DIFC Visit', desc: 'Financial District tour' },
+                    { title: 'Live Pitch', desc: 'Desert Safari & Investor meetings' },
+                    { title: 'Pitching Round', desc: 'Pitch & network' },
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-3">
+                      <div className="mt-0.5 h-5 w-5 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                        <span className="text-[9px] font-black text-indigo-600">{idx + 1}</span>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-800 leading-none">{item.title}</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* ── COLUMN 2: Included & Eligibility ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="space-y-6 order-3 lg:order-2"
+            >
+
+              {/* 2. What's Included */}
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
+                  <Award className="h-3.5 w-3.5 text-blue-500" /> What's Included
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
                   {[
                     { icon: <Hotel className="h-3.5 w-3.5" />, text: '4-Star Hotel Stay' },
                     { icon: <UtensilsCrossed className="h-3.5 w-3.5" />, text: 'Breakfast + Dinner' },
-                    { icon: <Plane className="h-3.5 w-3.5" />, text: 'Round Trip Flight + Visa' },
+                    { icon: <Plane className="h-3.5 w-3.5" />, text: 'Flight + Visa' },
                     { icon: <Bus className="h-3.5 w-3.5" />, text: 'Tours & Transport' },
                     { icon: <Award className="h-3.5 w-3.5" />, text: 'Pitching Round' },
+                    { icon: <Building2 className="h-3.5 w-3.5" />, text: 'EDC & ITQAN ELITE' },
                   ].map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-md border border-slate-100">
-                      <span className="text-blue-500">{item.icon}</span>
-                      <span className="text-[11px] font-semibold text-slate-700">{item.text}</span>
+                    <div key={idx} className="flex items-center gap-2 bg-blue-50/50 rounded-lg p-2 border border-blue-100/50">
+                      <div className="flex items-center justify-center h-6 w-6 rounded-md bg-white text-blue-600 shadow-sm border border-blue-100 shrink-0">
+                        {item.icon}
+                      </div>
+                      <span className="text-[10px] font-semibold text-slate-700 leading-tight">{item.text}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Bottom Row: Who Can Join & Key Activities */}
-              <div className="grid sm:grid-cols-2 gap-4">
-                {/* Who Can Join — Premium Card */}
-                <div className="relative rounded-2xl overflow-hidden flex flex-col" style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1e1b4b 100%)'}}>
-                  {/* Decorative blurred orb */}
-                  <div className="absolute -top-6 -right-6 h-28 w-28 rounded-full bg-blue-500/20 blur-2xl pointer-events-none" />
-                  <div className="absolute -bottom-4 -left-4 h-20 w-20 rounded-full bg-indigo-500/20 blur-2xl pointer-events-none" />
-
-                  <div className="relative z-10 p-5 flex flex-col flex-1">
-                    {/* Header */}
-                    <div className="flex items-center gap-2 mb-5">
-                      <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-white/10 border border-white/10">
-                        <Users className="h-4 w-4 text-blue-300" />
-                      </div>
-                      <div>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-blue-400/80">Eligibility</p>
-                        <h3 className="text-sm font-black text-white leading-none">Who Can Join?</h3>
-                      </div>
+              {/* Who Can Join — Premium Dark Card */}
+              <div className="relative rounded-2xl overflow-hidden flex flex-col h-full" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1e1b4b 100%)' }}>
+                <div className="absolute -top-6 -right-6 h-28 w-28 rounded-full bg-blue-500/20 blur-2xl pointer-events-none" />
+                <div className="absolute -bottom-4 -left-4 h-20 w-20 rounded-full bg-indigo-500/20 blur-2xl pointer-events-none" />
+                <div className="relative z-10 p-5 flex flex-col flex-1">
+                  <div className="flex items-center gap-2.5 mb-5">
+                    <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-white/10 border border-white/10 shrink-0">
+                      <Users className="h-4 w-4 text-blue-300" />
                     </div>
-
-                    {/* List */}
-                    <ul className="space-y-3 flex-1 mb-6">
-                      {[
-                        { label: 'Students', sub: '18+ years' },
-                        { label: 'Startup Founders', sub: '& Entrepreneurs' },
-                        { label: 'Young Professionals', sub: '& Innovators' },
-                        { label: 'Anyone', sub: 'exploring global opportunities' },
-                      ].map((item, idx) => (
-                        <li key={idx} className="flex items-center gap-3">
-                          <span className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-500/20 border border-blue-400/30 text-[10px] font-black text-blue-300 shrink-0">
-                            {idx + 1}
-                          </span>
-                          <div className="leading-tight">
-                            <span className="text-xs font-bold text-white">{item.label} </span>
-                            <span className="text-[11px] text-blue-300/80">{item.sub}</span>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* CTA */}
+                    <div>
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-blue-400/80">Eligibility</p>
+                      <h3 className="text-sm font-black text-white leading-none">Who Can Join?</h3>
+                    </div>
+                  </div>
+                  <ul className="space-y-3 flex-1 mb-6">
+                    {[
+                      { label: 'Students', sub: '18+ years' },
+                      { label: 'Startup Founders', sub: '& Entrepreneurs' },
+                      { label: 'Young Professionals', sub: '& Innovators' },
+                      { label: 'Anyone', sub: 'exploring global opportunities' },
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-center gap-3">
+                        <span className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-500/20 border border-blue-400/30 text-[10px] font-black text-blue-300 shrink-0">
+                          {idx + 1}
+                        </span>
+                        <div className="leading-tight">
+                          <span className="text-xs font-bold text-white">{item.label} </span>
+                          <span className="text-[11px] text-blue-300/80">{item.sub}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="flex flex-col gap-2.5">
+                    <Link
+                      to="https://rzp.io/rzp/rHRw8a8Y"
+                      className="group flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-xs font-black text-slate-900 shadow-lg transition-all hover:bg-blue-50 hover:scale-[1.02]"
+                    >
+                      Apply Now <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </Link>
                     <Link
                       to="https://dubaiaifestival.com/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-xs font-black text-slate-900 shadow-lg transition-all hover:bg-blue-50 hover:shadow-blue-500/20 hover:scale-[1.02]"
+                      className="group flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/20 bg-white/5 px-4 py-2.5 text-[11px] font-bold text-white transition-all hover:bg-white/10"
                     >
-                      Apply Now <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                      Explore more about event <ArrowRight className="h-3 w-3 opacity-70 transition-transform group-hover:translate-x-0.5" />
                     </Link>
                   </div>
                 </div>
+              </div>
 
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-                    <MapPin className="h-4 w-4 text-blue-600" /> Key Activities
-                  </h3>
-                  <div className="overflow-hidden rounded-xl border border-slate-200">
-                    <table className="w-full text-left text-[11px]">
-                      <tbody className="divide-y divide-slate-100 bg-white">
-                        <tr>
-                          <td className="px-2.5 py-2 font-semibold text-slate-900">Cruise Dinner</td>
-                          <td className="px-2.5 py-2 text-slate-600">With Indian founders</td>
-                        </tr>
-                        <tr>
-                          <td className="px-2.5 py-2 font-semibold text-slate-900">Expo Visit</td>
-                          <td className="px-2.5 py-2 text-slate-600">Full-day networking</td>
-                        </tr>
-                        <tr>
-                          <td className="px-2.5 py-2 font-semibold text-slate-900">DIFC Visit</td>
-                          <td className="px-2.5 py-2 text-slate-600">Financial District</td>
-                        </tr>
-                        <tr>
-                          <td className="px-2.5 py-2 font-semibold text-slate-900">Live Pitch</td>
-                          <td className="px-2.5 py-2 text-slate-600">Desert Safari meetings</td>
-                        </tr>
-                        <tr>
-                          <td className="px-2.5 py-2 font-semibold text-slate-900">Pitching</td>
-                          <td className="px-2.5 py-2 text-slate-600">Pitch/network</td>
-                        </tr>
-                      </tbody>
-                    </table>
+            </motion.div>
+
+            {/* ── COLUMN 3: POSTER ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="order-1 md:col-span-2 lg:col-span-1 lg:order-3 flex justify-center lg:sticky lg:top-24 mb-6 lg:mb-0"
+            >
+              <div className="relative group w-full max-w-sm sm:max-w-md lg:max-w-full">
+                {/* Glow */}
+                <div className="absolute -inset-3 bg-gradient-to-br from-blue-400/20 via-indigo-400/15 to-purple-400/10 rounded-3xl blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                <img
+                  src="/dubai/dubai-ai-fest.png"
+                  alt="Dubai AI Festival Poster"
+                  className="relative w-full object-contain rounded-2xl shadow-2xl shadow-slate-900/15 border border-white/60 transition-transform duration-500 group-hover:scale-[1.015]"
+                  onError={(e) => { e.currentTarget.src = '/dubai/dubai-ai-fest.png' }}
+                />
+                {/* Hover overlay */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-slate-900/90 via-slate-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-8 px-6">
+                  <p className="text-white/80 text-xs font-semibold mb-3 tracking-wide text-center">Ready to join the festival?</p>
+                  <div className="flex flex-col items-center gap-3 w-full max-w-[200px]">
+                    <Link
+                      to="https://rzp.io/rzp/rHRw8a8Y"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-black text-slate-900 shadow-xl transition-all hover:bg-blue-50 hover:scale-[1.03]"
+                    >
+                      Apply Now <ArrowRight className="h-4 w-4" />
+                    </Link>
+                    <Link
+                      to="https://dubaiaifestival.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-bold text-white/80 hover:text-white underline underline-offset-2 transition-colors"
+                    >
+                      Explore more about event
+                    </Link>
                   </div>
                 </div>
               </div>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="flex justify-center items-start"
-            >
-              <div className="relative group w-full max-w-md">
-                {/* Glow behind poster */}
-                <div className="absolute -inset-3 bg-gradient-to-br from-blue-400/20 via-indigo-400/15 to-purple-400/10 rounded-3xl blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-                <img
-                  src="/dubai/dubai-ai-fest.png"
-                  alt="Dubai AI Festival Poster"
-                  className="relative w-full object-contain rounded-2xl shadow-2xl shadow-slate-900/20 border border-white/60 transition-transform duration-500 group-hover:scale-[1.015]"
-                  onError={(e) => { e.currentTarget.src = '/dubai/dubai-ai-fest.png' }}
-                />
-                {/* Hover overlay with Apply CTA */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-400 flex flex-col items-center justify-end pb-8 px-6">
-                  <p className="text-white/80 text-xs font-semibold mb-3 tracking-wide">Ready to join the festival?</p>
-                  <Link
-                    to="https://dubaiaifestival.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-xl bg-white px-8 py-3 text-sm font-black text-slate-900 shadow-xl transition-all hover:bg-blue-50 hover:scale-[1.03]"
-                  >
-                    Apply Now <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>
@@ -971,7 +983,7 @@ export default function DubaiEventPage() {
 
                 <div className="relative flex items-end gap-2 mb-3 pb-3 border-b border-white/10">
                   <IndianRupee className="h-6 w-6 text-amber-300 mb-1" />
-                  <span className="text-4xl font-black leading-none">50,000</span>
+                  <span className="text-4xl font-black leading-none">70,000</span>
                   <span className="text-xs font-semibold text-white/60 mb-1">/ person, all-inclusive</span>
                 </div>
 
@@ -1083,7 +1095,7 @@ export default function DubaiEventPage() {
               Apply Now &amp; <span className="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">Take Your Ideas Global</span>
             </h2>
             <p className="mt-4 text-sm text-white/70 max-w-xl mx-auto">
-              Limited seats for September 2026. Secure your place on Dubai's most comprehensive startup &amp; innovation exposure program for just ₹50,000, all-inclusive.
+              Limited seats for September 2026. Secure your place on Dubai's most comprehensive startup &amp; innovation exposure program for just ₹70,000, all-inclusive.
             </p>
 
             <div className="mt-8 flex flex-wrap justify-center gap-4">
