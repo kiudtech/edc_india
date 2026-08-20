@@ -175,9 +175,8 @@ export default function DubaiEventPage() {
           {dubaiImages.map((img, index) => (
             <div
               key={index}
-              className={`absolute inset-0 transition-opacity duration-[1500ms] ${
-                index === currentSlide ? 'opacity-100' : 'opacity-0'
-              }`}
+              className={`absolute inset-0 transition-opacity duration-[1500ms] ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+                }`}
             >
               <img
                 src={img.src}
@@ -218,11 +217,11 @@ export default function DubaiEventPage() {
                   Global
                 </span>
                 <svg className="absolute -bottom-2 left-0 w-full" height="14" viewBox="0 0 300 14" fill="none" preserveAspectRatio="none">
-                  <path d="M2 11C60 4 240 4 298 11" stroke="url(#heroUnderline)" strokeWidth="5" strokeLinecap="round"/>
+                  <path d="M2 11C60 4 240 4 298 11" stroke="url(#heroUnderline)" strokeWidth="5" strokeLinecap="round" />
                   <defs>
                     <linearGradient id="heroUnderline" x1="0" y1="0" x2="300" y2="0">
-                      <stop stopColor="#fbbf24"/>
-                      <stop offset="1" stopColor="#fb923c"/>
+                      <stop stopColor="#fbbf24" />
+                      <stop offset="1" stopColor="#fb923c" />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -294,11 +293,10 @@ export default function DubaiEventPage() {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                index === currentSlide
+              className={`h-1.5 rounded-full transition-all duration-300 ${index === currentSlide
                   ? 'w-8 bg-amber-400'
                   : 'w-1.5 bg-white/30 hover:bg-white/50'
-              }`}
+                }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
@@ -480,7 +478,7 @@ export default function DubaiEventPage() {
                     * Dates reflect full travel schedule (India to India).
                   </p>
                 </div>
-                
+
                 <div>
                   <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-1.5">
                     <Building2 className="h-4 w-4 text-blue-600" /> Organizers
@@ -519,31 +517,54 @@ export default function DubaiEventPage() {
 
               {/* Bottom Row: Who Can Join & Key Activities */}
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex flex-col">
-                  <h3 className="text-sm font-bold text-blue-900 mb-2 flex items-center gap-1.5">
-                    <Users className="h-4 w-4 text-blue-600" /> Who Can Join?
-                  </h3>
-                  <ul className="space-y-1.5 mb-4 flex-1">
-                    {[
-                      'Students (18+ years)',
-                      'Startup Founders & Entrepreneurs',
-                      'Young Professionals & Innovators',
-                      'Anyone exploring global opportunities',
-                    ].map((point, idx) => (
-                      <li key={idx} className="flex items-start gap-1.5 text-xs text-blue-800 leading-tight">
-                        <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 shrink-0 text-blue-500" />
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    to="https://dubaiaifestival.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex w-full items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-500/30 transition-all hover:bg-blue-700 hover:scale-[1.02]"
-                  >
-                    Apply Now <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                  </Link>
+                {/* Who Can Join — Premium Card */}
+                <div className="relative rounded-2xl overflow-hidden flex flex-col" style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1e1b4b 100%)'}}>
+                  {/* Decorative blurred orb */}
+                  <div className="absolute -top-6 -right-6 h-28 w-28 rounded-full bg-blue-500/20 blur-2xl pointer-events-none" />
+                  <div className="absolute -bottom-4 -left-4 h-20 w-20 rounded-full bg-indigo-500/20 blur-2xl pointer-events-none" />
+
+                  <div className="relative z-10 p-5 flex flex-col flex-1">
+                    {/* Header */}
+                    <div className="flex items-center gap-2 mb-5">
+                      <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-white/10 border border-white/10">
+                        <Users className="h-4 w-4 text-blue-300" />
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-blue-400/80">Eligibility</p>
+                        <h3 className="text-sm font-black text-white leading-none">Who Can Join?</h3>
+                      </div>
+                    </div>
+
+                    {/* List */}
+                    <ul className="space-y-3 flex-1 mb-6">
+                      {[
+                        { label: 'Students', sub: '18+ years' },
+                        { label: 'Startup Founders', sub: '& Entrepreneurs' },
+                        { label: 'Young Professionals', sub: '& Innovators' },
+                        { label: 'Anyone', sub: 'exploring global opportunities' },
+                      ].map((item, idx) => (
+                        <li key={idx} className="flex items-center gap-3">
+                          <span className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-500/20 border border-blue-400/30 text-[10px] font-black text-blue-300 shrink-0">
+                            {idx + 1}
+                          </span>
+                          <div className="leading-tight">
+                            <span className="text-xs font-bold text-white">{item.label} </span>
+                            <span className="text-[11px] text-blue-300/80">{item.sub}</span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* CTA */}
+                    <Link
+                      to="https://dubaiaifestival.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-xs font-black text-slate-900 shadow-lg transition-all hover:bg-blue-50 hover:shadow-blue-500/20 hover:scale-[1.02]"
+                    >
+                      Apply Now <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </div>
                 </div>
 
                 <div>
@@ -585,14 +606,18 @@ export default function DubaiEventPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
-              className="flex justify-center items-center h-full"
+              className="flex justify-center items-start"
             >
-              <img
-                src="/dist/dubai/dubai-ai-fest.png"
-                alt="Dubai AI Festival Poster"
-                className="w-full max-h-[520px] object-contain rounded-xl"
-                onError={(e) => { e.currentTarget.src = '/dubai/dubai-ai-fest.png' }}
-              />
+              <div className="relative group w-full max-w-md">
+                {/* Glow behind poster */}
+                <div className="absolute -inset-3 bg-gradient-to-br from-blue-400/20 via-indigo-400/15 to-purple-400/10 rounded-3xl blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                <img
+                  src="/dist/dubai/dubai-ai-fest.png"
+                  alt="Dubai AI Festival Poster"
+                  className="relative w-full object-contain rounded-2xl shadow-2xl shadow-slate-900/20 border border-white/60 transition-transform duration-500 group-hover:scale-[1.015]"
+                  onError={(e) => { e.currentTarget.src = '/dubai/dubai-ai-fest.png' }}
+                />
+              </div>
             </motion.div>
           </div>
         </div>
