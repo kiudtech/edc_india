@@ -612,7 +612,7 @@ export default function DubaiEventPage() {
                 {/* Glow behind poster */}
                 <div className="absolute -inset-3 bg-gradient-to-br from-blue-400/20 via-indigo-400/15 to-purple-400/10 rounded-3xl blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                 <img
-                  src="/dist/dubai/dubai-ai-fest.png"
+                  src="/dubai/dubai-ai-fest.png"
                   alt="Dubai AI Festival Poster"
                   className="relative w-full object-contain rounded-2xl shadow-2xl shadow-slate-900/20 border border-white/60 transition-transform duration-500 group-hover:scale-[1.015]"
                   onError={(e) => { e.currentTarget.src = '/dubai/dubai-ai-fest.png' }}
